@@ -1,0 +1,14 @@
+name: "PrimeWarps"
+main: me.Scyy.PrimeWarps.Plugin
+version: 1.0
+author: "_Scyy"
+commands:
+  pwarp:
+    description: "Provides the GUI and easy access to teleporting to player-made warps"
+    aliases: ["pw", "playerwarp"]
+  pwadmin:
+    description: "Provides admin tools for managing player warps"
+    aliases: ["pwa", "playerwarpadmin"]
+  warprequest:
+    description: "Used to request the creation of a warp. Server admins have to approve a warp before it becomes live"
+    aliases: ["wrequest"]
