@@ -1,6 +1,7 @@
 name: "PrimeWarps"
 main: me.Scyy.PrimeWarps.Plugin
 version: 1.0
+api-version: 1.13
 author: "_Scyy"
 commands:
   pwarp:

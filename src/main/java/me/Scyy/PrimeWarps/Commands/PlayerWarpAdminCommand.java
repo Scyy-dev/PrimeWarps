@@ -4,9 +4,12 @@ import me.Scyy.PrimeWarps.Config.PlayerMessenger;
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Warps.Warp;
 import me.Scyy.PrimeWarps.Warps.WarpRequest;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +50,12 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                 }
                 requestSubcommand(sender, args);
                 return true;
+            case "setwarpshard":
+                if (!sender.hasPermission("pwarp.admin.setwarpshard")) {
+                    pm.msg(sender, "errorMessages.noPermission", false);
+                    return true;
+                }
+                setWarpShardSubcommand(sender, args);
             case "reload":
                 if (!sender.hasPermission("pwarp.admin.reload")) {
                     pm.msg(sender, "errorMessages.noPermission", false);
@@ -60,8 +69,6 @@ public class PlayerWarpAdminCommand implements TabExecutor {
         }
 
     }
-
-
 
     private void removeWarpSubcommand(CommandSender sender, String[] args) {
 
@@ -118,6 +125,23 @@ public class PlayerWarpAdminCommand implements TabExecutor {
             default:
                 pm.msg(sender, "errorMessages.invalidCommand", true);
         }
+    }
+
+    private void setWarpShardSubcommand(CommandSender sender, String[] args) {
+
+        if (!(sender instanceof Player)) {
+            pm.msg(sender, "errorMessages.mustBePlayer", false);
+            return;
+        }
+
+        ItemStack mainHand = ((Player) sender).getInventory().getItemInMainHand();
+        if (mainHand.getType() == Material.AIR) {
+            pm.msg(sender, "errorMessages.cannotUseAir", true);
+            return;
+        }
+
+        plugin.getCFH().getMiscDataStorage().saveWarpToken(mainHand);
+
     }
 
     @Override

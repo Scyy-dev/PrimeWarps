@@ -11,6 +11,7 @@ errorMessages:
   noPermission: "&cYou do not have permission to use that command"
   invalidCommandLength: "&cInvalid Command Length"
   mustBePlayer: "&cYou must be a player to use that command"
+  cannotUserAir: "&cYou cannot use air as an item"
   playerNotFound: "&cCould not find that player"
   invalidCommand: "&cThat command wasn't recognised"
   internalError: "Something went wrong trying to execute that command"

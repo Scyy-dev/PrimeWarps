@@ -6,20 +6,20 @@ public class ConfigFileHandler {
 
     private final PlayerWarps playerWarps;
     private final PlayerMessenger playerMessenger;
-    private final UserData userData;
+    private final MiscDataStorage miscDataStorage;
     private final Settings settings;
 
     public ConfigFileHandler(Plugin plugin) {
         this.playerMessenger = new PlayerMessenger(plugin);
         this.playerWarps = new PlayerWarps(plugin);
-        this.userData = new UserData(plugin);
+        this.miscDataStorage = new MiscDataStorage(plugin);
         this.settings = new Settings(plugin);
     }
 
     public void reloadConfigs() {
         playerMessenger.reloadConfig();
         playerWarps.reloadConfig();
-        userData.reloadConfig();
+        miscDataStorage.reloadConfig();
         settings.reloadConfig();
     }
 
@@ -31,8 +31,8 @@ public class ConfigFileHandler {
         return playerWarps;
     }
 
-    public UserData getUserData() {
-        return userData;
+    public MiscDataStorage getMiscDataStorage() {
+        return miscDataStorage;
     }
 
     public Settings getSettings() {

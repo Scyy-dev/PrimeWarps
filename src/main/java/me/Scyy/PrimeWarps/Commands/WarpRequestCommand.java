@@ -3,7 +3,6 @@ package me.Scyy.PrimeWarps.Commands;
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Warps.WarpRequest;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -45,8 +44,7 @@ public class WarpRequestCommand implements TabExecutor {
         Player player = (Player) sender;
 
         // Check if the player has the required items
-        // ItemStack warpToken = plugin.getCFH().getUserData().getWarpToken();
-        ItemStack warpToken = new ItemStack(Material.PRISMARINE_SHARD);
+        ItemStack warpToken = plugin.getCFH().getMiscDataStorage().getWarpToken();
         if (!player.getInventory().containsAtLeast(warpToken, plugin.getCFH().getSettings().getWarpTokenCount())) {
             pm.msg(sender, "warpMessages.notEnoughWarpShards", true, "%warp%", args[0]);
             return true;
