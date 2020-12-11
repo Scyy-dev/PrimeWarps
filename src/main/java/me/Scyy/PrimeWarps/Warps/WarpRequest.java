@@ -15,7 +15,7 @@ public class WarpRequest {
 
     private final Date dateCreated;
 
-    public WarpRequest(UUID owner, String name, Location location) {
+    public WarpRequest(String name, UUID owner, Location location) {
         this.owner = owner;
         this.name = name;
         this.location = location;
@@ -36,5 +36,14 @@ public class WarpRequest {
 
     public UUID getOwner() {
         return owner;
+    }
+
+    @Override
+    public String toString() {
+        return "Warp{" +
+                "name='" + name + '\'' +
+                ", owner=" + owner +
+                ", location=" + location +
+                '}';
     }
 }

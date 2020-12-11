@@ -9,6 +9,6 @@ public class Settings extends ConfigFile {
     }
 
     public int getWarpTokenCount() {
-        return config.getInt("shardAmount", 1);
+        return config.getInt("requiredWarpShardAmount", 1);
     }
 }

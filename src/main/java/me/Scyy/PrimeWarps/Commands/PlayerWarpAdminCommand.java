@@ -8,6 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,26 +35,27 @@ public class PlayerWarpAdminCommand implements TabExecutor {
 
             case "remove":
                 if (!sender.hasPermission("pwarp.admin.remove")) {
-                    // TODO - send no permission message
+                    pm.msg(sender, "errorMessages.noPermission", false);
                     return true;
                 }
                 removeWarpSubcommand(sender, args);
                 return true;
             case "request":
                 if (!sender.hasPermission("pwarp.admin.request")) {
-                    // TODO - send no permission message
+                    pm.msg(sender, "errorMessages.noPermission", false);
                     return true;
                 }
                 requestSubcommand(sender, args);
                 return true;
             case "reload":
                 if (!sender.hasPermission("pwarp.admin.reload")) {
-                    // TODO - send no permission message
+                    pm.msg(sender, "errorMessages.noPermission", false);
                     return true;
                 }
                 plugin.reload(sender);
+                return true;
             default:
-                // TODO - send invalid command message
+                pm.msg(sender, "errorMessages.invalidCommand", true);
                 return true;
         }
 
@@ -64,22 +66,22 @@ public class PlayerWarpAdminCommand implements TabExecutor {
     private void removeWarpSubcommand(CommandSender sender, String[] args) {
 
         if (args.length < 2) {
-            // TODO - send invalid command length message
+            pm.msg(sender, "errorMessages.invalidCommandLength", true);
             return;
         }
 
         boolean warpRemoved = plugin.getWarpRegister().removeWarp(args[1]);
         if (warpRemoved) {
-            // TODO - send warp removed message
+            pm.msg(sender, "warpMessages.warpRemoved", true, "%warp%", args[1]);
         } else {
-            // TODO - send warp not found message
+            pm.msg(sender, "warpMessages.warpNotFound", true, "%warp%", args[1]);
         }
     }
 
     private void requestSubcommand(CommandSender sender, String[] args) {
 
         if (args.length < 3) {
-            // TODO - send invalid command length message
+            pm.msg(sender, "errorMessages.invalidCommandLength", true);
             return;
         }
 
@@ -88,7 +90,7 @@ public class PlayerWarpAdminCommand implements TabExecutor {
         WarpRequest request = plugin.getWarpRegister().getWarpRequest(warpName);
 
         if (request == null) {
-            // TODO - send could not find warp request message
+            pm.msg(sender, "warpMessages.warpRequestNotFound", true, "%warp%", args[1]);
             return;
         }
 
@@ -97,26 +99,58 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                 // TODO - possibly refund materials to user that made the warp?
                 boolean requestRemoved = plugin.getWarpRegister().removeWarpRequest(request.getName());
                 if (requestRemoved) {
-                    // TODO - send warp request rejected message
+                    pm.msg(sender, "warpMessages.warpRequestRejected", true, "%warp%", args[1]);
                 } else {
-                    // TODO - send warp request not found message
+                    pm.msg(sender, "warpMessages.warpRequestNotFound", true, "%warp%", args[1]);
                 }
                 return;
             case "approve":
                 Warp warp = new Warp(request);
                 boolean warpAdded = plugin.getWarpRegister().addWarp(warp.getName(), warp);
                 if (warpAdded) {
-                    // TODO - send warp added message
-                } else {
-                    // TODO - send warp already exists message
+                    pm.msg(sender, "warpMessages.warpRequestApproved", true, "%warp%", warp.getName());
                     plugin.getWarpRegister().removeWarpRequest(request.getName());
+                } else {
+                    pm.msg(sender, "warpMessages.warpAlreadyExists", true, "%warp%", warp.getName());
+
                 }
                 return;
+            default:
+                pm.msg(sender, "errorMessages.invalidCommand", true);
         }
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
-        return null;
+
+        List<String> list = new ArrayList<>();
+
+        switch (args.length) {
+
+            case 1:
+                if (sender.hasPermission("pwarp.admin.remove")) list.add("remove");
+                if (sender.hasPermission("pwarp.admin.request")) list.add("request");
+                if (sender.hasPermission("pwarp.admin.reload")) list.add("reload");
+                return list;
+            case 2:
+                if (args[0].equalsIgnoreCase("remove") && sender.hasPermission("pwarp.admin.remove")) {
+                    for (Warp warp : plugin.getWarpRegister().getWarps().values()) {
+                        list.add(warp.getName());
+                    }
+                } else if (args[0].equalsIgnoreCase("request") && sender.hasPermission("pwarp.admin.request")) {
+                    for (WarpRequest warpRequest : plugin.getWarpRegister().getWarpRequests().values()) {
+                        list.add(warpRequest.getName());
+                    }
+                }
+                return list;
+            case 3:
+                if (args[0].equalsIgnoreCase("request") && sender.hasPermission("pwarp.admin.request")) {
+                    list.add("approve");
+                    list.add("reject");
+                }
+                return list;
+            default:
+                return list;
+        }
     }
 }

@@ -1,0 +1,45 @@
+# -================================-
+#    Customisable Player Messages
+# -================================-
+# All messages use the '&' symbol for colouring/styling
+
+# Prefix for all messages
+prefix: "&r&7[&6Prime&3Warps&r&7]&f"
+
+# Global error messages that apply to all commands
+errorMessages:
+  noPermission: "&cYou do not have permission to use that command"
+  invalidCommandLength: "&cInvalid Command Length"
+  mustBePlayer: "&cYou must be a player to use that command"
+  playerNotFound: "&cCould not find that player"
+  invalidCommand: "&cThat command wasn't recognised"
+  internalError: "Something went wrong trying to execute that command"
+
+# Errors in relation to managing and using warps
+# All warp messages take %warp% as a placeholder for the warp name
+warpMessages:
+  # Managing Warps
+  warpRemoved: "&bWarp removed!"
+  warpNotFound: "&cCould not find a warp with name: %warp%"
+  warpAlreadyExists: "&cThat warp already exists!"
+
+  # Managing Warp Requests
+  warpRequestAdded: "&bWarp request was added!"
+  warpRequestAlreadyExists: "&cThere is already a pending warp request with that name"
+  warpRequestNotFound: "&cCould not find a warp request with name: %warp%"
+  warpRequestRejected: "&bWarp request rejected!"
+  warpRequestApproved: "&bWarp request approved! Warp is now live!"
+
+  # Player Teleporting messages
+  holeInFloor: "&cCould not warp: Hole in floor!"
+  spaceBlocked: "&cCould not warp: Space was blocked!"
+  playerWarped: "&bWarped to %warp%"
+
+  # Misc Messages
+  notEnoughWarpShards: "&cYou don't have enough warp shards to create a warp!"
+
+
+
+
+
+

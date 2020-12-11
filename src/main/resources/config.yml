@@ -1,0 +1,5 @@
+# How many warp shards are required for the warp to be made
+# This amount of shards will be removed from the players inventory
+# Warp shards are an exact match - renaming, adding enchants etc will prevent them from working
+requiredWarpShardAmount: 10
+

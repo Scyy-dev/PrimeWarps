@@ -1,6 +1,9 @@
 package me.Scyy.PrimeWarps.Config;
 
 import me.Scyy.PrimeWarps.Plugin;
+import me.Scyy.PrimeWarps.Util.ItemBuilder;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 public class UserData extends ConfigFile {
@@ -13,7 +16,7 @@ public class UserData extends ConfigFile {
     }
 
     public ItemStack loadWarpToken() {
-        throw new UnsupportedOperationException("Needs work");
+        return new ItemBuilder(Material.PRISMARINE_SHARD).enchant(Enchantment.MENDING, 1).build();
     }
 
     public void saveWarpToken(ItemStack token) {

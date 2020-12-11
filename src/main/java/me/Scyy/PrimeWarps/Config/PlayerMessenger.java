@@ -65,10 +65,10 @@ public class PlayerMessenger extends ConfigFile {
      * @param sender The user to send the message to
      * @param path the path of the message in messages.yml
      * @param usePrefix whether or not to use the prefix
-     * @param replacements a map of the identifier for the replacement and the replacement.
-     *                     The identifier comes first in the pair
+     * @param replacements an array of replacements with the placeholder and their replacements in pairs e.g.
+     *                     "%player%", player.getName(), "%entity%", entity.getName() etc...
      */
-    public void msg(CommandSender sender, String path, boolean usePrefix, Map<String, String> replacements) {
+    public void msg(CommandSender sender, String path, boolean usePrefix, String... replacements) {
 
         String rawMessage = config.getString(path);
 
@@ -84,9 +84,14 @@ public class PlayerMessenger extends ConfigFile {
 
         if (replacements != null) {
 
-            for (String key : replacements.keySet()) {
+            if (replacements.length  % 2 != 0) throw new IllegalArgumentException("Not all placeholders have a corresponding replacement");
 
-                rawMessage.replaceAll(key, replacements.get(key));
+            for (int i = 0; i < replacements.length; i += 2) {
+
+                String placeholder = replacements[i];
+                String replacement = replacements[i + 1];
+
+                rawMessage = rawMessage.replaceAll(placeholder, replacement);
 
             }
 

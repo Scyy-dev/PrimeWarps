@@ -38,4 +38,5 @@ public class ConfigFileHandler {
     public Settings getSettings() {
         return settings;
     }
+
 }

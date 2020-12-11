@@ -2,7 +2,6 @@ package me.Scyy.PrimeWarps.Commands;
 
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
 import me.Scyy.PrimeWarps.Plugin;
-import me.Scyy.PrimeWarps.Util.ItemBuilder;
 import me.Scyy.PrimeWarps.Warps.WarpRequest;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -34,12 +33,12 @@ public class WarpRequestCommand implements TabExecutor {
         }
 
         if (!sender.hasPermission("pwarp.warp")) {
-            // TODO - send no permission message
+            pm.msg(sender, "errorMessages.noPermission", false);
             return true;
         }
 
         if (!(sender instanceof Player)) {
-            // TODO - send must be player message
+            pm.msg(sender, "errorMessages.mustBePlayer", true);
             return true;
         }
 
@@ -47,32 +46,35 @@ public class WarpRequestCommand implements TabExecutor {
 
         // Check if the player has the required items
         // ItemStack warpToken = plugin.getCFH().getUserData().getWarpToken();
-        ItemStack warpToken = new ItemBuilder(Material.PRISMARINE_SHARD).name("Warp Shard").build();
-        if (!player.getInventory().containsAtLeast(warpToken, 10)) {
-            // TODO - send couldn't find enough warp tokens message
+        ItemStack warpToken = new ItemStack(Material.PRISMARINE_SHARD);
+        if (!player.getInventory().containsAtLeast(warpToken, plugin.getCFH().getSettings().getWarpTokenCount())) {
+            pm.msg(sender, "warpMessages.notEnoughWarpShards", true, "%warp%", args[0]);
             return true;
         }
 
         // Check if the warp already exists
-        if (plugin.getWarpRegister().warpExists(args[0]) || plugin.getWarpRegister().warpRequestExists(args[0])) {
-            // TODO - send warp already exists messages
+        if (plugin.getWarpRegister().warpExists(args[0])) {
+            pm.msg(sender, "warpMessages.warpAlreadyExists", true, "%warp%", args[0]);
+            return true;
+        }
+        if (plugin.getWarpRegister().warpRequestExists(args[0])) {
+            pm.msg(sender, "warpMessages.warpRequestAlreadyExists", true, "%warp%", args[0]);
             return true;
         }
 
+
         // Remove the tokens
         ItemStack requiredTokens = warpToken.clone();
-        requiredTokens.setAmount(plugin.getCFH().getSettings().getWarpTokenCount());
-        player.getInventory().remove(requiredTokens);
+        removeWarpItem(player, requiredTokens, plugin.getCFH().getSettings().getWarpTokenCount());
 
         // Create the Warp Request
-        WarpRequest request = new WarpRequest(player.getUniqueId(), args[0], player.getLocation());
+        WarpRequest request = new WarpRequest(args[0], player.getUniqueId(), player.getLocation());
         boolean requestSuccess = plugin.getWarpRegister().addWarpRequest(args[0], request);
         if (requestSuccess) {
-            // TODO - send warp request added message
+            pm.msg(sender, "warpMessages.warpRequestAdded", true, "%warp%", args[0]);
         } else {
-            // TODO - send warp already exists message
+            pm.msg(sender, "warpMessages.warpAlreadyExists", true, "%warp%", args[0]);
         }
-
         return true;
 
     }
@@ -80,5 +82,29 @@ public class WarpRequestCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
         return Collections.emptyList();
+    }
+
+    private void removeWarpItem(Player player, ItemStack warpItem, int amount) {
+
+        int removedCounter = amount;
+
+        for (ItemStack item : player.getInventory().getStorageContents()) {
+
+            if (item == null) continue;
+
+            if (item.isSimilar(warpItem)) {
+
+                if (item.getAmount() >= removedCounter) {
+                    item.setAmount(item.getAmount() - removedCounter);
+                    return;
+                } else {
+                    removedCounter -= item.getAmount();
+                    item.setAmount(0);
+                }
+
+            }
+
+        }
+
     }
 }

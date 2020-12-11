@@ -4,21 +4,22 @@ import me.Scyy.PrimeWarps.Config.PlayerMessenger;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.Date;
 import java.util.UUID;
 
 public class Warp {
 
-    private final String name;
+    protected final String name;
 
-    private UUID owner;
+    protected UUID owner;
 
-    private final Location location;
+    protected final Location location;
 
     // private Date lastUserActivity;
 
-    private final Date dateCreated;
+    protected final Date dateCreated;
 
     public Warp(String name, UUID owner, Location location, Date dateCreated) {
         this.name = name;
@@ -64,15 +65,27 @@ public class Warp {
         // Verify the space the player takes up is safe
         assert world != null;
         if (!world.getBlockAt(location).isPassable() || !world.getBlockAt(location.getBlockX(), location.getBlockY() + 1, location.getBlockZ()).isPassable()) {
-            pm.msg(player, "warpMessages.spaceBlocked", false);
+            pm.msg(player, "warpMessages.spaceBlocked", false, "%warp%", name);
+            return;
         }
 
-        if (!world.getBlockAt(location.getBlockX(), location.getBlockY() - 1, location.getBlockZ()).isPassable()) {
-            pm.msg(player, "warpMessages.holeInFloor", false);
+        if (world.getBlockAt(location.getBlockX(), location.getBlockY() - 1, location.getBlockZ()).isPassable()) {
+            pm.msg(player, "warpMessages.holeInFloor", false, "%warp%", name);
+            return;
         }
 
-        player.teleport(location);
+        player.teleport(location, PlayerTeleportEvent.TeleportCause.COMMAND);
+        pm.msg(player, "warpMessages.playerWarped", false, "%warp%", name);
 
+    }
+
+    @Override
+    public String toString() {
+        return "Warp{" +
+                "name='" + name + '\'' +
+                ", owner=" + owner +
+                ", location=" + location +
+                '}';
     }
 
     /*

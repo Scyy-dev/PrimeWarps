@@ -39,6 +39,19 @@ public class Plugin extends JavaPlugin {
 
     }
 
+    @Override
+    public void onDisable() {
+        this.getLogger().info("Saving warp data to config...");
+        try {
+            CFH.getPlayerWarps().saveWarps(warpRegister.getWarps());
+            CFH.getPlayerWarps().saveWarpRequests(warpRegister.getWarpRequests());
+            this.getLogger().info("Warp data saved!");
+        } catch (Exception e) {
+            this.getLogger().severe("Could not save warp data!");
+            e.printStackTrace();
+        }
+    }
+
     public BidRegister getBidRegister() {
         return bidRegister;
     }
@@ -53,6 +66,8 @@ public class Plugin extends JavaPlugin {
 
     public void reload(CommandSender sender) {
         try {
+            CFH.getPlayerWarps().saveWarps(warpRegister.getWarps());
+            CFH.getPlayerWarps().saveWarpRequests(warpRegister.getWarpRequests());
             CFH.reloadConfigs();
             sender.sendMessage("Successfully reloaded!");
         } catch (Exception e) {
