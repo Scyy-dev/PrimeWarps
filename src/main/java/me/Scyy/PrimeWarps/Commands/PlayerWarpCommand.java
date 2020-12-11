@@ -1,7 +1,10 @@
 package me.Scyy.PrimeWarps.Commands;
 
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
+import me.Scyy.PrimeWarps.GUI.InventoryGUI;
+import me.Scyy.PrimeWarps.GUI.WarpListGUI;
 import me.Scyy.PrimeWarps.Plugin;
+import me.Scyy.PrimeWarps.Warps.Filters.DateCreatedSorter;
 import me.Scyy.PrimeWarps.Warps.Warp;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -39,8 +42,8 @@ public class PlayerWarpCommand implements TabExecutor {
 
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                // TODO - open warp GUI
-                sender.sendMessage("Opening GUI");
+                InventoryGUI gui = new WarpListGUI(null, plugin, 0, new DateCreatedSorter());
+                player.openInventory(gui.getInventory());
             } else {
                 pm.msg(sender, "errorMessages.mustBePlayer", true);
             }

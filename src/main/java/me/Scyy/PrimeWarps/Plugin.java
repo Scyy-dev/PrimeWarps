@@ -4,7 +4,9 @@ import me.Scyy.PrimeWarps.Commands.PlayerWarpAdminCommand;
 import me.Scyy.PrimeWarps.Commands.WarpRequestCommand;
 import me.Scyy.PrimeWarps.Config.ConfigFileHandler;
 import me.Scyy.PrimeWarps.Commands.PlayerWarpCommand;
+import me.Scyy.PrimeWarps.GUI.GUIListener;
 import me.Scyy.PrimeWarps.Warps.WarpRegister;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,6 +25,9 @@ public class Plugin extends JavaPlugin {
 
         this.bidRegister = new BidRegister();
         this.warpRegister = new WarpRegister(CFH.getPlayerWarps().loadWarps(), CFH.getPlayerWarps().loadWarpRequests());
+
+        // Register the GUI listener
+        Bukkit.getPluginManager().registerEvents(new GUIListener(this), this);
 
         // Register all the commands
         PlayerWarpCommand playerWarpCommand = new PlayerWarpCommand(this);
