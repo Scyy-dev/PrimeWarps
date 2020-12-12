@@ -11,8 +11,9 @@ errorMessages:
   noPermission: "&cYou do not have permission to use that command"
   invalidCommandLength: "&cInvalid Command Length"
   mustBePlayer: "&cYou must be a player to use that command"
-  cannotUserAir: "&cYou cannot use air as an item"
+  cannotUseAir: "&cYou cannot use air as an item"
   playerNotFound: "&cCould not find that player"
+  worldNotFound: "&cThe world could not be found!"
   invalidCommand: "&cThat command wasn't recognised"
   internalError: "Something went wrong trying to execute that command"
 
@@ -36,8 +37,10 @@ warpMessages:
   spaceBlocked: "&cCould not warp: Space was blocked!"
   playerWarped: "&bWarped to %warp%"
 
-  # Misc Messages
+  # Warp Shard Messages
   notEnoughWarpShards: "&cYou don't have enough warp shards to create a warp!"
+  addedWarpShard: "&bAdded warp shard!"
+
 
 
 

@@ -7,10 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerWarps extends ConfigFile {
 
@@ -33,7 +30,11 @@ public class PlayerWarps extends ConfigFile {
                 UUID uuid = UUID.fromString(section.getString(warpName + ".owner"));
                 Location location = section.getLocation(warpName + ".location");
                 Date dateCreated = new Date(section.getLong(warpName + ".dateCreated", 0));
-                warps.put(warpName, new Warp(warpName, uuid, location, dateCreated));
+                Set<UUID> uniqueVisitors = new LinkedHashSet<>();
+                for (String visitor : section.getStringList(warpName + ".uniqueVisitors")) {
+                    uniqueVisitors.add(UUID.fromString(visitor));
+                }
+                warps.put(warpName, new Warp(warpName, uuid, location, dateCreated, uniqueVisitors));
             } catch (Exception e) {
                 plugin.getLogger().severe("Error loading warps!");
                 e.printStackTrace();
@@ -57,6 +58,11 @@ public class PlayerWarps extends ConfigFile {
             config.set("warps." + warpName + ".owner", warp.getOwner().toString());
             config.set("warps." + warpName + ".location", warp.getLocation());
             config.set("warps." + warpName + ".dateCreated", warp.getDateCreated().toInstant().getEpochSecond());
+            List<String> stringUUIDs = new LinkedList<>();
+            for (UUID uuid : warp.getUniqueVisitors()) {
+                stringUUIDs.add(uuid.toString());
+            }
+            config.set("warps." + warpName + ".uniqueVisitors", stringUUIDs);
 
         }
 

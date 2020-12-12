@@ -1,12 +1,11 @@
 package me.Scyy.PrimeWarps.Commands;
 
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
+import me.Scyy.PrimeWarps.GUI.FeaturedWarpsGUI;
 import me.Scyy.PrimeWarps.GUI.InventoryGUI;
-import me.Scyy.PrimeWarps.GUI.WarpListGUI;
 import me.Scyy.PrimeWarps.Plugin;
-import me.Scyy.PrimeWarps.Warps.Filters.DateCreatedSorter;
+import me.Scyy.PrimeWarps.Util.WarpUtils;
 import me.Scyy.PrimeWarps.Warps.Warp;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -30,19 +29,16 @@ public class PlayerWarpCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        System.out.println(plugin.getWarpRegister().getWarps().toString());
-        System.out.println(plugin.getWarpRegister().getWarpRequests().toString());
-
         if (args.length == 0) {
 
-            if (!sender.hasPermission("pwarp.warp")) {
+            if (!sender.hasPermission("pwarp.warp.gui")) {
                 pm.msg(sender, "errorMessages.noPermission", false);
                 return true;
             }
 
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                InventoryGUI gui = new WarpListGUI(null, plugin, 0, new DateCreatedSorter());
+                InventoryGUI gui = new FeaturedWarpsGUI(null, plugin);
                 player.openInventory(gui.getInventory());
             } else {
                 pm.msg(sender, "errorMessages.mustBePlayer", true);
@@ -71,8 +67,8 @@ public class PlayerWarpCommand implements TabExecutor {
             return true;
         }
 
-        // Schedule a teleport
-        Bukkit.getScheduler().runTask(plugin, () -> warp.teleport((Player) sender, pm));
+        // Warp the player
+        WarpUtils.warp((Player) sender, plugin, warp);
         return true;
 
     }

@@ -33,11 +33,6 @@ public abstract class InventoryGUI implements InventoryHolder {
     protected final Inventory inventory;
 
     /**
-     * Flag for if the new inventory needs to be reopened
-     */
-    protected boolean reopen = false;
-
-    /**
      * Flag for if the listener should close the inventory, overrides reopen
      */
     protected boolean close = false;
@@ -94,16 +89,8 @@ public abstract class InventoryGUI implements InventoryHolder {
         return inventory;
     }
 
-    public boolean shouldReopen() {
-        return reopen;
-    }
-
     public boolean shouldClose() {
         return close;
-    }
-
-    public void setReopen(boolean reopen) {
-        this.reopen = reopen;
     }
 
     public abstract boolean allowPlayerInventoryEdits();

@@ -41,20 +41,10 @@ public class GUIListener implements Listener {
 
         }
 
-        if (oldGUI.shouldReopen()) {
+        // Reopen the new inventory
+        Bukkit.getScheduler().runTask(plugin, () -> event.getWhoClicked().openInventory(newGUI.getInventory()));
 
-            // Reopen the new inventory
-            Bukkit.getScheduler().runTask(plugin, () -> event.getWhoClicked().openInventory(newGUI.getInventory()));
 
-        } else {
-
-            // Update the inventory contents
-            event.getView().getTopInventory().setContents(newGUI.getInventoryItems());
-
-            // Update the players inventory
-            Bukkit.getScheduler().runTask(plugin, () -> ((Player) event.getWhoClicked()).updateInventory());
-
-        }
 
     }
 

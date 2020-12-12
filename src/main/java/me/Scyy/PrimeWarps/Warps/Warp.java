@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class Warp {
@@ -17,15 +19,24 @@ public class Warp {
 
     protected final Location location;
 
-    // private Date lastUserActivity;
-
     protected final Date dateCreated;
 
-    public Warp(String name, UUID owner, Location location, Date dateCreated) {
+    protected final Set<UUID> uniqueVisitors;
+
+    /**
+     * For loading a warp from config
+     * @param name name of the warp
+     * @param owner UUID of the player who owns this warp
+     * @param location location of the warp
+     * @param dateCreated when the warp was created
+     * @param uniqueVisitors collection of all unique visits to the warp
+     */
+    public Warp(String name, UUID owner, Location location, Date dateCreated, Set<UUID> uniqueVisitors) {
         this.name = name;
         this.owner = owner;
         this.location = location;
         this.dateCreated = dateCreated;
+        this.uniqueVisitors = uniqueVisitors;
     }
 
     public Warp(WarpRequest request) {
@@ -33,6 +44,8 @@ public class Warp {
         this.owner = request.getOwner();
         this.location = request.getLocation();
         this.dateCreated = request.getDateCreated();
+        this.uniqueVisitors = new HashSet<>();
+        this.uniqueVisitors.add(owner);
     }
 
     public String getName() {
@@ -55,28 +68,12 @@ public class Warp {
         return dateCreated;
     }
 
-    /**
-     * Teleports the player to the given location. Checks if the location to teleport to is valid
-     * @param player the player to teleport
-     */
-    public void teleport(Player player, PlayerMessenger pm) {
-        World world = location.getWorld();
+    public Set<UUID> getUniqueVisitors() {
+        return uniqueVisitors;
+    }
 
-        // Verify the space the player takes up is safe
-        assert world != null;
-        if (!world.getBlockAt(location).isPassable() || !world.getBlockAt(location.getBlockX(), location.getBlockY() + 1, location.getBlockZ()).isPassable()) {
-            pm.msg(player, "warpMessages.spaceBlocked", false, "%warp%", name);
-            return;
-        }
-
-        if (world.getBlockAt(location.getBlockX(), location.getBlockY() - 1, location.getBlockZ()).isPassable()) {
-            pm.msg(player, "warpMessages.holeInFloor", false, "%warp%", name);
-            return;
-        }
-
-        player.teleport(location, PlayerTeleportEvent.TeleportCause.COMMAND);
-        pm.msg(player, "warpMessages.playerWarped", false, "%warp%", name);
-
+    public int getUniqueVisitorCount() {
+        return uniqueVisitors.size();
     }
 
     @Override
@@ -87,19 +84,5 @@ public class Warp {
                 ", location=" + location +
                 '}';
     }
-
-    /*
-    public Date getLastUserActivity() {
-        return lastUserActivity;
-    }
-
-    public void setLastUserActivity(Date lastUserActivity) {
-        this.lastUserActivity = lastUserActivity;
-    }
-
-    public boolean hasExpired(Date date) {
-        return lastUserActivity.before(date);
-    }
-     */
 
 }

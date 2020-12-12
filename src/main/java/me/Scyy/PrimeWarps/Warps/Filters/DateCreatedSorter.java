@@ -11,6 +11,8 @@ public class DateCreatedSorter implements WarpSorter {
 
     @Override
     public List<Warp> sort(Map<String, Warp> warps) {
-        return warps.values().stream().sorted((Comparator.comparing(Warp::getDateCreated))).collect(Collectors.toList());
+        return warps.values().stream()
+                .sorted(Comparator.comparing(Warp::getDateCreated).reversed())
+                .collect(Collectors.toList());
     }
 }

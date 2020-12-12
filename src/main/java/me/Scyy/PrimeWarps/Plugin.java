@@ -13,8 +13,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Plugin extends JavaPlugin {
 
-    private BidRegister bidRegister;
-
     private WarpRegister warpRegister;
 
     private ConfigFileHandler CFH;
@@ -22,8 +20,6 @@ public class Plugin extends JavaPlugin {
     @Override
     public void onEnable() {
         this.CFH = new ConfigFileHandler(this);
-
-        this.bidRegister = new BidRegister();
         this.warpRegister = new WarpRegister(CFH.getPlayerWarps().loadWarps(), CFH.getPlayerWarps().loadWarpRequests());
 
         // Register the GUI listener
@@ -55,10 +51,6 @@ public class Plugin extends JavaPlugin {
             this.getLogger().severe("Could not save warp data!");
             e.printStackTrace();
         }
-    }
-
-    public BidRegister getBidRegister() {
-        return bidRegister;
     }
 
     public ConfigFileHandler getCFH() {

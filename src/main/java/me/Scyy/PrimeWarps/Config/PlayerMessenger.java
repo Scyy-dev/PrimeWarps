@@ -39,7 +39,7 @@ public class PlayerMessenger extends ConfigFile {
     }
 
     /**
-     * For sending a message with parts in the message that get replaced by some variable
+     * For sending a message from messages.yml
      * @param sender The user to send the message to
      * @param path the path of the message in messages.yml
      */
@@ -49,7 +49,7 @@ public class PlayerMessenger extends ConfigFile {
     }
 
     /**
-     * For sending a message with parts in the message that get replaced by some variable
+     * For sending a message from messages.yml
      * @param sender The user to send the message to
      * @param path the path of the message in messages.yml
      * @param usePrefix whether or not to use the prefix
@@ -61,7 +61,7 @@ public class PlayerMessenger extends ConfigFile {
     }
 
     /**
-     * For sending a message with parts in the message that get replaced by some variable
+     * For sending a message with parts in the message that contains placeholders
      * @param sender The user to send the message to
      * @param path the path of the message in messages.yml
      * @param usePrefix whether or not to use the prefix
@@ -108,6 +108,71 @@ public class PlayerMessenger extends ConfigFile {
 
         }
         sender.sendMessage(finalMessage);
+
+    }
+
+    /**
+     * For getting a message from messages.yml
+     * @param path the path of the message in messages.yml
+     */
+    public String getMsg(String path) {
+        return this.getMsg(path, true);
+    }
+
+    /**
+     * For getting a message from messages.yml
+     * @param path the path of the message in messages.yml
+     * @param usePrefix whether or not to use the prefix
+     */
+    public String getMsg(String path, boolean usePrefix) {
+        return this.getMsg(path, usePrefix, (String) null);
+    }
+
+    /**
+     * For getting a message with parts in the message that contains placeholders
+     * @param path the path of the message in messages.yml
+     * @param usePrefix whether or not to use the prefix
+     * @param replacements an array of replacements with the placeholder and their replacements in pairs e.g.
+     *                     "%player%", player.getName(), "%entity%", entity.getName() etc...
+     */
+    public String getMsg(String path, boolean usePrefix, String... replacements) {
+
+        String rawMessage = config.getString(path);
+
+        if (rawMessage == null) {
+            return "Could not find message at " + path;
+        }
+
+        if (rawMessage.equalsIgnoreCase("")) return rawMessage;
+
+
+        if (replacements != null) {
+
+            if (replacements.length  % 2 != 0) throw new IllegalArgumentException("Not all placeholders have a corresponding replacement");
+
+            for (int i = 0; i < replacements.length; i += 2) {
+
+                String placeholder = replacements[i];
+                String replacement = replacements[i + 1];
+
+                rawMessage = rawMessage.replaceAll(placeholder, replacement);
+
+            }
+
+        }
+
+        String finalMessage;
+        if (usePrefix) {
+
+            finalMessage = prefix + " " + ChatColor.translateAlternateColorCodes('&', rawMessage);
+
+        } else {
+
+            finalMessage = ChatColor.translateAlternateColorCodes('&', rawMessage);
+
+        }
+
+        return finalMessage;
 
     }
 

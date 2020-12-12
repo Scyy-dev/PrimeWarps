@@ -1,6 +1,7 @@
 package me.Scyy.PrimeWarps.Commands;
 
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
+import me.Scyy.PrimeWarps.GUI.WarpRequestGUI;
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Warps.Warp;
 import me.Scyy.PrimeWarps.Warps.WarpRequest;
@@ -50,12 +51,25 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                 }
                 requestSubcommand(sender, args);
                 return true;
+            case "requests":
+                if (!sender.hasPermission("pwarp.admin.request.gui")) {
+                    pm.msg(sender, "errorMessages.noPermission", false);
+                    return true;
+                }
+                if (!(sender instanceof Player)) {
+                    pm.msg(sender, "errorMessages.mustBePlayer", false);
+                    return true;
+                }
+                WarpRequestGUI gui = new WarpRequestGUI(null, plugin, 0);
+                ((Player) sender).openInventory(gui.getInventory());
+                return true;
             case "setwarpshard":
                 if (!sender.hasPermission("pwarp.admin.setwarpshard")) {
                     pm.msg(sender, "errorMessages.noPermission", false);
                     return true;
                 }
                 setWarpShardSubcommand(sender, args);
+                return true;
             case "reload":
                 if (!sender.hasPermission("pwarp.admin.reload")) {
                     pm.msg(sender, "errorMessages.noPermission", false);
@@ -140,7 +154,12 @@ public class PlayerWarpAdminCommand implements TabExecutor {
             return;
         }
 
-        plugin.getCFH().getMiscDataStorage().saveWarpToken(mainHand);
+        // Clone the item
+        ItemStack warpShard = mainHand.clone();
+        warpShard.setAmount(1);
+
+        plugin.getCFH().getMiscDataStorage().saveWarpToken(warpShard);
+        pm.msg(sender, "warpMessages.addedWarpShard", true);
 
     }
 
@@ -154,7 +173,9 @@ public class PlayerWarpAdminCommand implements TabExecutor {
             case 1:
                 if (sender.hasPermission("pwarp.admin.remove")) list.add("remove");
                 if (sender.hasPermission("pwarp.admin.request")) list.add("request");
+                if (sender.hasPermission("pwarp.admin.request.gui")) list.add("requests");
                 if (sender.hasPermission("pwarp.admin.reload")) list.add("reload");
+                if (sender.hasPermission("pwarp.admin.setwarpshard")) list.add("setwarpshard");
                 return list;
             case 2:
                 if (args[0].equalsIgnoreCase("remove") && sender.hasPermission("pwarp.admin.remove")) {
