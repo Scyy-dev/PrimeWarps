@@ -2,6 +2,7 @@ package me.Scyy.PrimeWarps.Config;
 
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Warps.Warp;
+import me.Scyy.PrimeWarps.Warps.WarpRequestHandler;
 import me.Scyy.PrimeWarps.Warps.WarpRequest;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -92,7 +93,7 @@ public class PlayerWarps extends ConfigFile {
                 Location location = section.getLocation(warpName + ".location");
                 warps.put(warpName, new WarpRequest(warpName, uuid, location));
             } catch (Exception e) {
-                plugin.getLogger().severe("Error loading warps!");
+                plugin.getLogger().severe("Error loading warp requests! Any pending warp requests have been lost!");
                 e.printStackTrace();
                 return warps;
             }
@@ -124,6 +125,73 @@ public class PlayerWarps extends ConfigFile {
             plugin.getLogger().severe("Unable to save any warps to the config file! No warps will be loaded next time!");
             e.printStackTrace();
         }
+
+    }
+
+    public Map<UUID, Set<WarpRequestHandler>> loadWarpHandlers() {
+
+        Map<UUID, Set<WarpRequestHandler>> requestHandlerMap = new LinkedHashMap<>();
+
+        ConfigurationSection section = config.getConfigurationSection("requestHandlers");
+        if (section == null || section.getKeys(false).size() == 0) {
+            plugin.getLogger().warning("No warp request handlers in config");
+            return new LinkedHashMap<>();
+        }
+
+        // Iterate over the Players
+        for (String rawOwner : section.getKeys(false)) {
+
+            ConfigurationSection warps = section.getConfigurationSection(rawOwner);
+
+            if (warps == null) continue;
+
+            UUID owner = UUID.fromString(rawOwner);
+
+            Set<WarpRequestHandler> requestHandlers = new LinkedHashSet<>();
+
+            // For each player, iterate over every warp handler they have
+            for (String warpName : warps.getKeys(false)) {
+                try {
+                    boolean refundShards = warps.getBoolean(warpName + ".refundShards");
+                    String requestMessage = warps.getString(warpName + ".requestMessage");
+                    requestHandlers.add(new WarpRequestHandler(owner, warpName, refundShards, requestMessage));
+                } catch (Exception e) {
+                    plugin.getLogger().warning("Error loading warp request handlers! Any pending warp shard refunds were lost!");
+                    e.printStackTrace();
+                }
+
+            }
+
+            requestHandlerMap.put(owner, requestHandlers);
+
+        }
+
+        return requestHandlerMap;
+
+    }
+
+    public void saveWarpHandlers(Map<UUID, Set<WarpRequestHandler>> warps) {
+
+        // Empty the warp data
+        config.set("warpHandlers", null);
+
+        // Iterate over each owner
+        for (UUID uuid : warps.keySet()) {
+            String rawOwner = uuid.toString();
+
+            // Iterate over each request handler the owner has
+            for (WarpRequestHandler handler : warps.get(uuid)) {
+                config.set("warpHandlers." + rawOwner + handler.getWarpName() + ".refundShards", handler.isRefundWarpShards());
+                config.set("warpHandlers." + rawOwner + handler.getWarpName() + ".requestMessage", handler.getRequestMessage());
+            }
+        }
+        try {
+            config.save(configFile);
+        } catch (IOException e) {
+            plugin.getLogger().warning("Unable to save any warp handlers to config! Pending warp shard refunds have been lost!");
+            e.printStackTrace();
+        }
+
 
     }
 

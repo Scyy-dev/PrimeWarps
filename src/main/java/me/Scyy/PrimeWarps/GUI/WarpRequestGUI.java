@@ -14,10 +14,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 // # # # # # # # # #
 // # 0 0 0 0 0 0 0 #
@@ -138,6 +135,8 @@ public class WarpRequestGUI extends InventoryGUI {
                     plugin.getWarpRegister().addWarp(warpRequest.getName(), new Warp(warpRequest));
                     plugin.getWarpRegister().removeWarpRequest(warpRequest.getName());
                     pm.msg(event.getWhoClicked(), "warpMessages.warpRequestApproved", true, "%warp%", warpRequest.getName());
+                    // Schedule a handler for the message and refund if needed
+                    plugin.getWarpRegister().getRequestScheduler().scheduleHandler(warpRequest, "approved");
                     return new WarpRequestGUI(this, plugin, 0);
                 // Teleport the user
                 case MIDDLE:
@@ -149,6 +148,8 @@ public class WarpRequestGUI extends InventoryGUI {
                 case SHIFT_RIGHT:
                     plugin.getWarpRegister().removeWarpRequest(warpRequest.getName());
                     pm.msg(event.getWhoClicked(), "warpMessages.warpRequestRejected", true, "%warp%", warpRequest.getName());
+                    // Schedule a handler for the message and refund if needed
+                    plugin.getWarpRegister().getRequestScheduler().scheduleHandler(warpRequest, "rejected");
                     return new WarpRequestGUI(this, plugin, 0);
             }
 

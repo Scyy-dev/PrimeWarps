@@ -31,6 +31,9 @@ warpMessages:
   warpRequestNotFound: "&cCould not find a warp request with name: %warp%"
   warpRequestRejected: "&bWarp request rejected!"
   warpRequestApproved: "&bWarp request approved! Warp is now live!"
+  # These are messages sent to the player if their warp is approved/rejected
+  requestrejected: "&cWarp '%warp%' was rejected"
+  requestapproved: "&bWarp '%warp%' was approved! Your warp is now live!"
 
   # Player Teleporting messages
   holeInFloor: "&cCould not warp: Hole in floor!"
@@ -40,6 +43,7 @@ warpMessages:
   # Warp Shard Messages
   notEnoughWarpShards: "&cYou don't have enough warp shards to create a warp!"
   addedWarpShard: "&bAdded warp shard!"
+  invFullCannotRefundWarpShards: "&cYour inventory is full! Warp shards not refunded. Make space and try relogging!"
 
 
 

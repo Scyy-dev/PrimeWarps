@@ -5,6 +5,7 @@ import me.Scyy.PrimeWarps.GUI.WarpRequestGUI;
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Warps.Warp;
 import me.Scyy.PrimeWarps.Warps.WarpRequest;
+import me.Scyy.PrimeWarps.Warps.WarpRequestHandler;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -117,7 +118,6 @@ public class PlayerWarpAdminCommand implements TabExecutor {
 
         switch (args[2].toLowerCase(Locale.ENGLISH)) {
             case "reject":
-                // TODO - possibly refund materials to user that made the warp?
                 boolean requestRemoved = plugin.getWarpRegister().removeWarpRequest(request.getName());
                 if (requestRemoved) {
                     pm.msg(sender, "warpMessages.warpRequestRejected", true, "%warp%", args[1]);
@@ -131,10 +131,14 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                 if (warpAdded) {
                     pm.msg(sender, "warpMessages.warpRequestApproved", true, "%warp%", warp.getName());
                     plugin.getWarpRegister().removeWarpRequest(request.getName());
+
                 } else {
                     pm.msg(sender, "warpMessages.warpAlreadyExists", true, "%warp%", warp.getName());
 
                 }
+
+                // Schedule a handler for the message and refund if needed
+                plugin.getWarpRegister().getRequestScheduler().scheduleHandler(request, args[2].toLowerCase(Locale.ENGLISH));
                 return;
             default:
                 pm.msg(sender, "errorMessages.invalidCommand", true);

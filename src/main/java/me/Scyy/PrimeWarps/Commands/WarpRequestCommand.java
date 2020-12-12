@@ -3,6 +3,7 @@ package me.Scyy.PrimeWarps.Commands;
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Warps.WarpRequest;
+import me.Scyy.PrimeWarps.Warps.WarpRequestHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -60,16 +61,18 @@ public class WarpRequestCommand implements TabExecutor {
             return true;
         }
 
-
-        // Remove the tokens
-        ItemStack requiredTokens = warpToken.clone();
-        removeWarpItem(player, requiredTokens, plugin.getCFH().getSettings().getWarpTokenCount());
-
         // Create the Warp Request
         WarpRequest request = new WarpRequest(args[0], player.getUniqueId(), player.getLocation());
         boolean requestSuccess = plugin.getWarpRegister().addWarpRequest(args[0], request);
         if (requestSuccess) {
+
+            // Message the player that the request was successful
             pm.msg(sender, "warpMessages.warpRequestAdded", true, "%warp%", args[0]);
+
+            // Remove the tokens from the players inventory
+            ItemStack requiredTokens = warpToken.clone();
+            removeWarpItem(player, requiredTokens, plugin.getCFH().getSettings().getWarpTokenCount());
+
         } else {
             pm.msg(sender, "warpMessages.warpAlreadyExists", true, "%warp%", args[0]);
         }

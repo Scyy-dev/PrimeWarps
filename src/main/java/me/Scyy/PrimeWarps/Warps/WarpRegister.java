@@ -1,7 +1,8 @@
 package me.Scyy.PrimeWarps.Warps;
 
-import java.util.Locale;
-import java.util.Map;
+import me.Scyy.PrimeWarps.Plugin;
+
+import java.util.*;
 
 public class WarpRegister {
 
@@ -9,9 +10,15 @@ public class WarpRegister {
 
     private final Map<String, WarpRequest> warpRequests;
 
-    public WarpRegister(Map<String, Warp> warps, Map<String, WarpRequest> warpRequests) {
+    private final Map<UUID, Set<WarpRequestHandler>> requestHandlers;
+
+    private final WarpRequestScheduler requestScheduler;
+
+    public WarpRegister(Plugin plugin, Map<String, Warp> warps, Map<String, WarpRequest> warpRequests, Map<UUID, Set<WarpRequestHandler>> requestHandlers) {
         this.warps = warps;
         this.warpRequests = warpRequests;
+        this.requestHandlers = requestHandlers;
+        this.requestScheduler = new WarpRequestScheduler(plugin);
     }
 
     public Map<String, Warp> getWarps() {
@@ -96,5 +103,42 @@ public class WarpRegister {
     public boolean warpRequestExists(String name) {
         String formatName = name.toLowerCase(Locale.ENGLISH);
         return warpRequests.containsKey(formatName);
+    }
+
+    public Map<UUID, Set<WarpRequestHandler>> getRequestHandlerMap() {
+        return requestHandlers;
+    }
+
+    public Set<WarpRequestHandler> getRequestHandlerList(UUID owner) {
+        return requestHandlers.get(owner);
+    }
+
+    /**
+     * Adds a warp handler to the request handler collection
+     * @param owner owner of the request handler
+     * @param warpRequestHandler warp handler to add
+     */
+    public void addWarpHandler(UUID owner, WarpRequestHandler warpRequestHandler) {
+        Set<WarpRequestHandler> handlers = requestHandlers.get(owner);
+        if (handlers == null) {
+            requestHandlers.put(owner, new LinkedHashSet<>());
+            requestHandlers.get(owner).add(warpRequestHandler);
+            return;
+        }
+        handlers.add(warpRequestHandler);
+
+    }
+
+    /**
+     * Removes a warp handler from the request handler collection
+     * @param handler owner of the request handler
+     */
+    public void removeWarpHandler(WarpRequestHandler handler) {
+        if (!requestHandlers.containsKey(handler.getOwner())) return;
+        requestHandlers.get(handler.getOwner()).remove(handler);
+    }
+
+    public WarpRequestScheduler getRequestScheduler() {
+        return requestScheduler;
     }
 }

@@ -20,10 +20,15 @@ public class Plugin extends JavaPlugin {
     @Override
     public void onEnable() {
         this.CFH = new ConfigFileHandler(this);
-        this.warpRegister = new WarpRegister(CFH.getPlayerWarps().loadWarps(), CFH.getPlayerWarps().loadWarpRequests());
+        this.warpRegister = new WarpRegister(this, CFH.getPlayerWarps().loadWarps(),
+                CFH.getPlayerWarps().loadWarpRequests(),
+                CFH.getPlayerWarps().loadWarpHandlers());
 
         // Register the GUI listener
         Bukkit.getPluginManager().registerEvents(new GUIListener(this), this);
+
+        // Register all events
+        Bukkit.getPluginManager().registerEvents(new JoinEvent(this), this);
 
         // Register all the commands
         PlayerWarpCommand playerWarpCommand = new PlayerWarpCommand(this);
@@ -46,6 +51,7 @@ public class Plugin extends JavaPlugin {
         try {
             CFH.getPlayerWarps().saveWarps(warpRegister.getWarps());
             CFH.getPlayerWarps().saveWarpRequests(warpRegister.getWarpRequests());
+            CFH.getPlayerWarps().saveWarpHandlers(warpRegister.getRequestHandlerMap());
             this.getLogger().info("Warp data saved!");
         } catch (Exception e) {
             this.getLogger().severe("Could not save warp data!");
@@ -65,6 +71,7 @@ public class Plugin extends JavaPlugin {
         try {
             CFH.getPlayerWarps().saveWarps(warpRegister.getWarps());
             CFH.getPlayerWarps().saveWarpRequests(warpRegister.getWarpRequests());
+            CFH.getPlayerWarps().saveWarpHandlers(warpRegister.getRequestHandlerMap());
             CFH.reloadConfigs();
             sender.sendMessage("Successfully reloaded!");
         } catch (Exception e) {
