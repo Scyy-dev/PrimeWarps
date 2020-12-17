@@ -180,7 +180,7 @@ public class WarpListGUI extends InventoryGUI {
                 this.close = true;
 
                 // Warp the player
-                WarpUtils.warp((Player) event.getWhoClicked(), plugin, warp);
+                WarpUtils.warp(this, (Player) event.getWhoClicked(), plugin, warp);
 
                 // To minimise chance of interacting while warping, return the GUI in the state it is in
                 return new UninteractableGUI(this, plugin, player);

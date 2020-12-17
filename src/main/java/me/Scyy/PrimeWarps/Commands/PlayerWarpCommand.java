@@ -73,7 +73,7 @@ public class PlayerWarpCommand implements TabExecutor {
         }
 
         // Warp the player
-        WarpUtils.warp((Player) sender, plugin, warp);
+        WarpUtils.warp(null, (Player) sender, plugin, warp);
         return true;
 
     }

@@ -94,7 +94,7 @@ public class FeaturedWarpsGUI extends InventoryGUI {
             }
 
             // Warp the player
-            WarpUtils.warp((Player) event.getWhoClicked(), plugin, featuredWarps.get(featuredSlot));
+            WarpUtils.warp(this, (Player) event.getWhoClicked(), plugin, featuredWarps.get(featuredSlot));
 
             // Minimise inventory interactions
             return new UninteractableGUI(this, plugin, player);

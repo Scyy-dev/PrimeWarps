@@ -1,6 +1,7 @@
 package me.Scyy.PrimeWarps.Util;
 
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
+import me.Scyy.PrimeWarps.GUI.InventoryGUI;
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Warps.Warp;
 import org.bukkit.Bukkit;
@@ -17,8 +18,8 @@ public class WarpUtils {
      * @param plugin plugin for scheduling the teleport through Bukkit
      * @param warp the warp that holds the location
      */
-    public static void warp(Player player, Plugin plugin, Warp warp) {
-        warp(player, plugin, warp, 1);
+    public static void warp(InventoryGUI gui, Player player, Plugin plugin, Warp warp) {
+        warp(gui, player, plugin, warp, 1);
     }
 
     /**
@@ -28,7 +29,7 @@ public class WarpUtils {
      * @param warp the warp that holds the location
      * @param delay the delay in ticks before the player is warped
      */
-    public static void warp(Player player, Plugin plugin, Warp warp, int delay) {
+    public static void warp(InventoryGUI gui, Player player, Plugin plugin, Warp warp, int delay) {
 
         Location location = warp.getLocation();
 
@@ -36,6 +37,9 @@ public class WarpUtils {
 
         if (location.getWorld() == null) {
             pm.msg(player, "errorMessages.worldNotFound");
+            if (gui != null) {
+                player.openInventory(gui.getInventory());
+            }
             return;
         }
 
@@ -44,11 +48,17 @@ public class WarpUtils {
             // Verify the space the player takes up is safe
             if (!world.getBlockAt(location).isPassable() || !world.getBlockAt(location.getBlockX(), location.getBlockY() + 1, location.getBlockZ()).isPassable()) {
                 pm.msg(player, "warpMessages.spaceBlocked", "%warp%", warp.getName());
+                if (gui != null) {
+                    player.openInventory(gui.getInventory());
+                }
                 return;
             }
 
             if (world.getBlockAt(location.getBlockX(), location.getBlockY() - 1, location.getBlockZ()).isPassable()) {
                 pm.msg(player, "warpMessages.holeInFloor", "%warp%", warp.getName());
+                if (gui != null) {
+                    player.openInventory(gui.getInventory());
+                }
                 return;
             }
 
