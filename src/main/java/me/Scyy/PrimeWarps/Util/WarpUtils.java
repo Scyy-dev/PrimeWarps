@@ -43,17 +43,17 @@ public class WarpUtils {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             // Verify the space the player takes up is safe
             if (!world.getBlockAt(location).isPassable() || !world.getBlockAt(location.getBlockX(), location.getBlockY() + 1, location.getBlockZ()).isPassable()) {
-                pm.msg(player, "warpMessages.spaceBlocked", false, "%warp%", warp.getName());
+                pm.msg(player, "warpMessages.spaceBlocked", "%warp%", warp.getName());
                 return;
             }
 
             if (world.getBlockAt(location.getBlockX(), location.getBlockY() - 1, location.getBlockZ()).isPassable()) {
-                pm.msg(player, "warpMessages.holeInFloor", false, "%warp%", warp.getName());
+                pm.msg(player, "warpMessages.holeInFloor", "%warp%", warp.getName());
                 return;
             }
 
             player.teleport(location, PlayerTeleportEvent.TeleportCause.COMMAND);
-            pm.msg(player, "warpMessages.playerWarped", false, "%warp%", warp.getName());
+            pm.msg(player, "warpMessages.playerWarped", "%warp%", warp.getName());
             warp.getUniqueVisitors().add(player.getUniqueId());
         }, delay);
 

@@ -5,6 +5,7 @@ import me.Scyy.PrimeWarps.Util.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -33,14 +34,31 @@ public abstract class InventoryGUI implements InventoryHolder {
     protected final Inventory inventory;
 
     /**
+     * Player currently viewing this GUI
+     */
+    protected final Player player;
+
+    /**
+     * Name of the GUI that is displayed at the top
+     */
+    protected final String name;
+
+    /**
+     * Size of the GUI, also found from {@code inventoryItems.length}
+     */
+    protected final int size;
+
+    /**
      * Flag for if the listener should close the inventory, overrides reopen
      */
     protected boolean close = false;
 
-    public InventoryGUI(InventoryGUI lastGUI, String name, Plugin plugin, int size) {
-
+    public InventoryGUI(InventoryGUI lastGUI, String name, Plugin plugin, int size, Player player) {
         this.lastGUI = lastGUI;
         this.plugin = plugin;
+        this.player = player;
+        this.name = name;
+        this.size = size;
         this.inventoryItems = initialiseDefaultPage(size);
         this.inventory = Bukkit.createInventory(this, size, ChatColor.translateAlternateColorCodes('&', name));
 
@@ -51,14 +69,21 @@ public abstract class InventoryGUI implements InventoryHolder {
      * @return the itemstack array with the glass panes
      */
     private ItemStack[] initialiseDefaultPage(int size) {
-
         ItemStack[] defaultInv = new ItemStack[size];
         for (int i = 0; i < size; i++) {
-            defaultInv[i] = new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).name("").build();
+            defaultInv[i] = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(" ").build();
         }
 
         return defaultInv;
 
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public int getSize() {
+        return this.size;
     }
 
     public abstract InventoryGUI handleClick(InventoryClickEvent event);

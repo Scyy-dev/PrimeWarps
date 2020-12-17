@@ -21,6 +21,12 @@ public class WarpRegister {
         this.requestScheduler = new WarpRequestScheduler(plugin);
     }
 
+    public void updateWarpInactivity(int days) {
+        for (Warp warp : warps.values()) {
+            if (warp.testInactivity(days)) warp.setInactive(true);
+        }
+    }
+
     public Map<String, Warp> getWarps() {
         return warps;
     }
@@ -61,6 +67,11 @@ public class WarpRegister {
     public boolean warpExists(String name) {
         String formatName = name.toLowerCase(Locale.ENGLISH);
         return warps.containsKey(formatName);
+    }
+
+    public void updateWarp(Warp oldWarp, Warp newWarp) {
+        warps.remove(oldWarp.getName());
+        warps.put((newWarp.getName()), newWarp);
     }
 
     public Map<String, WarpRequest> getWarpRequests() {

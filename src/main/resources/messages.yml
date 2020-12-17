@@ -1,10 +1,24 @@
 # -================================-
 #    Customisable Player Messages
 # -================================-
-# All messages use the '&' symbol for colouring/styling
+# All messages use the '&' symbol for the minecraft default colouring/formatting
+
+# This document supports hex colour coding. If you want to include a hex colour, insert before the text you want coloured
+# e.g. noPermission: "#6e140dYou do not have permission to use that command"
+
+# If you want a message to not have the prefix, tag it at the start of the message '[NO_PREFIX]'
+# Make sure the tag is the VERY start, no format codes or anything
+# e.g. noPermission: "[NO_PREFIX]&cYou do not have permission to use that command"
 
 # Prefix for all messages
 prefix: "&r&7[&6Prime&3Warps&r&7]&f"
+
+# Formatting for the names of warps on featured warps and the warp list
+warpName: "[NO_PREFIX]&6%warp%"
+
+# Formatting for the names of inactive warps on featured warps and the warps list
+# Accepts %warp% for the warp name
+inactiveWarpName: "[NO_PREFIX]&c%warp% &8(inactive)"
 
 # Global error messages that apply to all commands
 errorMessages:
@@ -22,8 +36,10 @@ errorMessages:
 warpMessages:
   # Managing Warps
   warpRemoved: "&bWarp removed!"
+  warpMoved: "&bWarp moved!"
   warpNotFound: "&cCould not find a warp with name: %warp%"
   warpAlreadyExists: "&cThat warp already exists!"
+  warpRenamed: "&bWarp rename successful!"
 
   # Managing Warp Requests
   warpRequestAdded: "&bWarp request was added!"
@@ -43,7 +59,47 @@ warpMessages:
   # Warp Shard Messages
   notEnoughWarpShards: "&cYou don't have enough warp shards to create a warp!"
   addedWarpShard: "&bAdded warp shard!"
+  warpShardsRefunded: "&bWarp shards for warp request '%warp%' were refunded!"
   invFullCannotRefundWarpShards: "&cYour inventory is full! Warp shards not refunded. Make space and try relogging!"
+
+  # Managing warp inactivity
+  warpInactive: "&cThis warp is inactive!"
+  alertWarpInactive: "&bYour warp %warp% has gone inactive! Players cannot use it and you will need to pay warp shards to bring it back"
+
+# Messages with no available placeholders
+otherMessages:
+
+  # Sent when the user renames their warp, this is the message that shows up for them in chat
+  renameWarpMessage: "&bPlease enter the name of the new warp"
+
+  # Sent when the user toggles the 'category' option when sorting warps
+  # Highly recommended to include the list of categories in this list to reduce confusion
+  # Categories are an exact match so make sure you type them correctly
+  requestCategoryMessage: "&bPlease enter the name of the category, options are '&6Grinder&b', '&6Shop&b', '&6Nether&b', '&6Build&b', or '&6default&b'"
+
+  # The prompt that is sent to players when trying to create a warp
+  # Note that players can enter CANCEL (in all uppercase) to cancel creating a warp
+  # If they really want a warp called 'cancel' they can enter it in lower case
+  createWarpPrompt: "&bPlease enter the name of your new warp! enter 'CANCEL' to cancel creating a warp"
+
+  # Message sent when the user enters "CANCEL" to the warp Creation prompt
+  warpRequestPromptCancelled: "&cYou have cancelled creating a warp!"
+
+helpMessages:
+
+  # The lore of the help item in the featured page
+  # Prefix is not added to any of these messages
+  featuredPageHelpLore:
+    - "&r&8To view all warps, click the Book and browse the list"
+    - "&r&8To create warps, click the Ender Pearl and follow the chat prompts!"
+    - "&r&8To manage your warps, click the Comparator and use the GUI"
+    - "&r&8If you require further assistance contact staff via /msg or /mail"
+
+  # Message is sent when the user clicks the help button
+  # Intended for a wiki page / guide on how to use
+  helpClickMessage: "[NO_PREFIX]&bView the wiki here: https://www.fruitservers.net/wiki/m/34051434/page/Landing_Page"
+
+
 
 
 

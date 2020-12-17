@@ -28,7 +28,7 @@ public class WarpRequestScheduler {
 
     public void scheduleOnlineHandler(WarpRequest request, Player player, String type) {
         PlayerMessenger pm = plugin.getCFH().getPlayerMessenger();
-        pm.msg(player, "warpMessages.request" + type, false, "%warp%", request.getName());
+        pm.msg(player, "warpMessages.request" + type, "%warp%", request.getName());
 
         // Check if the player needs to be refunded for the shards
         if (type.equalsIgnoreCase("rejected")) {
@@ -41,9 +41,8 @@ public class WarpRequestScheduler {
     }
 
     public void scheduleOfflinePlayer(WarpRequest request, String type) {
-        boolean refundShards = !type.equalsIgnoreCase("rejected");
-        String requestMessage = plugin.getCFH().getPlayerMessenger().getMsg("warpMessages.request" + type,
-                false, "%warp%", request.getName());
+        boolean refundShards = type.equalsIgnoreCase("rejected");
+        String requestMessage = plugin.getCFH().getPlayerMessenger().getMsg("warpMessages.request" + type, "%warp%", request.getName());
         WarpRequestHandler handler = new WarpRequestHandler(request.getOwner(), request.getName(), refundShards, requestMessage);
         plugin.getWarpRegister().addWarpHandler(request.getOwner(), handler);
     }

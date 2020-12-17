@@ -2,7 +2,7 @@ package me.Scyy.PrimeWarps.Warps;
 
 import org.bukkit.Location;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.UUID;
 
 public class WarpRequest {
@@ -13,13 +13,13 @@ public class WarpRequest {
 
     private final Location location;
 
-    private final Date dateCreated;
+    private final Instant dateCreated;
 
     public WarpRequest(String name, UUID owner, Location location) {
         this.owner = owner;
         this.name = name;
         this.location = location;
-        this.dateCreated = new Date();
+        this.dateCreated = Instant.now();
     }
 
     public String getName() {
@@ -30,7 +30,7 @@ public class WarpRequest {
         return location;
     }
 
-    public Date getDateCreated() {
+    public Instant getDateCreated() {
         return dateCreated;
     }
 

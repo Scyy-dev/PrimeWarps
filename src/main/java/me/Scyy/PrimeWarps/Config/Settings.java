@@ -1,7 +1,11 @@
 package me.Scyy.PrimeWarps.Config;
 
 import me.Scyy.PrimeWarps.Plugin;
-import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class Settings extends ConfigFile {
 
@@ -9,14 +13,52 @@ public class Settings extends ConfigFile {
         super(plugin, "config.yml");
     }
 
-    public int getWarpTokenCount() {
-        return config.getInt("requiredWarpShardAmount", 1);
+    public int getCreateWarpCost() {
+        return config.getInt("createWarpCost", 10);
     }
 
-    public String getWarpMessage(String warpName) {
-        String rawMessage = config.getString("warpName");
-        if (rawMessage == null) return "ERROR_WARP_NAMING_NOT_FOUND";
-        rawMessage = rawMessage.replaceAll("%warp%", warpName);
-        return ChatColor.translateAlternateColorCodes('&', rawMessage);
+    public int getMoveWarpCost() {
+        return config.getInt("moveWarpCost", 5);
+    }
+
+    public int getRenameWarpCost() {
+        return config.getInt("renameWarpCost", 5);
+    }
+
+    public int getReactivateWarpCost() {
+        return config.getInt("reactivateWarpCost", 10);
+    }
+
+    public int getInactiveDayMeasure() {
+        return config.getInt("inactiveDays", 30);
+    }
+
+    public List<String> getCategories() {
+        ConfigurationSection categorySection = config.getConfigurationSection("categories");
+        if (categorySection != null) return new LinkedList<>(categorySection.getKeys(false));
+        else {
+            plugin.getLogger().warning("Could not load categories!");
+            return new LinkedList<>();
+        }
+    }
+
+    public Material getCategoryMaterial(String category) {
+        return Material.valueOf(config.getString("categories." + category, "ACACIA_BOAT"));
+    }
+
+    public List<Material> getCategoryMaterials() {
+
+        List<Material> categories = new LinkedList<>();
+
+        for (String category : this.getCategories()) {
+            categories.add(this.getCategoryMaterial(category));
+        }
+
+        return categories;
+
+    }
+
+    public String getDefaultCategory() {
+        return config.getString("defaultCategory", "default");
     }
 }

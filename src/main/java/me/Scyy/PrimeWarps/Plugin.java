@@ -41,8 +41,14 @@ public class Plugin extends JavaPlugin {
         this.getCommand("pwadmin").setExecutor(playerWarpAdminCommand);
         this.getCommand("pwadmin").setTabCompleter(playerWarpAdminCommand);
 
+        // Ensure that the Warp categories has the 'default' category active, or send a warning
+        String defaultCategory = CFH.getSettings().getDefaultCategory();
+        if (!CFH.getSettings().getCategories().contains(defaultCategory)) {
+            getLogger().warning("Could not find the default category for warps!");
+        }
 
-
+        // Iterate over every warp and mark them as inactive if needed
+        warpRegister.updateWarpInactivity(CFH.getSettings().getInactiveDayMeasure());
     }
 
     @Override
@@ -73,6 +79,9 @@ public class Plugin extends JavaPlugin {
             CFH.getPlayerWarps().saveWarpRequests(warpRegister.getWarpRequests());
             CFH.getPlayerWarps().saveWarpHandlers(warpRegister.getRequestHandlerMap());
             CFH.reloadConfigs();
+            if (CFH.getSettings().getCategoryMaterial("default") == null) {
+                sender.sendMessage("'default' warp category not found!");
+            }
             sender.sendMessage("Successfully reloaded!");
         } catch (Exception e) {
             sender.sendMessage("Error reloading! Check console for logs!");

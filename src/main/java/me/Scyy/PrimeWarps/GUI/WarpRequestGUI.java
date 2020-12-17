@@ -9,6 +9,7 @@ import me.Scyy.PrimeWarps.Warps.WarpRequest;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
@@ -21,9 +22,10 @@ import java.util.*;
 // # 0 0 0 0 0 0 0 #
 // # 0 0 0 0 0 0 0 #
 // # 0 0 0 0 0 0 0 #
-// # P # # # # # N #
+// # P # # B # # N #
 // P = previous page
 // N = next page
+// B = Back to Featured Warps
 
 public class WarpRequestGUI extends InventoryGUI {
 
@@ -31,8 +33,8 @@ public class WarpRequestGUI extends InventoryGUI {
 
     private final List<WarpRequest> requests;
 
-    public WarpRequestGUI(InventoryGUI lastGUI, Plugin plugin, int page) {
-        super(lastGUI, "&6Warp Requests", plugin, 54);
+    public WarpRequestGUI(InventoryGUI lastGUI, Plugin plugin, Player player, int page) {
+        super(lastGUI, "&8Warp Requests", plugin, 54, player);
 
         this.page = page;
 
@@ -59,12 +61,12 @@ public class WarpRequestGUI extends InventoryGUI {
 
                 // Get the skull meta for the warp owner
                 ItemMeta skullMeta = SkullMetaProvider.getMeta(warp.getOwner());
-                skullMeta.setDisplayName(plugin.getCFH().getSettings().getWarpMessage(warp.getName()));
+                skullMeta.setDisplayName(plugin.getCFH().getPlayerMessenger().getMsg("warpName", "%warp%", warp.getName()));
                 List<String> interaction = Arrays.asList(
-                        ChatColor.translateAlternateColorCodes('&', "&r&7Owner: " + warpOwner),
-                        ChatColor.translateAlternateColorCodes('&', "&r&7Shift-Left click to APPROVE warp"),
-                        ChatColor.translateAlternateColorCodes('&', "&r&7Middle click to Teleport to warp"),
-                        ChatColor.translateAlternateColorCodes('&', "&r&7Shift-Right click to REJECT warp"));
+                        ChatColor.translateAlternateColorCodes('&', "&r&8Owner: " + warpOwner),
+                        ChatColor.translateAlternateColorCodes('&', "&r&8Left C to &eTELEPORT &8to warp"),
+                        ChatColor.translateAlternateColorCodes('&', "&r&8Shift-Left click to &aAPPROVE &8warp"),
+                        ChatColor.translateAlternateColorCodes('&', "&r&8Shift-Right click to &cREJECT &8warp"));
                 skullMeta.setLore(interaction);
                 ItemStack warpItem = new ItemStack(Material.PLAYER_HEAD);
                 warpItem.setItemMeta(skullMeta);
@@ -96,6 +98,8 @@ public class WarpRequestGUI extends InventoryGUI {
 
         // Add the next pagination arrow
         inventoryItems[52] = new ItemBuilder(Material.ARROW).name("&6Page " + nextPageNum).build();
+
+        inventoryItems[49] = new ItemBuilder(Material.BARRIER).name("&6Back to Featured Warps").build();
 
     }
 
@@ -130,27 +134,29 @@ public class WarpRequestGUI extends InventoryGUI {
 
             switch (event.getClick()) {
 
+                // Teleport the user
+                case LEFT:
+                case RIGHT:
+                case MIDDLE:
+                    this.close = true;
+                    Bukkit.getScheduler().runTask(plugin, () -> event.getWhoClicked().teleport(warpRequest.getLocation(), PlayerTeleportEvent.TeleportCause.COMMAND));
+                    pm.msg(event.getWhoClicked(), "warpMessages.playerWarped", "%warp%", warpRequest.getName());
+                    return new UninteractableGUI(this, plugin, player);
                 // Approve the request
                 case SHIFT_LEFT:
                     plugin.getWarpRegister().addWarp(warpRequest.getName(), new Warp(warpRequest));
                     plugin.getWarpRegister().removeWarpRequest(warpRequest.getName());
-                    pm.msg(event.getWhoClicked(), "warpMessages.warpRequestApproved", true, "%warp%", warpRequest.getName());
+                    pm.msg(event.getWhoClicked(), "warpMessages.warpRequestApproved", "%warp%", warpRequest.getName());
                     // Schedule a handler for the message and refund if needed
                     plugin.getWarpRegister().getRequestScheduler().scheduleHandler(warpRequest, "approved");
-                    return new WarpRequestGUI(this, plugin, 0);
-                // Teleport the user
-                case MIDDLE:
-                    this.close = true;
-                    Bukkit.getScheduler().runTask(plugin, () -> event.getWhoClicked().teleport(warpRequest.getLocation(), PlayerTeleportEvent.TeleportCause.COMMAND));
-                    pm.msg(event.getWhoClicked(), "warpMessages.playerWarped", true, "%warp%", warpRequest.getName());
-                    return this;
+                    return new WarpRequestGUI(this, plugin, player, 0);
                 // Teleport the user
                 case SHIFT_RIGHT:
                     plugin.getWarpRegister().removeWarpRequest(warpRequest.getName());
-                    pm.msg(event.getWhoClicked(), "warpMessages.warpRequestRejected", true, "%warp%", warpRequest.getName());
+                    pm.msg(event.getWhoClicked(), "warpMessages.warpRequestRejected", "%warp%", warpRequest.getName());
                     // Schedule a handler for the message and refund if needed
                     plugin.getWarpRegister().getRequestScheduler().scheduleHandler(warpRequest, "rejected");
-                    return new WarpRequestGUI(this, plugin, 0);
+                    return new WarpRequestGUI(this, plugin, player, 0);
             }
 
         }
@@ -165,7 +171,15 @@ public class WarpRequestGUI extends InventoryGUI {
             --page;
 
             // Return a new inventory back a page
-            return new WarpRequestGUI(this, plugin, page);
+            return new WarpRequestGUI(this, plugin, player, page);
+
+        }
+
+        if (clickedSlot == 49 && inventoryItems[49].getType() == Material.BARRIER) {
+
+            event.setCancelled(true);
+
+            return new FeaturedWarpsGUI(this, plugin, player);
 
         }
 
@@ -179,14 +193,14 @@ public class WarpRequestGUI extends InventoryGUI {
             ++page;
 
             // Return a new inventory forward a page
-            return new WarpRequestGUI(this, plugin, page);
+            return new WarpRequestGUI(this, plugin, player, page);
 
         }
 
         event.setCancelled(true);
 
         // User has clicked something that doesn't interact, so return an unchanged GUI
-        return new WarpRequestGUI(this, plugin, page);
+        return new WarpRequestGUI(this, plugin, player, page);
 
     }
 

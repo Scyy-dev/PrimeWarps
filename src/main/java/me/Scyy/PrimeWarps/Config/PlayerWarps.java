@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.*;
 
 public class PlayerWarps extends ConfigFile {
@@ -30,12 +31,15 @@ public class PlayerWarps extends ConfigFile {
             try {
                 UUID uuid = UUID.fromString(section.getString(warpName + ".owner"));
                 Location location = section.getLocation(warpName + ".location");
-                Date dateCreated = new Date(section.getLong(warpName + ".dateCreated", 0));
+                String category = section.getString(warpName + "category");
+                Instant dateCreated = Instant.ofEpochSecond(section.getLong(warpName + ".dateCreated"));
+                Instant ownerLastSeen = Instant.ofEpochSecond(section.getLong(warpName + ".ownerLastSeen"));
+                boolean inactive = section.getBoolean(warpName + ".inactive");
                 Set<UUID> uniqueVisitors = new LinkedHashSet<>();
                 for (String visitor : section.getStringList(warpName + ".uniqueVisitors")) {
                     uniqueVisitors.add(UUID.fromString(visitor));
                 }
-                warps.put(warpName, new Warp(warpName, uuid, location, dateCreated, uniqueVisitors));
+                warps.put(warpName, new Warp(warpName, uuid, location, category, dateCreated,ownerLastSeen, inactive, uniqueVisitors));
             } catch (Exception e) {
                 plugin.getLogger().severe("Error loading warps!");
                 e.printStackTrace();
@@ -58,7 +62,10 @@ public class PlayerWarps extends ConfigFile {
             Warp warp = warps.get(warpName);
             config.set("warps." + warpName + ".owner", warp.getOwner().toString());
             config.set("warps." + warpName + ".location", warp.getLocation());
-            config.set("warps." + warpName + ".dateCreated", warp.getDateCreated().toInstant().getEpochSecond());
+            config.set("warps." + warpName + ".category", warp.getCategory());
+            config.set("warps." + warpName + ".dateCreated", warp.getDateCreated().getEpochSecond());
+            config.set("warps." + warpName + ".ownerLastSeen", warp.getOwnerLastSeen().getEpochSecond());
+            config.set("warps." + warpName + ".inactive", warp.isInactive());
             List<String> stringUUIDs = new LinkedList<>();
             for (UUID uuid : warp.getUniqueVisitors()) {
                 stringUUIDs.add(uuid.toString());
@@ -81,9 +88,9 @@ public class PlayerWarps extends ConfigFile {
 
         Map<String, WarpRequest> warps = new LinkedHashMap<>();
 
-        ConfigurationSection section = config.getConfigurationSection("warps");
+        ConfigurationSection section = config.getConfigurationSection("warpRequests");
         if (section == null || section.getKeys(false).size() == 0) {
-            plugin.getLogger().warning("No Warp Requests found in config!");
+            plugin.getLogger().info("No Warp Requests found in config");
             return new LinkedHashMap<>();
         }
 
@@ -93,7 +100,7 @@ public class PlayerWarps extends ConfigFile {
                 Location location = section.getLocation(warpName + ".location");
                 warps.put(warpName, new WarpRequest(warpName, uuid, location));
             } catch (Exception e) {
-                plugin.getLogger().severe("Error loading warp requests! Any pending warp requests have been lost!");
+                plugin.getLogger().warning("Error loading warp requests! Any pending warp requests have been lost!");
                 e.printStackTrace();
                 return warps;
             }
@@ -134,7 +141,7 @@ public class PlayerWarps extends ConfigFile {
 
         ConfigurationSection section = config.getConfigurationSection("requestHandlers");
         if (section == null || section.getKeys(false).size() == 0) {
-            plugin.getLogger().warning("No warp request handlers in config");
+            plugin.getLogger().info("No Warp Request handlers found in config");
             return new LinkedHashMap<>();
         }
 
@@ -173,7 +180,7 @@ public class PlayerWarps extends ConfigFile {
     public void saveWarpHandlers(Map<UUID, Set<WarpRequestHandler>> warps) {
 
         // Empty the warp data
-        config.set("warpHandlers", null);
+        config.set("requestHandlers", null);
 
         // Iterate over each owner
         for (UUID uuid : warps.keySet()) {
@@ -181,19 +188,17 @@ public class PlayerWarps extends ConfigFile {
 
             // Iterate over each request handler the owner has
             for (WarpRequestHandler handler : warps.get(uuid)) {
-                config.set("warpHandlers." + rawOwner + handler.getWarpName() + ".refundShards", handler.isRefundWarpShards());
-                config.set("warpHandlers." + rawOwner + handler.getWarpName() + ".requestMessage", handler.getRequestMessage());
+                config.set("requestHandlers." + rawOwner + "." + handler.getWarpName() + ".refundShards", handler.isRefundWarpShards());
+                config.set("requestHandlers." + rawOwner + "." + handler.getWarpName() + ".requestMessage", handler.getRequestMessage());
             }
         }
         try {
             config.save(configFile);
         } catch (IOException e) {
-            plugin.getLogger().warning("Unable to save any warp handlers to config! Pending warp shard refunds have been lost!");
+            plugin.getLogger().warning("Unable to save any request handlers to config! Pending warp shard refunds have been lost!");
             e.printStackTrace();
         }
 
 
     }
-
-
 }

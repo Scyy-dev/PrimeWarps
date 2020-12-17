@@ -1,15 +1,9 @@
 package me.Scyy.PrimeWarps.Warps;
 
-import me.Scyy.PrimeWarps.Config.PlayerMessenger;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.time.Instant;
+import java.util.*;
 
 public class Warp {
 
@@ -19,7 +13,13 @@ public class Warp {
 
     protected final Location location;
 
-    protected final Date dateCreated;
+    protected String category;
+
+    protected final Instant dateCreated;
+
+    protected Instant ownerLastSeen;
+
+    protected boolean inactive;
 
     protected final Set<UUID> uniqueVisitors;
 
@@ -31,11 +31,14 @@ public class Warp {
      * @param dateCreated when the warp was created
      * @param uniqueVisitors collection of all unique visits to the warp
      */
-    public Warp(String name, UUID owner, Location location, Date dateCreated, Set<UUID> uniqueVisitors) {
-        this.name = name;
+    public Warp(String name, UUID owner, Location location, String category, Instant dateCreated, Instant ownerLastSeen, boolean inactive, Set<UUID> uniqueVisitors) {
+        this.name = name.toLowerCase(Locale.ENGLISH);
         this.owner = owner;
         this.location = location;
+        this.category = category;
         this.dateCreated = dateCreated;
+        this.ownerLastSeen = ownerLastSeen;
+        this.inactive = inactive;
         this.uniqueVisitors = uniqueVisitors;
     }
 
@@ -43,7 +46,10 @@ public class Warp {
         this.name = request.getName();
         this.owner = request.getOwner();
         this.location = request.getLocation();
+        this.category = "default";
         this.dateCreated = request.getDateCreated();
+        this.ownerLastSeen = Instant.now();
+        this.inactive = false;
         this.uniqueVisitors = new HashSet<>();
         this.uniqueVisitors.add(owner);
     }
@@ -64,8 +70,42 @@ public class Warp {
         return location;
     }
 
-    public Date getDateCreated() {
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public Instant getDateCreated() {
         return dateCreated;
+    }
+
+    public Instant getOwnerLastSeen() {
+        return ownerLastSeen;
+    }
+
+    public void setOwnerLastSeen(Instant ownerLastSeen) {
+        this.ownerLastSeen = ownerLastSeen;
+    }
+
+    public boolean isInactive() {
+        return inactive;
+    }
+
+    public void setInactive(boolean inactive) {
+        this.inactive = inactive;
+    }
+
+    public void setInactive(int daysAgo) {
+        this.inactive = testInactivity(daysAgo);
+    }
+
+    public boolean testInactivity(int daysAgo) {
+        // Subtract daysAgo days away from this second
+        Instant inactiveMarker = Instant.now().minusSeconds(daysAgo * 86400L);
+        return inactiveMarker.isAfter(ownerLastSeen);
     }
 
     public Set<UUID> getUniqueVisitors() {

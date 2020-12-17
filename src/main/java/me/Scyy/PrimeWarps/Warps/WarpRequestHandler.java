@@ -15,7 +15,7 @@ public class WarpRequestHandler {
 
     private boolean refundWarpShards;
 
-    private final String requestMessage;
+    private String requestMessage;
 
     public WarpRequestHandler(UUID owner, String warpName, boolean refundWarpShards, String requestMessage) {
         this.owner = owner;
@@ -44,15 +44,20 @@ public class WarpRequestHandler {
         return requestMessage;
     }
 
+    public void setRequestMessage(String requestMessage) {
+        this.requestMessage = requestMessage;
+    }
+
     public void refundWarpShards(Player player, Plugin plugin) {
         if (!this.isRefundWarpShards()) return;
         ItemStack warpToken = plugin.getCFH().getMiscDataStorage().getWarpToken();
-        warpToken.setAmount(plugin.getCFH().getSettings().getWarpTokenCount());
+        warpToken.setAmount(plugin.getCFH().getSettings().getCreateWarpCost());
         if (!(player.getInventory().firstEmpty() == -1)) {
             player.getInventory().addItem(warpToken);
             this.setRefundWarpShards(false);
+            plugin.getCFH().getPlayerMessenger().msg(player, "warpMessages.warpShardsRefunded", "%warp%", warpName);
         } else {
-            plugin.getCFH().getPlayerMessenger().msg(player, "warpMessages.invFullCannotRefundWarpShards");
+            plugin.getCFH().getPlayerMessenger().msg(player, "warpMessages.invFullCannotRefundWarpShards", "%warp%", warpName);
         }
 
     }

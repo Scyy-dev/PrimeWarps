@@ -32,16 +32,16 @@ public class PlayerWarpCommand implements TabExecutor {
         if (args.length == 0) {
 
             if (!sender.hasPermission("pwarp.warp.gui")) {
-                pm.msg(sender, "errorMessages.noPermission", false);
+                pm.msg(sender, "errorMessages.noPermission");
                 return true;
             }
 
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                InventoryGUI gui = new FeaturedWarpsGUI(null, plugin);
+                InventoryGUI gui = new FeaturedWarpsGUI(null, plugin, player);
                 player.openInventory(gui.getInventory());
             } else {
-                pm.msg(sender, "errorMessages.mustBePlayer", true);
+                pm.msg(sender, "errorMessages.mustBePlayer");
             }
 
             return true;
@@ -50,12 +50,12 @@ public class PlayerWarpCommand implements TabExecutor {
 
         // User is trying to command line warp
         if (!sender.hasPermission("pwarp.warp")) {
-            pm.msg(sender, "errorMessages.noPermission", false);
+            pm.msg(sender, "errorMessages.noPermission");
             return true;
         }
 
         if (!(sender instanceof Player)) {
-            pm.msg(sender, "errorMessages.mustBePlayer", true);
+            pm.msg(sender, "errorMessages.mustBePlayer");
             return true;
         }
 
@@ -63,7 +63,12 @@ public class PlayerWarpCommand implements TabExecutor {
         Warp warp = plugin.getWarpRegister().getWarp(args[0]);
 
         if (warp == null) {
-            pm.msg(sender, "warpMessages.warpNotFound", false, "%warp%", args[0]);
+            pm.msg(sender, "warpMessages.warpNotFound", "%warp%", args[0]);
+            return true;
+        }
+
+        if (warp.isInactive()) {
+            pm.msg(sender, "warpMessages.warpInactive", "%warp%", warp.getName());
             return true;
         }
 

@@ -1,9 +1,50 @@
 # How many warp shards are required for the warp to be made
 # This amount of shards will be removed from the players inventory
 # Warp shards are an exact match - renaming, adding enchants etc will prevent them from working
-requiredWarpShardAmount: 10
+createWarpCost: 10
+
+# Number of warp shards required to move a warp
+moveWarpCost: 5
+
+# Number of warp shards required to rename a warp
+renameWarpCost: 5
+
+# Number of warp shards required to make an inactive warp active
+reactivateWarpCost: 10
 
 # The name of the item that displays the warp
 # Use %warp% for the warp name
 warpName: "&r&6%warp%"
+
+# The name of the item that displays the inactive warp
+# Use %warp$ for the warp name
+inactiveWarpName: "&r&c%warp% &8(inactive)"
+
+# Amount of days to pass for a warp to be marked as 'inactive'
+# Inactive warps cannot be teleported to unless the user has a permission to teleport to them
+inactiveDays: 30
+
+# A list of all categories players can set their warps to. No limit on how many categories you create
+# Each category requires a name and attached to that name a material, which is then displayed to the users
+# Examples
+# categories:
+#   Grinder: BONE
+#   Shop: EMERALD
+#   Nether: NETHERRACK
+#   Build: BRICK
+#   default: STONE
+categories:
+  Grinder: BONE
+  Shop: EMERALD
+  Nether: NETHERRACK
+  Build: BRICK
+  default: STONE
+
+# The default category whenever a warp is created
+# Note that it must also be in the list above
+defaultCategory: "default"
+
+
+
+
 

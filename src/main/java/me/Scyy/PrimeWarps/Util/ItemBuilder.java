@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ItemBuilder {
@@ -20,7 +21,7 @@ public class ItemBuilder {
     /**
      * Meta for the item. Stores Display Name and Lore
      */
-    private final ItemMeta itemMeta;
+    private ItemMeta itemMeta;
 
     /**
      * Lore for the item. An incremental list that gets added to by the builder
@@ -50,6 +51,18 @@ public class ItemBuilder {
         if (itemMeta != null && itemMeta.getLore() != null) this.itemLore = itemMeta.getLore();
         else this.itemLore = new ArrayList<>();
 
+    }
+
+    /* Meta */
+
+    /**
+     * Overrides the ItemMeta with a new instance of meta. Intended to be used in conjunction with ItemMeta providers such as Player Heads
+     * @param meta the meta to replace the existing meta with
+     * @return the Builder instance
+     */
+    public ItemBuilder meta(ItemMeta meta) {
+        this.itemMeta = meta;
+        return this;
     }
 
     /*  Material and Amount  */
@@ -107,7 +120,7 @@ public class ItemBuilder {
      * @param lore the lore to be added
      * @return The Builder instance
      */
-    public ItemBuilder lore(String... lore) {
+    public ItemBuilder lore(Iterable<String> lore) {
 
         for (String loreLine : lore) {
 

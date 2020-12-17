@@ -2,8 +2,8 @@ package me.Scyy.PrimeWarps.Commands;
 
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
 import me.Scyy.PrimeWarps.Plugin;
+import me.Scyy.PrimeWarps.Util.ItemStackUtils;
 import me.Scyy.PrimeWarps.Warps.WarpRequest;
-import me.Scyy.PrimeWarps.Warps.WarpRequestHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -33,12 +33,12 @@ public class WarpRequestCommand implements TabExecutor {
         }
 
         if (!sender.hasPermission("pwarp.warp")) {
-            pm.msg(sender, "errorMessages.noPermission", false);
+            pm.msg(sender, "errorMessages.noPermission");
             return true;
         }
 
         if (!(sender instanceof Player)) {
-            pm.msg(sender, "errorMessages.mustBePlayer", true);
+            pm.msg(sender, "errorMessages.mustBePlayer");
             return true;
         }
 
@@ -46,18 +46,18 @@ public class WarpRequestCommand implements TabExecutor {
 
         // Check if the player has the required items
         ItemStack warpToken = plugin.getCFH().getMiscDataStorage().getWarpToken();
-        if (!player.getInventory().containsAtLeast(warpToken, plugin.getCFH().getSettings().getWarpTokenCount())) {
-            pm.msg(sender, "warpMessages.notEnoughWarpShards", true, "%warp%", args[0]);
+        if (!player.getInventory().containsAtLeast(warpToken, plugin.getCFH().getSettings().getCreateWarpCost())) {
+            pm.msg(sender, "warpMessages.notEnoughWarpShards", "%warp%", args[0]);
             return true;
         }
 
         // Check if the warp already exists
         if (plugin.getWarpRegister().warpExists(args[0])) {
-            pm.msg(sender, "warpMessages.warpAlreadyExists", true, "%warp%", args[0]);
+            pm.msg(sender, "warpMessages.warpAlreadyExists", "%warp%", args[0]);
             return true;
         }
         if (plugin.getWarpRegister().warpRequestExists(args[0])) {
-            pm.msg(sender, "warpMessages.warpRequestAlreadyExists", true, "%warp%", args[0]);
+            pm.msg(sender, "warpMessages.warpRequestAlreadyExists", "%warp%", args[0]);
             return true;
         }
 
@@ -67,14 +67,14 @@ public class WarpRequestCommand implements TabExecutor {
         if (requestSuccess) {
 
             // Message the player that the request was successful
-            pm.msg(sender, "warpMessages.warpRequestAdded", true, "%warp%", args[0]);
+            pm.msg(sender, "warpMessages.warpRequestAdded", "%warp%", args[0]);
 
             // Remove the tokens from the players inventory
             ItemStack requiredTokens = warpToken.clone();
-            removeWarpItem(player, requiredTokens, plugin.getCFH().getSettings().getWarpTokenCount());
+            ItemStackUtils.removeItem(player, requiredTokens, plugin.getCFH().getSettings().getCreateWarpCost());
 
         } else {
-            pm.msg(sender, "warpMessages.warpAlreadyExists", true, "%warp%", args[0]);
+            pm.msg(sender, "warpMessages.warpAlreadyExists", "%warp%", args[0]);
         }
         return true;
 
@@ -83,29 +83,5 @@ public class WarpRequestCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
         return Collections.emptyList();
-    }
-
-    private void removeWarpItem(Player player, ItemStack warpItem, int amount) {
-
-        int removedCounter = amount;
-
-        for (ItemStack item : player.getInventory().getStorageContents()) {
-
-            if (item == null) continue;
-
-            if (item.isSimilar(warpItem)) {
-
-                if (item.getAmount() >= removedCounter) {
-                    item.setAmount(item.getAmount() - removedCounter);
-                    return;
-                } else {
-                    removedCounter -= item.getAmount();
-                    item.setAmount(0);
-                }
-
-            }
-
-        }
-
     }
 }
