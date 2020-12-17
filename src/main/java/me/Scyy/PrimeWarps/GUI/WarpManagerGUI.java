@@ -13,6 +13,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 // # # # # # # # # #
 // # # # # H # # # #
 // # # # # # # # # #
@@ -88,6 +90,12 @@ public class WarpManagerGUI extends InventoryGUI {
 
             ItemStack warpToken = plugin.getCFH().getMiscDataStorage().getWarpToken();
             int cost = plugin.getCFH().getSettings().getMoveWarpCost();
+
+            List<String> permittedWorlds = plugin.getCFH().getSettings().getWorlds();
+            if (!permittedWorlds.contains(player.getWorld().getName())) {
+                plugin.getCFH().getPlayerMessenger().msg(player, "errorMessages.cannotCreateWarpInWorld");
+                return new WarpManagerGUI(this, plugin, player, warp);
+            }
 
             if (!player.hasPermission("pwarp.admin.manage")) {
 

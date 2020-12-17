@@ -106,7 +106,7 @@ public class Plugin extends JavaPlugin {
     }
 
     public void splashText(CommandSender sender) {
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6&lPrime&7&lWarps"));
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6&lPrime&7&lWarps &6v" + this.getDescription().getVersion()));
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Built by &3_Scyy"));
     }
 }

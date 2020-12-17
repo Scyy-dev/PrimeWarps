@@ -9,6 +9,7 @@ import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
 import java.time.Instant;
+import java.util.Locale;
 
 public class RenameWarpPrompt extends StringPrompt {
 
@@ -31,20 +32,24 @@ public class RenameWarpPrompt extends StringPrompt {
 
         PlayerMessenger pm = plugin.getCFH().getPlayerMessenger();
 
+        if (answer == null) return this;
+
+        String formatName = answer.toLowerCase(Locale.ENGLISH);
+
         if (!(conversationContext.getForWhom() instanceof Player)) {
             plugin.getLogger().warning("Error reading new warp name for warp " + warp.getName());
             conversationContext.getForWhom().sendRawMessage("Error receiving your new warp name! Please report this bug!");
             return null;
         }
 
-        Warp existingWarp = plugin.getWarpRegister().getWarp(answer);
+        Warp existingWarp = plugin.getWarpRegister().getWarp(formatName);
         if (existingWarp != null) {
-            conversationContext.getForWhom().sendRawMessage(pm.getMsg("warpMessages.warpAlreadyExists", "%warp%", answer));
-            return this;
+            conversationContext.getForWhom().sendRawMessage(pm.getMsg("warpMessages.warpAlreadyExists", "%warp%", formatName));
+            return null;
         }
 
         // Create the new warp
-        Warp newWarp = new Warp(answer, warp.getOwner(), warp.getLocation(), warp.getCategory(), warp.getDateCreated(), Instant.now(), warp.isInactive(), warp.getUniqueVisitors());
+        Warp newWarp = new Warp(formatName, warp.getOwner(), warp.getLocation(), warp.getCategory(), warp.getDateCreated(), Instant.now(), warp.isInactive(), warp.getUniqueVisitors());
 
         // Add the new warp
         plugin.getWarpRegister().updateWarp(warp, newWarp);

@@ -30,6 +30,7 @@ errorMessages:
   worldNotFound: "&cThe world could not be found!"
   invalidCommand: "&cThat command wasn't recognised"
   internalError: "Something went wrong trying to execute that command"
+  illegalWorldForWarp: "A warp cannot be in this world!"
 
 # Errors in relation to managing and using warps
 # All warp messages take %warp% as a placeholder for the warp name
