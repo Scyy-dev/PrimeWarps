@@ -44,6 +44,13 @@ categories:
 # Note that it must also be in the list above
 defaultCategory: "default"
 
+# Worlds the player can create warps in
+# Modifying this list will require a server restart and will not work with /pwa reload
+# You will have to include the default worlds in this list if you want players to create warps in them
+# please note that these names MUST be correct, as there is no check if the world is not valid
+worlds:
+  "Skyblock"
+
 
 
 

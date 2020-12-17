@@ -61,4 +61,8 @@ public class Settings extends ConfigFile {
     public String getDefaultCategory() {
         return config.getString("defaultCategory", "default");
     }
+
+    public List<String> getWorlds() {
+        return config.getStringList("worlds");
+    }
 }

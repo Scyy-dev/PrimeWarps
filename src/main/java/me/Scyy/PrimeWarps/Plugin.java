@@ -4,6 +4,7 @@ import me.Scyy.PrimeWarps.Commands.PlayerWarpAdminCommand;
 import me.Scyy.PrimeWarps.Commands.WarpRequestCommand;
 import me.Scyy.PrimeWarps.Config.ConfigFileHandler;
 import me.Scyy.PrimeWarps.Commands.PlayerWarpCommand;
+import me.Scyy.PrimeWarps.Event.WorldLoadListener;
 import me.Scyy.PrimeWarps.GUI.GUIListener;
 import me.Scyy.PrimeWarps.Warps.WarpRegister;
 import org.bukkit.Bukkit;
@@ -17,12 +18,17 @@ public class Plugin extends JavaPlugin {
 
     private ConfigFileHandler CFH;
 
+    private WorldLoadListener worldLoadListener;
+
     @Override
     public void onEnable() {
         this.CFH = new ConfigFileHandler(this);
-        this.warpRegister = new WarpRegister(this, CFH.getPlayerWarps().loadWarps(),
-                CFH.getPlayerWarps().loadWarpRequests(),
-                CFH.getPlayerWarps().loadWarpHandlers());
+
+        this.worldLoadListener = new WorldLoadListener(this);
+
+        // Check if the warps can be loaded
+        if (worldLoadListener.allWorldsLoaded()) this.loadWarps();
+        else Bukkit.getPluginManager().registerEvents(worldLoadListener, this);
 
         // Register the GUI listener
         Bukkit.getPluginManager().registerEvents(new GUIListener(this), this);
@@ -71,6 +77,16 @@ public class Plugin extends JavaPlugin {
 
     public WarpRegister getWarpRegister() {
         return warpRegister;
+    }
+
+    public boolean allWorldsLoaded() {
+        return worldLoadListener.allWorldsLoaded();
+    }
+
+    public void loadWarps() {
+        this.warpRegister = new WarpRegister(this, CFH.getPlayerWarps().loadWarps(),
+                CFH.getPlayerWarps().loadWarpRequests(),
+                CFH.getPlayerWarps().loadWarpHandlers());
     }
 
     public void reload(CommandSender sender) {

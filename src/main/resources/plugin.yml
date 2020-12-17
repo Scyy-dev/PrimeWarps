@@ -1,9 +1,11 @@
 name: "PrimeWarps"
 main: me.Scyy.PrimeWarps.Plugin
-version: 1.4.1
-api-version: 1.13
+version: 1.4.2
+api-version: 1.16
 author: "_Scyy"
-load: POSTWORLD
+softdepend:
+  - Skyblock
+  - Multiverse-Core
 commands:
   pwarp:
     description: "Provides the GUI and easy access to teleporting to player-made warps"
