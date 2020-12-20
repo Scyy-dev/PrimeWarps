@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 public class DateUtils {
 
     public static String format(Instant instant) {
-        return instant.atZone(ZoneId.of("AET")).format(DateTimeFormatter.ofPattern("dd/MM/uuuu"));
+        return instant.atZone(ZoneId.of("UTC+10")).format(DateTimeFormatter.ofPattern("dd/MM/uuuu"));
     }
 
 }
