@@ -49,7 +49,7 @@ defaultCategory: "default"
 # You will have to include the default worlds in this list if you want players to create warps in them
 # please note that these names MUST be correct, as there is no check if the world is not valid
 worlds:
-  "Skyblock"
+  - "Skyblock"
 
 
 
