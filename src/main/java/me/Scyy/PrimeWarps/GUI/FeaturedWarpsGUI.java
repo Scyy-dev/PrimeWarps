@@ -174,7 +174,7 @@ public class FeaturedWarpsGUI extends InventoryGUI {
         if (index >= warps.size()) return new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name(" ").build();
         Warp warp = warps.get(index);
         String warpName = warp.isInactive() ? pm.getMsg("inactiveWarpName", "%warp%", warp.getName()) : pm.getMsg("warpName", "%warp%", warp.getName());
-        String visitText = warp.isInactive() ? "" : "&8Left click to visit!";
+        String visitText = warp.isInactive() ? "" : "&aLeft click to visit!";
         String playerName = Bukkit.getOfflinePlayer(warp.getOwner()).getName();
         return new ItemBuilder(Material.PLAYER_HEAD).meta(SkullMetaProvider.getMeta(warp.getOwner()))
                 .name(warpName)
