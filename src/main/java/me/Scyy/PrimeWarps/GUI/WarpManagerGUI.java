@@ -37,8 +37,11 @@ public class WarpManagerGUI extends InventoryGUI {
 
         this.warp = warp;
 
-        inventoryItems[13] = new ItemBuilder(Material.PLAYER_HEAD).meta(SkullMetaProvider.getMeta(warp.getOwner()))
-                .name("&6" + warp.getName()).build();
+        ItemBuilder headBuilder = new ItemBuilder(Material.PLAYER_HEAD).meta(SkullMetaProvider.getMeta(warp.getOwner()))
+                .name("&6" + warp.getName());
+        if (player.hasPermission("pwarp.admin.manage")) headBuilder.lore("&8Unique Visits: &5" + warp.getUniqueVisitors().size());
+
+        inventoryItems[13] = headBuilder.build();
 
         int moveCost = plugin.getCFH().getSettings().getMoveWarpCost();
         inventoryItems[29] = new ItemBuilder(Material.PISTON).name("&6Move Warp")
