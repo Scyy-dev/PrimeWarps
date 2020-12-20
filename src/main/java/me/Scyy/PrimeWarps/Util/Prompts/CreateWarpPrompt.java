@@ -1,8 +1,6 @@
 package me.Scyy.PrimeWarps.Util.Prompts;
 
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
-import me.Scyy.PrimeWarps.GUI.FeaturedWarpsGUI;
-import me.Scyy.PrimeWarps.GUI.InventoryGUI;
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Util.ItemStackUtils;
 import me.Scyy.PrimeWarps.Warps.Warp;

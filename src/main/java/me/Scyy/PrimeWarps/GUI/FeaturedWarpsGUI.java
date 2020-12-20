@@ -2,6 +2,7 @@ package me.Scyy.PrimeWarps.GUI;
 
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
 import me.Scyy.PrimeWarps.Plugin;
+import me.Scyy.PrimeWarps.Util.DateUtils;
 import me.Scyy.PrimeWarps.Util.ItemBuilder;
 import me.Scyy.PrimeWarps.Util.Prompts.CreateWarpPrompt;
 import me.Scyy.PrimeWarps.Util.SkullMetaProvider;
@@ -179,6 +180,7 @@ public class FeaturedWarpsGUI extends InventoryGUI {
                 .name(warpName)
                 .lore("&8Owner: &5" + playerName)
                 .lore("&8Category: &7" + warp.getCategory())
+                .lore("&8Date Created: &7" + DateUtils.format(warp.getDateCreated()))
                 .lore(visitText).build();
     }
 }

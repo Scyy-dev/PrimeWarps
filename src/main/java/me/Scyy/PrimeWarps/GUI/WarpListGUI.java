@@ -2,6 +2,7 @@ package me.Scyy.PrimeWarps.GUI;
 
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
 import me.Scyy.PrimeWarps.Plugin;
+import me.Scyy.PrimeWarps.Util.DateUtils;
 import me.Scyy.PrimeWarps.Util.ItemBuilder;
 import me.Scyy.PrimeWarps.Util.SkullMetaProvider;
 import me.Scyy.PrimeWarps.Util.WarpUtils;
@@ -14,7 +15,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-
 
 import java.util.Arrays;
 import java.util.List;
@@ -84,6 +84,7 @@ public class WarpListGUI extends InventoryGUI {
                             .name(warpName)
                             .lore("&8Owner: &5" + ownerName)
                             .lore("&8Category: &7" + warp.getCategory())
+                            .lore("&8Date Created: &7" + DateUtils.format(warp.getDateCreated()))
                             .lore(visitText)
                             .lore("&8Shift right click to manage this warp")
                             .lore("&8Shift left click to force TP to this warp").build();
@@ -93,6 +94,7 @@ public class WarpListGUI extends InventoryGUI {
                             .name(warpName)
                             .lore("&8Owner: &5" + ownerName)
                             .lore("&8Category: &7" + warp.getCategory())
+                            .lore("&8Date Created: &7" + DateUtils.format(warp.getDateCreated()))
                             .lore(visitText).build();
                 }
 
