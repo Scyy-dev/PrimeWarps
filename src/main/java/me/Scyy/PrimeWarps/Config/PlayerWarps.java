@@ -27,11 +27,13 @@ public class PlayerWarps extends ConfigFile {
             return new LinkedHashMap<>();
         }
 
+        String defaultCategory = plugin.getCFH().getSettings().getDefaultCategory();
+
         for (String warpName : section.getKeys(false)) {
             try {
                 UUID uuid = UUID.fromString(section.getString(warpName + ".owner"));
                 Location location = section.getLocation(warpName + ".location");
-                String category = section.getString(warpName + ".category");
+                String category = section.getString(warpName + ".category", defaultCategory);
                 Instant dateCreated = Instant.ofEpochSecond(section.getLong(warpName + ".dateCreated"));
                 Instant ownerLastSeen = Instant.ofEpochSecond(section.getLong(warpName + ".ownerLastSeen"));
                 boolean inactive = section.getBoolean(warpName + ".inactive");
