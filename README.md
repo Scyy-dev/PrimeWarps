@@ -1,2 +1,2 @@
 # PrimeWarps
-An extension to the EssentialsX warp system, allowing for GUIs to display warps, automated set-up of warps through in-game itemization and an advertising system for warps
+A new way for players to create their own warps, with a GUI for browsing, configuring and managing all warps for both staff and players
