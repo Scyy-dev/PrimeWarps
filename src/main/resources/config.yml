@@ -24,6 +24,23 @@ inactiveWarpName: "&r&c%warp% &8(inactive)"
 # Inactive warps cannot be teleported to unless the user has a permission to teleport to them
 inactiveDays: 30
 
+# Featured Warp Algorithm
+# The 'ranking' of warps is calculated through the factors listed below. Changing the weighting below changes
+# how much of an affect it has on the 'ranking' - the higher the weight, the greater the effect.
+# Weights either positively or negatively affect the ranking. Positive weights increase the ranking, negative decrease
+# If you wish to flip the effect of a weighting, make the weighting negative
+# Weights can also be set to 0 to make their value have no effect
+
+# How many unique players have visited the warp. This value positively affects ranking
+uniqueHitsWeighting: 1
+
+# How long the warp has been around. This value negatively affects ranking
+warpUptimeWeighting: 1
+
+# How long it has been since the owner of the warp has been online. This value negatively affects ranking
+ownerDowntimeWeighting: 1
+
+
 # A list of all categories players can set their warps to. No limit on how many categories you create
 # Each category requires a name and attached to that name a material, which is then displayed to the users
 # Examples
@@ -48,8 +65,11 @@ defaultCategory: "default"
 # Modifying this list will require a server restart and will not work with /pwa reload
 # You will have to include the default worlds in this list if you want players to create warps in them
 # please note that these names MUST be correct, as there is no check if the world is not valid
+# Example
+# worlds:
+#   - "world"
+#   - "world_nether"
 worlds:
-  - "Skyblock"
 
 
 

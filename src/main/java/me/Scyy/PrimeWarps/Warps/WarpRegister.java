@@ -1,6 +1,7 @@
 package me.Scyy.PrimeWarps.Warps;
 
 import me.Scyy.PrimeWarps.Plugin;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 
@@ -147,6 +148,11 @@ public class WarpRegister {
     public void removeWarpHandler(WarpRequestHandler handler) {
         if (!requestHandlers.containsKey(handler.getOwner())) return;
         requestHandlers.get(handler.getOwner()).remove(handler);
+    }
+
+    public void filterHandlers(Player player) {
+        if (requestHandlers.get(player.getUniqueId()) == null) return;
+        requestHandlers.get(player.getUniqueId()).removeIf((handler -> !handler.isRefundWarpShards() && handler.getRequestMessage() == null));
     }
 
     public WarpRequestScheduler getRequestScheduler() {

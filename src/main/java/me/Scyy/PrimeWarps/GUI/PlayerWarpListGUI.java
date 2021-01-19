@@ -1,5 +1,7 @@
 package me.Scyy.PrimeWarps.GUI;
 
+import me.Scyy.PrimeWarps.GUI.Type.GUI;
+import me.Scyy.PrimeWarps.GUI.Type.InventoryGUI;
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Util.ItemBuilder;
 import me.Scyy.PrimeWarps.Util.SkullMetaProvider;
@@ -7,6 +9,7 @@ import me.Scyy.PrimeWarps.Warps.Warp;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +32,14 @@ public class PlayerWarpListGUI extends InventoryGUI {
 
     private int page;
 
-    public PlayerWarpListGUI(InventoryGUI lastGUI, Plugin plugin, UUID owner, Player player, int page) {
-        super(lastGUI, "&8Your Warps", plugin, 54, player);
+    public PlayerWarpListGUI(GUI<?> lastGUI, Plugin plugin, UUID owner, Player player, int page) {
+        super(lastGUI, plugin, player,"&5Your Warps", 54);
 
         this.owner = owner;
         this.page = page;
         this.playerWarps = new ArrayList<>();
+
+        fill();
 
         // Get a list of all the players warps
         for (Warp warp : plugin.getWarpRegister().getWarps().values()) {
@@ -80,7 +85,7 @@ public class PlayerWarpListGUI extends InventoryGUI {
         // Check if the page is not 0 and if so add the previous pagination arrow
         if (page != 0) {
 
-            inventoryItems[38] = new ItemBuilder(Material.ARROW).name("&6Page " + page).build();
+            inventoryItems[38] = new ItemBuilder(Material.ARROW).name("&5Page " + page).build();
 
         }
 
@@ -88,16 +93,15 @@ public class PlayerWarpListGUI extends InventoryGUI {
         int nextPageNum = page + 2;
 
         // Add the next pagination arrow
-        inventoryItems[42] = new ItemBuilder(Material.ARROW).name("&6Page " + nextPageNum).build();
+        inventoryItems[42] = new ItemBuilder(Material.ARROW).name("&5Page " + nextPageNum).build();
 
         // Add the back button
-        inventoryItems[49] = new ItemBuilder(Material.BARRIER).name("&6Back to Featured Warps").build();
+        inventoryItems[49] = new ItemBuilder(Material.BARRIER).name("&5Back to Featured Warps").build();
 
     }
 
     @Override
-    public InventoryGUI handleClick(InventoryClickEvent event) {
-
+    public @NotNull GUI<?> handleInteraction(InventoryClickEvent event) {
         if (event.getView().getTopInventory().getHolder() instanceof PlayerWarpListGUI) {
             this.inventoryItems = event.getView().getTopInventory().getContents();
         }
@@ -163,7 +167,6 @@ public class PlayerWarpListGUI extends InventoryGUI {
         event.setCancelled(true);
 
         return new PlayerWarpListGUI(this, plugin, owner, player, page);
-
     }
 
     @Override

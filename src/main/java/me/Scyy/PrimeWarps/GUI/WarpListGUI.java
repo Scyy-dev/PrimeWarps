@@ -1,6 +1,8 @@
 package me.Scyy.PrimeWarps.GUI;
 
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
+import me.Scyy.PrimeWarps.GUI.Type.GUI;
+import me.Scyy.PrimeWarps.GUI.Type.InventoryGUI;
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Util.DateUtils;
 import me.Scyy.PrimeWarps.Util.ItemBuilder;
@@ -15,6 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,15 +43,18 @@ public class WarpListGUI extends InventoryGUI {
 
     private final WarpSorter warpSorter;
 
-    public WarpListGUI(InventoryGUI lastGUI, Plugin plugin, int page, Player player) {
-        this(lastGUI, plugin, page, player, new DateCreatedSorter());
+    public WarpListGUI(GUI<?> lastGUI, Plugin plugin, int page, Player player) {
+        this(lastGUI, plugin, player, page, new DateCreatedSorter());
     }
 
-    public WarpListGUI(InventoryGUI lastGUI, Plugin plugin, int page, Player player, WarpSorter warpSorter) {
-        super(lastGUI, "&8Warps", plugin, 54, player);
+    public WarpListGUI(GUI<?> lastGUI, Plugin plugin, Player player, int page, WarpSorter warpSorter) {
+        super(lastGUI, plugin, player, "&5Warps", 54);
 
         this.page = page;
+
         this.warpSorter = warpSorter;
+
+        fill();
 
         Map<String, Warp> warps = plugin.getWarpRegister().getWarps();
 
@@ -77,26 +83,20 @@ public class WarpListGUI extends InventoryGUI {
 
                 String visitText = warp.isInactive() ? "" : "&aLeft click to visit!";
 
-                // Check the players permissions for managing warps
+                ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD).meta(SkullMetaProvider.getMeta(warp.getOwner())).name(warpName)
+                        .lore("&8Owner: &7" + ownerName)
+                        .lore("&8Category: &7" + warp.getCategory())
+                        .lore("&8Date Created: &7" + DateUtils.format(warp.getDateCreated()))
+                        .lore("")
+                        .lore(visitText);
+
                 if (player.hasPermission("pwarp.admin.manage")) {
-                    inventoryItems[invIndex] = new ItemBuilder(Material.PLAYER_HEAD)
-                            .meta(SkullMetaProvider.getMeta(warp.getOwner()))
-                            .name(warpName)
-                            .lore("&8Owner: &5" + ownerName)
-                            .lore("&8Category: &7" + warp.getCategory())
-                            .lore("&8Date Created: &7" + DateUtils.format(warp.getDateCreated()))
-                            .lore(visitText)
-                            .lore("&8Shift right click to manage this warp")
-                            .lore("&8Shift left click to force TP to this warp").build();
-                } else {
-                    inventoryItems[invIndex] = new ItemBuilder(Material.PLAYER_HEAD)
-                            .meta(SkullMetaProvider.getMeta(warp.getOwner()))
-                            .name(warpName)
-                            .lore("&8Owner: &5" + ownerName)
-                            .lore("&8Category: &7" + warp.getCategory())
-                            .lore("&8Date Created: &7" + DateUtils.format(warp.getDateCreated()))
-                            .lore(visitText).build();
+                    builder.lore("");
+                    builder.lore("&8Shift right click to manage this warp")
+                            .lore("&8Shift left click to force TP to this warp");
                 }
+
+                inventoryItems[invIndex] = builder.build();
 
             } else {
 
@@ -115,7 +115,7 @@ public class WarpListGUI extends InventoryGUI {
         // Check if the page is not 0 and if so add the previous pagination arrow
         if (page != 0) {
 
-            inventoryItems[47] = new ItemBuilder(Material.ARROW).name("&6Page " + page).build();
+            inventoryItems[47] = new ItemBuilder(Material.ARROW).name("&5Page " + page).build();
 
         }
 
@@ -123,20 +123,19 @@ public class WarpListGUI extends InventoryGUI {
         int nextPageNum = page + 2;
 
         // Add the next pagination arrow
-        inventoryItems[51] = new ItemBuilder(Material.ARROW).name("&6Page " + nextPageNum).build();
+        inventoryItems[51] = new ItemBuilder(Material.ARROW).name("&5Page " + nextPageNum).build();
 
         // Add the Back button
-        inventoryItems[49] = new ItemBuilder(Material.BARRIER).name("&6Back to Featured Warps").build();
+        inventoryItems[49] = new ItemBuilder(Material.BARRIER).name("&5Back to Featured Warps").build();
 
         // Add the sorter button
-        inventoryItems[53] = new ItemBuilder(Material.HOPPER).name("&6Sort Warps")
+        inventoryItems[53] = new ItemBuilder(Material.HOPPER).name("&5Sort Warps")
                 .lore(this.sorterLore()).build();
 
     }
 
     @Override
-    public InventoryGUI handleClick(InventoryClickEvent event) {
-
+    public @NotNull GUI<?> handleInteraction(InventoryClickEvent event) {
         if (event.getView().getTopInventory().getHolder() instanceof WarpListGUI) {
             this.inventoryItems = event.getView().getTopInventory().getContents();
         }
@@ -169,7 +168,7 @@ public class WarpListGUI extends InventoryGUI {
 
                 Bukkit.getScheduler().runTask(plugin, () -> player.teleport(warp.getLocation()));
 
-                return new UninteractableGUI(this, plugin, player);
+                return new UninteractableGUI(this);
 
             } else {
 
@@ -182,10 +181,10 @@ public class WarpListGUI extends InventoryGUI {
                 this.close = true;
 
                 // Warp the player
-                WarpUtils.warp(this, (Player) event.getWhoClicked(), plugin, warp);
+                WarpUtils.warp((Player) event.getWhoClicked(), plugin, warp);
 
                 // To minimise chance of interacting while warping, return the GUI in the state it is in
-                return new UninteractableGUI(this, plugin, player);
+                return new UninteractableGUI(this);
 
             }
 
@@ -201,7 +200,7 @@ public class WarpListGUI extends InventoryGUI {
             --page;
 
             // Return a new inventory back a page
-            return new WarpListGUI(this, plugin, page, player, warpSorter);
+            return new WarpListGUI(this, plugin, player, page, warpSorter);
 
         }
 
@@ -226,7 +225,7 @@ public class WarpListGUI extends InventoryGUI {
             ++page;
 
             // Return a new inventory forward a page
-            return new WarpListGUI(this, plugin, page, player, warpSorter);
+            return new WarpListGUI(this, plugin, player, page, warpSorter);
 
         }
 
@@ -239,7 +238,7 @@ public class WarpListGUI extends InventoryGUI {
 
                 String category = plugin.getCFH().getSettings().getCategories().get(0);
 
-                return new WarpListGUI(this, plugin, 0, player, new CategorySorter(category));
+                return new WarpListGUI(this, plugin, player, 0, new CategorySorter(category));
 
             } else if (warpSorter instanceof CategorySorter) {
 
@@ -253,11 +252,11 @@ public class WarpListGUI extends InventoryGUI {
 
                     String category = categories.get(newIndex);
 
-                    return new WarpListGUI(this, plugin, 0, player, new CategorySorter(category));
+                    return new WarpListGUI(this, plugin, player, 0, new CategorySorter(category));
 
                 } else {
 
-                    return new WarpListGUI(this, plugin, 0, player, new DateCreatedSorter());
+                    return new WarpListGUI(this, plugin, player, 0, new DateCreatedSorter());
 
                 }
 
@@ -268,8 +267,7 @@ public class WarpListGUI extends InventoryGUI {
         event.setCancelled(true);
 
         // User has clicked something that doesn't interact, so return an unchanged GUI
-        return new WarpListGUI(this, plugin, page, player, warpSorter);
-
+        return new WarpListGUI(this, plugin, player, page, warpSorter);
     }
 
     @Override

@@ -1,17 +1,17 @@
 package me.Scyy.PrimeWarps.GUI;
 
+import me.Scyy.PrimeWarps.GUI.Type.GUI;
+import me.Scyy.PrimeWarps.GUI.Type.InventoryGUI;
 import me.Scyy.PrimeWarps.Plugin;
-import me.Scyy.PrimeWarps.Util.Prompts.RenameWarpPrompt;
 import me.Scyy.PrimeWarps.Util.ItemBuilder;
 import me.Scyy.PrimeWarps.Util.ItemStackUtils;
 import me.Scyy.PrimeWarps.Util.SkullMetaProvider;
 import me.Scyy.PrimeWarps.Warps.Warp;
 import org.bukkit.Material;
-import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -32,56 +32,57 @@ public class WarpManagerGUI extends InventoryGUI {
 
     private final Warp warp;
 
-    public WarpManagerGUI(InventoryGUI lastGUI, Plugin plugin, Player player, Warp warp) {
-        super(lastGUI, "&8Warp '" + warp.getName() + "'", plugin, 54, player);
+    public WarpManagerGUI(GUI<?> lastGUI, Plugin plugin, Player player, Warp warp) {
+        super(lastGUI, plugin, player, "&5Warp '" + warp.getName() + "'", 54);
 
         this.warp = warp;
 
+        fill();
+
         ItemBuilder headBuilder = new ItemBuilder(Material.PLAYER_HEAD).meta(SkullMetaProvider.getMeta(warp.getOwner()))
-                .name("&6" + warp.getName());
-        if (player.hasPermission("pwarp.admin.manage")) headBuilder.lore("&8Unique Visits: &5" + warp.getUniqueVisitors().size());
+                .name("&5" + warp.getName());
+        if (player.hasPermission("pwarp.admin.manage")) headBuilder.lore("&8Unique Visits: &6" + warp.getUniqueVisitors().size());
 
         inventoryItems[13] = headBuilder.build();
 
         int moveCost = plugin.getCFH().getSettings().getMoveWarpCost();
-        inventoryItems[29] = new ItemBuilder(Material.PISTON).name("&6Move Warp")
+        inventoryItems[29] = new ItemBuilder(Material.PISTON).name("&5Move Warp")
                 .lore("&8Move the warp to where you are standing!")
-                .lore("&8Cost: &5" + moveCost + " &8shards").build();
+                .lore("&8Cost: &6" + moveCost + " &8shards").build();
 
         int renameCost = plugin.getCFH().getSettings().getRenameWarpCost();
-        inventoryItems[30] = new ItemBuilder(Material.NAME_TAG).name("&6Rename Warp")
+        inventoryItems[30] = new ItemBuilder(Material.NAME_TAG).name("&5Rename Warp")
                 .lore("&8Rename the warp to a new name!")
                 .lore("&8Follow the chat prompt to finish the renaming")
-                .lore("&8Cost: &5" + renameCost + " &8shards").build();
+                .lore("&8Cost: &6" + renameCost + " &8shards").build();
 
-        inventoryItems[31] = new ItemBuilder(Material.HOPPER).name("&6Categorise Warp")
+        inventoryItems[31] = new ItemBuilder(Material.HOPPER).name("&5Categorise Warp")
                 .lore("&8Pick a category for the warp!").build();
 
         if (warp.isInactive()) {
             int reactivateCost = plugin.getCFH().getSettings().getReactivateWarpCost();
-            inventoryItems[32] = new ItemBuilder(Material.GRAY_DYE).name("&6Reactivate Warp")
+            inventoryItems[32] = new ItemBuilder(Material.GRAY_DYE).name("&5Reactivate Warp")
                     .lore("&8Reactivate the warp!")
-                    .lore("&8Cost: &5" + reactivateCost + " &8shards").build();
+                    .lore("&8Cost: &6" + reactivateCost + " &8shards").build();
         } else {
-            inventoryItems[32] = new ItemBuilder(Material.LIME_DYE).name("&6Reactivate Warp")
+            inventoryItems[32] = new ItemBuilder(Material.LIME_DYE).name("&5Reactivate Warp")
                     .lore("&8Your warp is already active!").build();
         }
 
         inventoryItems[33] = new ItemBuilder(Material.TNT).name("&cRemove Warp")
                 .lore("&r&8WARNING!")
-                .lore("&7&8You are &cNOT &8refunded for removing warps!").build();
+                .lore("&r&8You are &cNOT &8refunded for removing warps!").build();
 
         if (player.hasPermission("pwarp.admin.manage")) {
-            inventoryItems[49] = new ItemBuilder(Material.BARRIER).name("&6Back to Warp List").build();
+            inventoryItems[49] = new ItemBuilder(Material.BARRIER).name("&5Back to Warp List").build();
         } else {
-            inventoryItems[49] = new ItemBuilder(Material.BARRIER).name("&6Back to Your Warps").build();
+            inventoryItems[49] = new ItemBuilder(Material.BARRIER).name("&5Back to Your Warps").build();
         }
 
     }
 
     @Override
-    public InventoryGUI handleClick(InventoryClickEvent event) {
-
+    public @NotNull GUI<?> handleInteraction(InventoryClickEvent event) {
         if (event.getView().getTopInventory().getHolder() instanceof WarpManagerGUI) {
             this.inventoryItems = event.getView().getTopInventory().getContents();
         }
@@ -126,6 +127,18 @@ public class WarpManagerGUI extends InventoryGUI {
 
             event.setCancelled(true);
 
+            // Check if the world has a registered sign GUI - error not logged as players can use the GUI outside of valid worlds
+            if (!plugin.getSignManager().isValidWorld(player.getWorld().getName())) {
+                plugin.getCFH().getPlayerMessenger().msg(player, "otherMessages.noSignGUIAvailable");
+                return new WarpManagerGUI(this, plugin, player, warp);
+            }
+
+            // Check if the sign is available
+            if (!plugin.getSignManager().getSign(player.getWorld().getName()).isAvailable()) {
+                plugin.getCFH().getPlayerMessenger().msg(player, "errorMessages.signNotAvailable");
+                return new WarpManagerGUI(this, plugin, player, warp);
+            }
+
             ItemStack warpToken = plugin.getCFH().getMiscDataStorage().getWarpToken();
             int cost = plugin.getCFH().getSettings().getRenameWarpCost();
 
@@ -138,15 +151,7 @@ public class WarpManagerGUI extends InventoryGUI {
                 ItemStackUtils.removeItem(player, warpToken, cost);
             }
 
-            ConversationFactory factory = new ConversationFactory(plugin);
-            Conversation conv = factory.withFirstPrompt(new RenameWarpPrompt(plugin, warp)).withLocalEcho(false)
-                    .buildConversation(player);
-            conv.begin();
-
-            this.close = true;
-
-            // Minimise inventory interactions
-            return new UninteractableGUI(this, plugin, player);
+            return new RenameWarpGUI(this, plugin, player, warp);
 
         }
 
@@ -217,7 +222,6 @@ public class WarpManagerGUI extends InventoryGUI {
         event.setCancelled(true);
 
         return new WarpManagerGUI(this, plugin, player, warp);
-
     }
 
     @Override

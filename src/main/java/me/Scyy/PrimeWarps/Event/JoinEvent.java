@@ -1,5 +1,6 @@
-package me.Scyy.PrimeWarps;
+package me.Scyy.PrimeWarps.Event;
 
+import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Warps.Warp;
 import me.Scyy.PrimeWarps.Warps.WarpRequestHandler;
 import org.bukkit.Bukkit;
@@ -23,6 +24,10 @@ public class JoinEvent implements Listener {
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
 
         Player player = event.getPlayer();
+
+        if (plugin.getWarpRegister() == null) {
+            return;
+        }
 
         Set<WarpRequestHandler> handlers = plugin.getWarpRegister().getRequestHandlerList(player.getUniqueId());
 
@@ -48,13 +53,6 @@ public class JoinEvent implements Listener {
         // Check for any messages and shard refunds
         for (WarpRequestHandler handler : handlers) {
 
-            // Check if the handler has no tasks and if so remove it
-            if (handler.getRequestMessage() == null && !handler.isRefundWarpShards()) {
-
-                plugin.getWarpRegister().removeWarpHandler(handler);
-
-            }
-
             if (handler.isRefundWarpShards()) {
 
                 Bukkit.getScheduler().runTaskLater(plugin, () -> handler.refundWarpShards(player, plugin), 20);
@@ -72,7 +70,8 @@ public class JoinEvent implements Listener {
 
         }
 
-
+        // Clean out used handlers
+        plugin.getWarpRegister().filterHandlers(player);
 
     }
 

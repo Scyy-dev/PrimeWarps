@@ -9,8 +9,25 @@ import java.util.List;
 
 public class Settings extends ConfigFile {
 
+    public static int uniqueHitsWeighting;
+
+    public static int warpUptimeWeighting;
+
+    public static int ownerDowntimeWeighting;
+
     public Settings(Plugin plugin) {
         super(plugin, "config.yml");
+        uniqueHitsWeighting = config.getInt("uniqueHitsWeighting");
+        warpUptimeWeighting = config.getInt("warpUptimeWeighting");
+        ownerDowntimeWeighting = config.getInt("ownerDowntimeWeighting");
+    }
+
+    @Override
+    public void reloadConfig() {
+        super.reloadConfig();
+        uniqueHitsWeighting = config.getInt("uniqueHitsWeighting");
+        warpUptimeWeighting = config.getInt("warpUptimeWeighting");
+        ownerDowntimeWeighting = config.getInt("ownerDowntimeWeighting");
     }
 
     public int getCreateWarpCost() {

@@ -4,9 +4,11 @@ import me.Scyy.PrimeWarps.Commands.PlayerWarpAdminCommand;
 import me.Scyy.PrimeWarps.Commands.WarpRequestCommand;
 import me.Scyy.PrimeWarps.Config.ConfigFileHandler;
 import me.Scyy.PrimeWarps.Commands.PlayerWarpCommand;
+import me.Scyy.PrimeWarps.Event.JoinEvent;
 import me.Scyy.PrimeWarps.Event.WorldLoadListener;
-import me.Scyy.PrimeWarps.GUI.GUIListener;
+import me.Scyy.PrimeWarps.GUI.Type.InventoryGUI;
 import me.Scyy.PrimeWarps.Warps.WarpRegister;
+import me.Scyy.PrimeWarps.GUI.Type.SignGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -20,18 +22,22 @@ public class Plugin extends JavaPlugin {
 
     private WorldLoadListener worldLoadListener;
 
+    private SignManager signManager;
+
     @Override
     public void onEnable() {
         this.CFH = new ConfigFileHandler(this);
-
         this.worldLoadListener = new WorldLoadListener(this);
 
         // Check if the warps can be loaded
         if (worldLoadListener.allWorldsLoaded()) this.loadWarps();
         else Bukkit.getPluginManager().registerEvents(worldLoadListener, this);
 
+        this.signManager = new SignManager(this);
+
         // Register the GUI listener
-        Bukkit.getPluginManager().registerEvents(new GUIListener(this), this);
+        Bukkit.getPluginManager().registerEvents(InventoryGUI.getListener(), this);
+        Bukkit.getPluginManager().registerEvents(SignGUI.getListener(this), this);
 
         // Register all events
         Bukkit.getPluginManager().registerEvents(new JoinEvent(this), this);
@@ -53,8 +59,6 @@ public class Plugin extends JavaPlugin {
             getLogger().warning("Could not find the default category for warps!");
         }
 
-        // Iterate over every warp and mark them as inactive if needed
-        warpRegister.updateWarpInactivity(CFH.getSettings().getInactiveDayMeasure());
     }
 
     @Override
@@ -79,6 +83,10 @@ public class Plugin extends JavaPlugin {
         return warpRegister;
     }
 
+    public SignManager getSignManager() {
+        return signManager;
+    }
+
     public boolean allWorldsLoaded() {
         return worldLoadListener.allWorldsLoaded();
     }
@@ -87,6 +95,10 @@ public class Plugin extends JavaPlugin {
         this.warpRegister = new WarpRegister(this, CFH.getPlayerWarps().loadWarps(),
                 CFH.getPlayerWarps().loadWarpRequests(),
                 CFH.getPlayerWarps().loadWarpHandlers());
+
+        // Iterate over every warp and mark them as inactive if needed
+        warpRegister.updateWarpInactivity(CFH.getSettings().getInactiveDayMeasure());
+        this.getLogger().info("Warp data loaded");
     }
 
     public void reload(CommandSender sender) {
@@ -95,6 +107,7 @@ public class Plugin extends JavaPlugin {
             CFH.getPlayerWarps().saveWarpRequests(warpRegister.getWarpRequests());
             CFH.getPlayerWarps().saveWarpHandlers(warpRegister.getRequestHandlerMap());
             CFH.reloadConfigs();
+            signManager.loadSigns();
             if (CFH.getSettings().getCategoryMaterial("default") == null) {
                 sender.sendMessage("'default' warp category not found!");
             }

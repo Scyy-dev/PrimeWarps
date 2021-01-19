@@ -1,11 +1,13 @@
 package me.Scyy.PrimeWarps.Warps;
 
+import me.Scyy.PrimeWarps.Config.Settings;
 import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 import java.util.*;
 
-public class Warp {
+public class Warp implements Comparable<Warp> {
 
     protected final String name;
 
@@ -52,6 +54,23 @@ public class Warp {
         this.inactive = false;
         this.uniqueVisitors = new HashSet<>();
         this.uniqueVisitors.add(owner);
+    }
+
+    public int getRanking() {
+
+        long millisecondsAlive = Instant.now().toEpochMilli() - dateCreated.toEpochMilli();
+        // 86400000 = 1000 milliseconds * 60 seconds * 60 minutes * 24 hours
+        int daysAlive = (int) (millisecondsAlive / 86400000L);
+
+        long millisecondsSinceOwner = Instant.now().toEpochMilli() - ownerLastSeen.toEpochMilli();
+        int daysSinceOwner = (int) (millisecondsSinceOwner / 86400000L);
+
+        int ranking = uniqueVisitors.size() * Settings.uniqueHitsWeighting;
+        ranking -= daysAlive * Settings.warpUptimeWeighting;
+        ranking -= daysSinceOwner * Settings.ownerDowntimeWeighting;
+
+        return ranking;
+
     }
 
     public String getName() {
@@ -125,4 +144,8 @@ public class Warp {
                 '}';
     }
 
+    @Override
+    public int compareTo(@NotNull Warp warp) {
+        return this.getRanking() - warp.getRanking();
+    }
 }

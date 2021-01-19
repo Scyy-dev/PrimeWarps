@@ -1,12 +1,12 @@
 package me.Scyy.PrimeWarps.Commands;
 
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
-import me.Scyy.PrimeWarps.GUI.WarpRequestGUI;
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Warps.Warp;
-import me.Scyy.PrimeWarps.Warps.WarpRequest;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -58,6 +58,10 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                     pm.msg(sender, "errorMessages.noPermission");
                     return true;
                 }
+                if (!(sender instanceof Player)) {
+                    pm.msg(sender, "errorMessages.mustBePlayer");
+                    return true;
+                }
                 setWarpShardSubcommand(sender, args);
                 return true;
             case "forceinactive":
@@ -66,6 +70,17 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                     return true;
                 }
                 forceInactiveSubcommand(sender, args);
+                return true;
+            case "setsigngui":
+                if (!sender.hasPermission("pwarp.admin.forceinactive")) {
+                    pm.msg(sender, "errorMessages.noPermission");
+                    return true;
+                }
+                if (!(sender instanceof Player)) {
+                    pm.msg(sender, "errorMessages.mustBePlayer");
+                    return true;
+                }
+                setSignGUISubcommand(sender, args);
                 return true;
             case "reload":
                 if (!sender.hasPermission("pwarp.admin.reload")) {
@@ -125,11 +140,6 @@ public class PlayerWarpAdminCommand implements TabExecutor {
 
     private void setWarpShardSubcommand(CommandSender sender, String[] args) {
 
-        if (!(sender instanceof Player)) {
-            pm.msg(sender, "errorMessages.mustBePlayer");
-            return;
-        }
-
         ItemStack mainHand = ((Player) sender).getInventory().getItemInMainHand();
         if (mainHand.getType() == Material.AIR) {
             pm.msg(sender, "errorMessages.cannotUseAir");
@@ -160,6 +170,26 @@ public class PlayerWarpAdminCommand implements TabExecutor {
         pm.msg(sender, "warpMessages.warpInactive", "%warp%", warp.getName());
     }
 
+    private void setSignGUISubcommand(CommandSender sender, String[] args) {
+        Player player = (Player) sender;
+        Block targetBlock = player.getTargetBlock(null,7);
+
+        if (!(targetBlock.getState() instanceof Sign)) {
+            pm.msg(sender, "errorMessages.mustBeSign");
+            return;
+        }
+
+        Sign sign = (Sign) targetBlock.getState();
+        plugin.getSignManager().markAsGUI(sign);
+        plugin.getCFH().getMiscDataStorage().setSignLocation(player.getWorld().getName(), sign.getLocation());
+
+        String signLoc = "[" + sign.getLocation().getWorld().getName() + ": " + sign.getLocation().getBlockX() + ", "
+                + sign.getLocation().getBlockY() + ", " + sign.getLocation().getBlockZ() + "]";
+
+        pm.msg(sender, "otherMessages.setSignGUI", "%loc%", signLoc);
+
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
 
@@ -173,6 +203,7 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                 if (sender.hasPermission("pwarp.admin.forceinactive")) list.add("forceinactive");
                 if (sender.hasPermission("pwarp.admin.reload")) list.add("reload");
                 if (sender.hasPermission("pwarp.admin.setwarpshard")) list.add("setwarpshard");
+                if (sender.hasPermission("pwarp.admin.setsigngui")) list.add("setsigngui");
                 return list;
             case 2:
                 if (args[0].equalsIgnoreCase("remove") && sender.hasPermission("pwarp.admin.remove")) {

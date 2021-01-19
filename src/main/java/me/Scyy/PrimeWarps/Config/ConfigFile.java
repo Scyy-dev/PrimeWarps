@@ -79,4 +79,14 @@ public abstract class ConfigFile {
     public void setConfig(YamlConfiguration config) {
         this.config = config;
     }
+
+    public void saveConfig(String errorMessage) {
+        try {
+            config.save(configFile);
+        } catch (IOException e) {
+            plugin.getLogger().warning(errorMessage);
+            e.printStackTrace();
+        }
+    }
+
 }

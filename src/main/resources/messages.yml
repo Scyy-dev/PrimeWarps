@@ -29,8 +29,14 @@ errorMessages:
   playerNotFound: "&cCould not find that player"
   worldNotFound: "&cThe world could not be found!"
   invalidCommand: "&cThat command wasn't recognised"
-  internalError: "Something went wrong trying to execute that command"
-  illegalWorldForWarp: "A warp cannot be in this world!"
+  internalError: "&cSomething went wrong trying to execute that command"
+  illegalWorldForWarp: "&cA warp cannot be in this world!"
+  mustBeSign: "&cThe block must be a sign!"
+  # Message sent when a player gets blocked from opening a sign GUI due to another player having a sign GUI open
+  signNotAvailable: "&cSorry, but the requested action could not be completed. Please try again in a few minutes"
+  # Message sent when the player tries to open the GUI without a sign GUI being set up for the world
+  # This only happens if the sign system is incorrectly configured, highly recommended to encourage players to report if they get this message
+  signNotFound: "&cSorry, but the sign GUI cannot be used in this world. Please report this bug!"
 
 # Errors in relation to managing and using warps
 # All warp messages take %warp% as a placeholder for the warp name
@@ -41,6 +47,7 @@ warpMessages:
   warpNotFound: "&cCould not find a warp with name: %warp%"
   warpAlreadyExists: "&cThat warp already exists!"
   warpRenamed: "&bWarp rename successful!"
+  invalidWarpName: "&cThat warp name is not valid! Must be at least 1 character and contain numbers or letters, no fancy characters"
 
   # Managing Warp Requests
   warpRequestAdded: "&bWarp request was added!"
@@ -85,6 +92,13 @@ otherMessages:
 
   # Message sent when the user enters "CANCEL" to the warp Creation prompt
   warpRequestPromptCancelled: "&cYou have cancelled creating a warp!"
+
+  # Message sent when a user uses the /pwa setsigngui command successfully - %loc% for the sign location
+  setSignGUI: "&bYou have set the sign GUI to: %loc%"
+
+  # Message sent when the player tries to rename their warp in a world without a sign GUI configured
+  # You don't actually have to be in the same world as the warp, but it just makes it easier to explain to players
+  noSignGUIAvaliable: "&cYou must be in the same world as your warp to rename it!"
 
 helpMessages:
 

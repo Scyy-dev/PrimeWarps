@@ -2,7 +2,6 @@ package me.Scyy.PrimeWarps.Commands;
 
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
 import me.Scyy.PrimeWarps.GUI.FeaturedWarpsGUI;
-import me.Scyy.PrimeWarps.GUI.InventoryGUI;
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Util.WarpUtils;
 import me.Scyy.PrimeWarps.Warps.Warp;
@@ -38,8 +37,8 @@ public class PlayerWarpCommand implements TabExecutor {
 
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                InventoryGUI gui = new FeaturedWarpsGUI(null, plugin, player);
-                player.openInventory(gui.getInventory());
+                FeaturedWarpsGUI gui = new FeaturedWarpsGUI(null, plugin, player);
+                gui.open(player);
             } else {
                 pm.msg(sender, "errorMessages.mustBePlayer");
             }
@@ -73,7 +72,7 @@ public class PlayerWarpCommand implements TabExecutor {
         }
 
         // Warp the player
-        WarpUtils.warp(null, (Player) sender, plugin, warp);
+        WarpUtils.warp((Player) sender, plugin, warp);
         return true;
 
     }

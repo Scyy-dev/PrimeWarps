@@ -1,6 +1,8 @@
 package me.Scyy.PrimeWarps.GUI;
 
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
+import me.Scyy.PrimeWarps.GUI.Type.GUI;
+import me.Scyy.PrimeWarps.GUI.Type.InventoryGUI;
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Util.ItemBuilder;
 import me.Scyy.PrimeWarps.Util.SkullMetaProvider;
@@ -14,6 +16,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -33,10 +36,12 @@ public class WarpRequestGUI extends InventoryGUI {
 
     private final List<WarpRequest> requests;
 
-    public WarpRequestGUI(InventoryGUI lastGUI, Plugin plugin, Player player, int page) {
-        super(lastGUI, "&8Warp Requests", plugin, 54, player);
+    public WarpRequestGUI(GUI<?> lastGUI, Plugin plugin, Player player, int page) {
+        super(lastGUI, plugin, player, "&5Warp Requests", 54);
 
         this.page = page;
+
+        fill();
 
         Map<String, WarpRequest> warpRequests = plugin.getWarpRegister().getWarpRequests();
 
@@ -64,7 +69,7 @@ public class WarpRequestGUI extends InventoryGUI {
                 skullMeta.setDisplayName(plugin.getCFH().getPlayerMessenger().getMsg("warpName", "%warp%", warp.getName()));
                 List<String> interaction = Arrays.asList(
                         ChatColor.translateAlternateColorCodes('&', "&r&8Owner: " + warpOwner),
-                        ChatColor.translateAlternateColorCodes('&', "&r&8Left C to &eTELEPORT &8to warp"),
+                        ChatColor.translateAlternateColorCodes('&', "&r&8Left click to &eTELEPORT &8to warp"),
                         ChatColor.translateAlternateColorCodes('&', "&r&8Shift-Left click to &aAPPROVE &8warp"),
                         ChatColor.translateAlternateColorCodes('&', "&r&8Shift-Right click to &cREJECT &8warp"));
                 skullMeta.setLore(interaction);
@@ -89,7 +94,7 @@ public class WarpRequestGUI extends InventoryGUI {
         // Check if the page is not 0 and if so add the previous pagination arrow
         if (page != 0) {
 
-            inventoryItems[46] = new ItemBuilder(Material.ARROW).name("&6Page " + page).build();
+            inventoryItems[46] = new ItemBuilder(Material.ARROW).name("&5Page " + page).build();
 
         }
 
@@ -97,15 +102,14 @@ public class WarpRequestGUI extends InventoryGUI {
         int nextPageNum = page + 2;
 
         // Add the next pagination arrow
-        inventoryItems[52] = new ItemBuilder(Material.ARROW).name("&6Page " + nextPageNum).build();
+        inventoryItems[52] = new ItemBuilder(Material.ARROW).name("&5Page " + nextPageNum).build();
 
-        inventoryItems[49] = new ItemBuilder(Material.BARRIER).name("&6Back to Featured Warps").build();
+        inventoryItems[49] = new ItemBuilder(Material.BARRIER).name("&5Back to Featured Warps").build();
 
     }
 
     @Override
-    public InventoryGUI handleClick(InventoryClickEvent event) {
-
+    public @NotNull GUI<?> handleInteraction(InventoryClickEvent event) {
         PlayerMessenger pm = plugin.getCFH().getPlayerMessenger();
 
         if (event.getView().getTopInventory().getHolder() instanceof WarpRequestGUI) {
@@ -141,7 +145,7 @@ public class WarpRequestGUI extends InventoryGUI {
                     this.close = true;
                     Bukkit.getScheduler().runTask(plugin, () -> event.getWhoClicked().teleport(warpRequest.getLocation(), PlayerTeleportEvent.TeleportCause.COMMAND));
                     pm.msg(event.getWhoClicked(), "warpMessages.playerWarped", "%warp%", warpRequest.getName());
-                    return new UninteractableGUI(this, plugin, player);
+                    return new UninteractableGUI(this);
                 // Approve the request
                 case SHIFT_LEFT:
                     plugin.getWarpRegister().addWarp(warpRequest.getName(), new Warp(warpRequest));
@@ -201,7 +205,6 @@ public class WarpRequestGUI extends InventoryGUI {
 
         // User has clicked something that doesn't interact, so return an unchanged GUI
         return new WarpRequestGUI(this, plugin, player, page);
-
     }
 
     @Override

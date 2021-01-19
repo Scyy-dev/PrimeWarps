@@ -1,11 +1,14 @@
 package me.Scyy.PrimeWarps.GUI;
 
+import me.Scyy.PrimeWarps.GUI.Type.GUI;
+import me.Scyy.PrimeWarps.GUI.Type.InventoryGUI;
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Util.ItemBuilder;
 import me.Scyy.PrimeWarps.Warps.Warp;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -17,11 +20,14 @@ public class ChooseCategoryGUI extends InventoryGUI {
 
     private final List<String> categories;
 
-    public ChooseCategoryGUI(InventoryGUI lastGUI, Plugin plugin, Player player, Warp warp, int page) {
-        super(lastGUI, "&8Choose Category", plugin, 54, player);
+    public ChooseCategoryGUI(GUI<?> lastGUI, Plugin plugin, Player player, Warp warp, int page) {
+        super(lastGUI, plugin, player,"&5Choose Category",54);
 
         this.warp = warp;
         this.page = page;
+
+        // Default items
+        fill();
 
         // Create the category list
         // Index of the warp list
@@ -45,10 +51,10 @@ public class ChooseCategoryGUI extends InventoryGUI {
                 Material categoryMaterial = plugin.getCFH().getSettings().getCategoryMaterial(category);
 
                 if (warp.getCategory().equals(category)) {
-                    inventoryItems[invIndex] = new ItemBuilder(categoryMaterial).name("&6" + category)
+                    inventoryItems[invIndex] = new ItemBuilder(categoryMaterial).name("&5" + category)
                             .lore("&8Click to select this category!").enchant().build();
                 } else {
-                    inventoryItems[invIndex] = new ItemBuilder(categoryMaterial).name("&6" + category)
+                    inventoryItems[invIndex] = new ItemBuilder(categoryMaterial).name("&5" + category)
                             .lore("&8Click to select this category!").build();
                 }
 
@@ -72,20 +78,19 @@ public class ChooseCategoryGUI extends InventoryGUI {
         // Check if the page is not 0 and if so add the previous pagination arrow
         if (page != 0) {
 
-            inventoryItems[47] = new ItemBuilder(Material.ARROW).name("&6Page " + page).build();
+            inventoryItems[47] = new ItemBuilder(Material.ARROW).name("&5Page " + page).build();
 
         }
 
-        inventoryItems[49] = new ItemBuilder(Material.BARRIER).name("&6Back to '" + warp.getName() + "'").build();
+        inventoryItems[49] = new ItemBuilder(Material.BARRIER).name("&5Back to '" + warp.getName() + "'").build();
 
         int nextPage = page + 2;
-        inventoryItems[51] = new ItemBuilder(Material.ARROW).name("&6Page " + nextPage).build();
+        inventoryItems[51] = new ItemBuilder(Material.ARROW).name("&5Page " + nextPage).build();
 
     }
 
     @Override
-    public InventoryGUI handleClick(InventoryClickEvent event) {
-
+    public @NotNull GUI<?> handleInteraction(InventoryClickEvent event) {
         int clickedSlot = event.getRawSlot();
 
         // slot of the warp in the filtered warp list
@@ -146,13 +151,11 @@ public class ChooseCategoryGUI extends InventoryGUI {
         event.setCancelled(true);
 
         return new ChooseCategoryGUI(this, plugin, player, warp, page);
-
-
-
     }
 
     @Override
     public boolean allowPlayerInventoryEdits() {
         return false;
     }
+
 }
