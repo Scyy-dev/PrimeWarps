@@ -12,7 +12,6 @@
 
 # Maven and IntelliJ
 target/*
-pom.xml
 *.iml
 .idea/*
 
