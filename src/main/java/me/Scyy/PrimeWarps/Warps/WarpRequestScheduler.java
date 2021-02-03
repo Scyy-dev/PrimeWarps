@@ -37,7 +37,6 @@ public class WarpRequestScheduler {
             handler.refundWarpShards(player, plugin);
         }
 
-
     }
 
     public void scheduleOfflinePlayer(WarpRequest request, String type) {

@@ -83,7 +83,7 @@ public class CreateWarpGUI extends SignGUI {
         ItemStackUtils.removeItem(player, warpShard, cost);
 
         // Create the new warp
-        WarpRequest warpRequest = new WarpRequest(warpName, player.getUniqueId(), player.getLocation());
+        WarpRequest warpRequest = new WarpRequest(warpName, player.getName(), player.getUniqueId(), player.getLocation());
 
         // Add the new warp
         plugin.getWarpRegister().addWarpRequest(warpName, warpRequest);

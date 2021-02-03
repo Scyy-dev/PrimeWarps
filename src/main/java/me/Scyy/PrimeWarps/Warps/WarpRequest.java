@@ -9,14 +9,17 @@ public class WarpRequest {
 
     private final String name;
 
+    private final String warpOwner;
+
     private final UUID owner;
 
     private final Location location;
 
     private final Instant dateCreated;
 
-    public WarpRequest(String name, UUID owner, Location location) {
+    public WarpRequest(String name, String warpOwner, UUID owner, Location location) {
         this.owner = owner;
+        this.warpOwner = warpOwner;
         this.name = name;
         this.location = location;
         this.dateCreated = Instant.now();
@@ -24,6 +27,10 @@ public class WarpRequest {
 
     public String getName() {
         return name;
+    }
+
+    public String getWarpOwner() {
+        return warpOwner;
     }
 
     public Location getLocation() {
@@ -40,10 +47,12 @@ public class WarpRequest {
 
     @Override
     public String toString() {
-        return "Warp{" +
+        return "WarpRequest{" +
                 "name='" + name + '\'' +
+                ", warpOwner='" + warpOwner + '\'' +
                 ", owner=" + owner +
                 ", location=" + location +
+                ", dateCreated=" + dateCreated +
                 '}';
     }
 }

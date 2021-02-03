@@ -71,7 +71,7 @@ public class WarpRequestCommand implements TabExecutor {
         }
 
         // Create the Warp Request
-        WarpRequest request = new WarpRequest(formatName, player.getUniqueId(), player.getLocation());
+        WarpRequest request = new WarpRequest(formatName, player.getName(), player.getUniqueId(), player.getLocation());
         boolean requestSuccess = plugin.getWarpRegister().addWarpRequest(formatName, request);
         if (requestSuccess) {
 
