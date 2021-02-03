@@ -78,7 +78,7 @@ public class CreateWarpPrompt extends StringPrompt {
         ItemStackUtils.removeItem(player, warpShard, cost);
 
         // Create the new warp
-        WarpRequest warpRequest = new WarpRequest(formatName, player.getUniqueId(), player.getLocation());
+        WarpRequest warpRequest = new WarpRequest(formatName, player.getName(), player.getUniqueId(), player.getLocation());
 
         // Add the new warp
         plugin.getWarpRegister().addWarpRequest(formatName, warpRequest);

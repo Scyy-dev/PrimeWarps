@@ -6,6 +6,7 @@ import me.Scyy.PrimeWarps.Config.ConfigFileHandler;
 import me.Scyy.PrimeWarps.Commands.PlayerWarpCommand;
 import me.Scyy.PrimeWarps.Event.WorldLoadListener;
 import me.Scyy.PrimeWarps.GUI.GUIListener;
+import me.Scyy.PrimeWarps.Util.SkullMetaProvider;
 import me.Scyy.PrimeWarps.Warps.WarpRegister;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -69,6 +70,10 @@ public class Plugin extends JavaPlugin {
             this.getLogger().severe("Could not save warp data!");
             e.printStackTrace();
         }
+
+        // Clear player head data to prevent data leaks
+        SkullMetaProvider.clearHeadData();
+
     }
 
     public ConfigFileHandler getCFH() {

@@ -176,7 +176,7 @@ public class FeaturedWarpsGUI extends InventoryGUI {
         String warpName = warp.isInactive() ? pm.getMsg("inactiveWarpName", "%warp%", warp.getName()) : pm.getMsg("warpName", "%warp%", warp.getName());
         String visitText = warp.isInactive() ? "" : "&aLeft click to visit!";
         String playerName = Bukkit.getOfflinePlayer(warp.getOwner()).getName();
-        return new ItemBuilder(Material.PLAYER_HEAD).meta(SkullMetaProvider.getMeta(warp.getOwner()))
+        return new ItemBuilder(Material.PLAYER_HEAD).skull(plugin, warp.getOwner())
                 .name(warpName)
                 .lore("&8Owner: &5" + playerName)
                 .lore("&8Category: &7" + warp.getCategory())

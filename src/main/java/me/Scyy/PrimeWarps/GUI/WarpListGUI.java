@@ -80,7 +80,7 @@ public class WarpListGUI extends InventoryGUI {
                 // Check the players permissions for managing warps
                 if (player.hasPermission("pwarp.admin.manage")) {
                     inventoryItems[invIndex] = new ItemBuilder(Material.PLAYER_HEAD)
-                            .meta(SkullMetaProvider.getMeta(warp.getOwner()))
+                            .skull(plugin, warp.getOwner())
                             .name(warpName)
                             .lore("&8Owner: &5" + ownerName)
                             .lore("&8Category: &7" + warp.getCategory())
@@ -90,7 +90,7 @@ public class WarpListGUI extends InventoryGUI {
                             .lore("&8Shift left click to force TP to this warp").build();
                 } else {
                     inventoryItems[invIndex] = new ItemBuilder(Material.PLAYER_HEAD)
-                            .meta(SkullMetaProvider.getMeta(warp.getOwner()))
+                            .skull(plugin, warp.getOwner())
                             .name(warpName)
                             .lore("&8Owner: &5" + ownerName)
                             .lore("&8Category: &7" + warp.getCategory())

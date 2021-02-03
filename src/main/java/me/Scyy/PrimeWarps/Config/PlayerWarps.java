@@ -100,7 +100,8 @@ public class PlayerWarps extends ConfigFile {
             try {
                 UUID uuid = UUID.fromString(section.getString(warpName + ".owner"));
                 Location location = section.getLocation(warpName + ".location");
-                warps.put(warpName, new WarpRequest(warpName, uuid, location));
+                String ownerName = section.getString(warpName + ".ownerName");
+                warps.put(warpName, new WarpRequest(warpName, ownerName, uuid, location));
             } catch (Exception e) {
                 plugin.getLogger().warning("Error loading warp requests! Any pending warp requests have been lost!");
                 e.printStackTrace();
