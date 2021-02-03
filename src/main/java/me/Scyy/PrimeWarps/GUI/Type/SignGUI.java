@@ -1,8 +1,8 @@
 package me.Scyy.PrimeWarps.GUI.Type;
 
 import me.Scyy.PrimeWarps.Plugin;
-import me.Scyy.PrimeWarps.SignManager;
-import me.Scyy.PrimeWarps.WorldSign;
+import me.Scyy.PrimeWarps.GUI.Sign.SignManager;
+import me.Scyy.PrimeWarps.GUI.Sign.WorldSign;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;

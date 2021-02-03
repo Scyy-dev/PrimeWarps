@@ -1,6 +1,7 @@
-package me.Scyy.PrimeWarps;
+package me.Scyy.PrimeWarps.GUI.Sign;
 
 import me.Scyy.PrimeWarps.GUI.Type.SignGUI;
+import me.Scyy.PrimeWarps.Plugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;

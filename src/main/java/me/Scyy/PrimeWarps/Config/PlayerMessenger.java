@@ -141,7 +141,7 @@ public class PlayerMessenger extends ConfigFile {
         String messagePrefix = "";
 
         if (!rawMessage.startsWith("[NO_PREFIX]")) {
-            messagePrefix = prefix + " ";
+            messagePrefix = prefix;
         } else {
             rawMessage = rawMessage.substring(11);
         }

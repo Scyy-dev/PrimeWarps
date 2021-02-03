@@ -1,4 +1,4 @@
-package me.Scyy.PrimeWarps;
+package me.Scyy.PrimeWarps.GUI.Sign;
 
 import me.Scyy.PrimeWarps.GUI.Type.SignGUI;
 import org.bukkit.block.Sign;
