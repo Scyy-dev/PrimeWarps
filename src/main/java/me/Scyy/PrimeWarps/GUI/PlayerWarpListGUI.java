@@ -65,7 +65,7 @@ public class PlayerWarpListGUI extends InventoryGUI {
                 Warp warp = playerWarps.get(i);
 
                 // Add the item
-                inventoryItems[invIndex] = new ItemBuilder(Material.PLAYER_HEAD).meta(SkullMetaProvider.getMeta(player.getUniqueId()))
+                inventoryItems[invIndex] = new ItemBuilder(Material.PLAYER_HEAD).skull(plugin, player.getUniqueId())
                         .name(plugin.getCFH().getPlayerMessenger().getMsg("warpName", "%warp%", warp.getName())).build();
 
             } else {

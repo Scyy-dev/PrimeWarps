@@ -1,5 +1,6 @@
 package me.Scyy.PrimeWarps.Util;
 
+import me.Scyy.PrimeWarps.Plugin;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -10,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public class ItemBuilder {
 
@@ -62,6 +64,11 @@ public class ItemBuilder {
      */
     public ItemBuilder meta(ItemMeta meta) {
         this.itemMeta = meta;
+        return this;
+    }
+
+    public ItemBuilder skull(Plugin plugin, UUID uuid) {
+        SkullMetaProvider.setOwner(plugin, uuid, itemMeta);
         return this;
     }
 

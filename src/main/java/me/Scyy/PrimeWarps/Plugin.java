@@ -36,12 +36,10 @@ public class Plugin extends JavaPlugin {
 
         this.signManager = new SignManager(this);
 
-        // Register the GUI listener
-        Bukkit.getPluginManager().registerEvents(InventoryGUI.getListener(), this);
-        Bukkit.getPluginManager().registerEvents(SignGUI.getListener(this), this);
-
         // Register all events
         Bukkit.getPluginManager().registerEvents(new JoinEvent(this), this);
+        Bukkit.getPluginManager().registerEvents(InventoryGUI.getListener(), this);
+        Bukkit.getPluginManager().registerEvents(SignGUI.getListener(this), this);
 
         // Register all the commands
         PlayerWarpCommand playerWarpCommand = new PlayerWarpCommand(this);

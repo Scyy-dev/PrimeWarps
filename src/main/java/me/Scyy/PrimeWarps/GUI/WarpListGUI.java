@@ -83,7 +83,7 @@ public class WarpListGUI extends InventoryGUI {
 
                 String visitText = warp.isInactive() ? "" : "&aLeft click to visit!";
 
-                ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD).meta(SkullMetaProvider.getMeta(warp.getOwner())).name(warpName)
+                ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD).skull(plugin, warp.getOwner()).name(warpName)
                         .lore("&8Owner: &7" + ownerName)
                         .lore("&8Category: &7" + warp.getCategory())
                         .lore("&8Date Created: &7" + DateUtils.format(warp.getDateCreated()))

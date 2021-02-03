@@ -6,7 +6,6 @@ import me.Scyy.PrimeWarps.GUI.Type.InventoryGUI;
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Util.DateUtils;
 import me.Scyy.PrimeWarps.Util.ItemBuilder;
-import me.Scyy.PrimeWarps.Util.SkullMetaProvider;
 import me.Scyy.PrimeWarps.Util.WarpUtils;
 import me.Scyy.PrimeWarps.Warps.Warp;
 import org.bukkit.Bukkit;
@@ -185,7 +184,7 @@ public class FeaturedWarpsGUI extends InventoryGUI {
         Warp warp = warps.get(index);
         String warpName = pm.getMsg("warpName", "%warp%", warp.getName());
         String playerName = Bukkit.getOfflinePlayer(warp.getOwner()).getName();
-        return new ItemBuilder(Material.PLAYER_HEAD).meta(SkullMetaProvider.getMeta(warp.getOwner()))
+        return new ItemBuilder(Material.PLAYER_HEAD).skull(plugin, warp.getOwner())
                 .name(warpName)
                 .lore("&8Owner: &7" + playerName)
                 .lore("&8Category: &7" + warp.getCategory())

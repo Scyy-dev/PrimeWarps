@@ -62,13 +62,13 @@ public class WarpRequestGUI extends InventoryGUI {
                 // Get the warp
                 WarpRequest warp = requests.get(i);
 
-                String warpOwner = Bukkit.getOfflinePlayer(warp.getOwner()).getName();
+                ItemMeta skullMeta = new ItemStack(Material.PLAYER_HEAD).getItemMeta();
 
                 // Get the skull meta for the warp owner
-                ItemMeta skullMeta = SkullMetaProvider.getMeta(warp.getOwner());
+                SkullMetaProvider.setOwner(plugin, warp.getOwner(), skullMeta);
                 skullMeta.setDisplayName(plugin.getCFH().getPlayerMessenger().getMsg("warpName", "%warp%", warp.getName()));
                 List<String> interaction = Arrays.asList(
-                        ChatColor.translateAlternateColorCodes('&', "&r&8Owner: " + warpOwner),
+                        ChatColor.translateAlternateColorCodes('&', "&r&8Owner: " + warp.getWarpOwner()),
                         ChatColor.translateAlternateColorCodes('&', "&r&8Left click to &eTELEPORT &8to warp"),
                         ChatColor.translateAlternateColorCodes('&', "&r&8Shift-Left click to &aAPPROVE &8warp"),
                         ChatColor.translateAlternateColorCodes('&', "&r&8Shift-Right click to &cREJECT &8warp"));

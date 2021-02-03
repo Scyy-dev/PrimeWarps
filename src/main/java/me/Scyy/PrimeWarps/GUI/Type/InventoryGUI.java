@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,15 +82,6 @@ public abstract class InventoryGUI implements InventoryHolder, GUI<InventoryClic
         player.openInventory(inventory);
     }
 
-    /**
-     * Utility method for saving time when registering listeners for the GUI.<br>
-     * All subclasses of {@link InventoryGUI} will use this listener for triggering their interaction handlers
-     * @return the listener for this GUI and all GUI subclasses for it
-     */
-    public static Listener getListener() {
-        return new InventoryListener();
-    }
-
     @Override
     public @Nullable GUI<?> getLastGUI() {
         return lastGUI;
@@ -108,6 +100,10 @@ public abstract class InventoryGUI implements InventoryHolder, GUI<InventoryClic
     @Override
     public @NotNull Inventory getInventory() {
         return inventory;
+    }
+
+    public static Listener getListener() {
+        return new InventoryListener();
     }
 
     public ItemStack[] getInventoryItems() {

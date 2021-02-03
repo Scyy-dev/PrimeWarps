@@ -39,7 +39,7 @@ public class WarpManagerGUI extends InventoryGUI {
 
         fill();
 
-        ItemBuilder headBuilder = new ItemBuilder(Material.PLAYER_HEAD).meta(SkullMetaProvider.getMeta(warp.getOwner()))
+        ItemBuilder headBuilder = new ItemBuilder(Material.PLAYER_HEAD).skull(plugin, warp.getOwner())
                 .name("&5" + warp.getName());
         if (player.hasPermission("pwarp.admin.manage")) headBuilder.lore("&8Unique Visits: &6" + warp.getUniqueVisitors().size());
 
