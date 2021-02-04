@@ -3,7 +3,7 @@ package me.Scyy.PrimeWarps.GUI;
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Util.ItemBuilder;
-import me.Scyy.PrimeWarps.Util.SkullMetaProvider;
+import me.Scyy.PrimeWarps.Util.SkullProvider;
 import me.Scyy.PrimeWarps.Warps.Warp;
 import me.Scyy.PrimeWarps.Warps.WarpRequest;
 import org.bukkit.Bukkit;
@@ -58,8 +58,7 @@ public class WarpRequestGUI extends InventoryGUI {
                 WarpRequest warp = requests.get(i);
 
                 // Get the skull meta for the warp owner
-                ItemMeta skullMeta = new ItemStack(Material.PLAYER_HEAD).getItemMeta();
-                SkullMetaProvider.setOwner(plugin, warp.getOwner(), skullMeta);
+                ItemMeta skullMeta = SkullProvider.getMeta(plugin, warp.getOwner());
                 skullMeta.setDisplayName(plugin.getCFH().getPlayerMessenger().getMsg("warpName", "%warp%", warp.getName()));
                 List<String> interaction = Arrays.asList(
                         ChatColor.translateAlternateColorCodes('&', "&r&8Owner: " + warp.getOwnerName()),

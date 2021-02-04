@@ -5,7 +5,6 @@ import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Util.DateUtils;
 import me.Scyy.PrimeWarps.Util.ItemBuilder;
 import me.Scyy.PrimeWarps.Util.Prompts.CreateWarpPrompt;
-import me.Scyy.PrimeWarps.Util.SkullMetaProvider;
 import me.Scyy.PrimeWarps.Util.WarpUtils;
 import me.Scyy.PrimeWarps.Warps.Warp;
 import org.bukkit.Bukkit;

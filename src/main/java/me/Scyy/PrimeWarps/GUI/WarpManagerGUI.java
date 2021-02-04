@@ -4,7 +4,6 @@ import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Util.Prompts.RenameWarpPrompt;
 import me.Scyy.PrimeWarps.Util.ItemBuilder;
 import me.Scyy.PrimeWarps.Util.ItemStackUtils;
-import me.Scyy.PrimeWarps.Util.SkullMetaProvider;
 import me.Scyy.PrimeWarps.Warps.Warp;
 import org.bukkit.Material;
 import org.bukkit.conversations.Conversation;

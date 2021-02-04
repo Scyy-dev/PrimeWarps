@@ -10,6 +10,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class InventoryGUI implements InventoryHolder {
 
@@ -105,7 +106,7 @@ public abstract class InventoryGUI implements InventoryHolder {
         return inventoryItems;
     }
 
-    public Inventory getInventory() {
+    public @NotNull Inventory getInventory() {
 
         // Assign the inventory items to the inventory
         inventory.setContents(inventoryItems);
