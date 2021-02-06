@@ -1,5 +1,6 @@
 package me.Scyy.PrimeWarps.Util;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
 import me.Scyy.PrimeWarps.Plugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,21 +15,24 @@ import java.util.UUID;
 
 public class SkullMetaProvider {
 
-    private final static Map<UUID, OfflinePlayer> players = new HashMap<>();
+    private static final Map<UUID, PlayerProfile> profiles = new HashMap<>();
 
-    public static void setOwner(Plugin plugin, UUID uuid, ItemMeta meta) {
-        if (!(meta instanceof SkullMeta)) {
-            throw new IllegalArgumentException("Meta must be SkullMeta");
+    public static ItemMeta getMeta(Plugin plugin, UUID uuid) {
+        SkullMeta meta = (SkullMeta) new ItemStack(Material.PLAYER_HEAD).getItemMeta();
+        if (profiles.containsKey(uuid)) {
+            meta.setPlayerProfile(profiles.get(uuid));
+        } else {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                PlayerProfile profile = Bukkit.createProfile(uuid);
+                profile.complete();
+                profiles.put(uuid, profile);
+            });
         }
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            if (players.containsKey(uuid)) {
-                ((SkullMeta) meta).setOwningPlayer(players.get(uuid));
-                return;
-            }
-            OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-            players.put(uuid, player);
-            ((SkullMeta) meta).setOwningPlayer(player);
-        });
+        return meta;
+    }
+
+    public static void clearHeadData() {
+        profiles.clear();
     }
 
 }
