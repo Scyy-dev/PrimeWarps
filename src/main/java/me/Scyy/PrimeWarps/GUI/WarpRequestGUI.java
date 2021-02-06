@@ -62,10 +62,9 @@ public class WarpRequestGUI extends InventoryGUI {
                 // Get the warp
                 WarpRequest warp = requests.get(i);
 
-                ItemMeta skullMeta = new ItemStack(Material.PLAYER_HEAD).getItemMeta();
+                // Get the skull meta from the provider
+                ItemMeta skullMeta = SkullMetaProvider.getMeta(plugin, warp.getOwner());
 
-                // Get the skull meta for the warp owner
-                SkullMetaProvider.setOwner(plugin, warp.getOwner(), skullMeta);
                 skullMeta.setDisplayName(plugin.getCFH().getPlayerMessenger().getMsg("warpName", "%warp%", warp.getName()));
                 List<String> interaction = Arrays.asList(
                         ChatColor.translateAlternateColorCodes('&', "&r&8Owner: " + warp.getWarpOwner()),
