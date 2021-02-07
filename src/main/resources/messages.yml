@@ -30,6 +30,7 @@ errorMessages:
   worldNotFound: "&cThe world could not be found!"
   invalidCommand: "&cThat command wasn't recognised"
   internalError: "&cSomething went wrong trying to execute that command"
+  notANumber: "&cCould not parse a number provided!"
   illegalWorldForWarp: "&cA warp cannot be in this world!"
   mustBeSign: "&cThe block must be a sign!"
   # Message sent when a player gets blocked from opening a sign GUI due to another player having a sign GUI open
@@ -55,6 +56,7 @@ warpMessages:
   warpRequestNotFound: "&cCould not find a warp request with name: %warp%"
   warpRequestRejected: "&bWarp request rejected!"
   warpRequestApproved: "&bWarp request approved! Warp is now live!"
+  playerHasWarpRequest: "&3%player%&b has a pending warp request"
   # These are messages sent to the player if their warp is approved/rejected
   requestrejected: "&cWarp '%warp%' was rejected"
   requestapproved: "&bWarp '%warp%' was approved! Your warp is now live!"
@@ -74,8 +76,15 @@ warpMessages:
   warpInactive: "&cThis warp is inactive!"
   alertWarpInactive: "&bYour warp %warp% has gone inactive! Players cannot use it and you will need to pay warp shards to bring it back"
 
-# Messages with no available placeholders
+  # Formatting of each warp that shows up in the list for /pwa nearby [radius]
+  # use %dist% for the distance from the player to the warp (direct line, 3D space) in meters
+  warpNearby: "&6%warp% &7(&3%dist%&7)&8"
+
+# Messages that don't match other categories
 otherMessages:
+
+  # the initial message for the list of warps
+  initialNearby: "&bNearby warps are:"
 
   # Sent when the user renames their warp, this is the message that shows up for them in chat
   renameWarpMessage: "&bPlease enter the name of the new warp"

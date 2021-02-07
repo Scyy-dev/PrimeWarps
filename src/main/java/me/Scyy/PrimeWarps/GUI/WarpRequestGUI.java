@@ -4,6 +4,7 @@ import me.Scyy.PrimeWarps.Config.PlayerMessenger;
 import me.Scyy.PrimeWarps.GUI.Type.GUI;
 import me.Scyy.PrimeWarps.GUI.Type.InventoryGUI;
 import me.Scyy.PrimeWarps.Plugin;
+import me.Scyy.PrimeWarps.Util.DateUtils;
 import me.Scyy.PrimeWarps.Util.ItemBuilder;
 import me.Scyy.PrimeWarps.Util.SkullMetaProvider;
 import me.Scyy.PrimeWarps.Warps.Warp;
@@ -61,6 +62,7 @@ public class WarpRequestGUI extends InventoryGUI {
 
                 // Get the warp
                 WarpRequest warp = requests.get(i);
+                String formattedDate = DateUtils.format(warp.getDateCreated(), true);
 
                 // Get the skull meta from the provider
                 ItemMeta skullMeta = SkullMetaProvider.getMeta(plugin, warp.getOwner());
@@ -68,6 +70,7 @@ public class WarpRequestGUI extends InventoryGUI {
                 skullMeta.setDisplayName(plugin.getCFH().getPlayerMessenger().getMsg("warpName", "%warp%", warp.getName()));
                 List<String> interaction = Arrays.asList(
                         ChatColor.translateAlternateColorCodes('&', "&r&8Owner: " + warp.getWarpOwner()),
+                        ChatColor.translateAlternateColorCodes('&', "&r&8Date Created: " + formattedDate),
                         ChatColor.translateAlternateColorCodes('&', "&r&8Left click to &eTELEPORT &8to warp"),
                         ChatColor.translateAlternateColorCodes('&', "&r&8Shift-Left click to &aAPPROVE &8warp"),
                         ChatColor.translateAlternateColorCodes('&', "&r&8Shift-Right click to &cREJECT &8warp"));
