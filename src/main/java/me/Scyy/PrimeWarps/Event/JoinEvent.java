@@ -2,6 +2,7 @@ package me.Scyy.PrimeWarps.Event;
 
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Warps.Warp;
+import me.Scyy.PrimeWarps.Warps.WarpRequest;
 import me.Scyy.PrimeWarps.Warps.WarpRequestHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -36,6 +37,18 @@ public class JoinEvent implements Listener {
 
             if (warp.getOwner().equals(player.getUniqueId())) {
                 warp.setOwnerLastSeen(Instant.now());
+            }
+
+        }
+
+        // Cycle through warp requests and if the player has a warp request notify staff
+        for (WarpRequest request : plugin.getWarpRegister().getWarpRequests().values()) {
+            if (request.getOwner().equals(player.getUniqueId())) {
+                for (Player online : Bukkit.getOnlinePlayers()) {
+                    if (online.hasPermission("pwarp.admin.request")) {
+                        plugin.getCFH().getPlayerMessenger().msg(online, "warpMessages.playerHasWarpRequest", "%player%", player.getName());
+                    }
+                }
             }
 
         }
