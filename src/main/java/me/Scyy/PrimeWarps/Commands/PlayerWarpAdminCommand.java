@@ -4,6 +4,7 @@ import me.Scyy.PrimeWarps.Config.PlayerMessenger;
 import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.Warps.Warp;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -82,6 +83,16 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                 }
                 setSignGUISubcommand(sender, args);
                 return true;
+            case "nearby":
+                if (!sender.hasPermission("pwarp.admin.nearby")) {
+                    pm.msg(sender, "errorMessages.noPermission");
+                    return true;
+                }
+                if (!(sender instanceof Player)) {
+                    pm.msg(sender, "errorMessages.mustBePlayer");
+                    return true;
+                }
+                nearbySubcommand((Player) sender, args);
             case "reload":
                 if (!sender.hasPermission("pwarp.admin.reload")) {
                     pm.msg(sender, "errorMessages.noPermission");
@@ -188,6 +199,37 @@ public class PlayerWarpAdminCommand implements TabExecutor {
 
         pm.msg(sender, "otherMessages.setSignGUI", "%loc%", signLoc);
 
+    }
+
+    private void nearbySubcommand(Player sender, String[] args) {
+        if (args.length < 2) {
+            pm.msg(sender, "errorMessages.invalidCommandLength");
+            return;
+        }
+
+        int radius;
+        try {
+            radius = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            pm.msg(sender, "errorMessages.notANumber");
+            return;
+        }
+
+        Location playerLoc = sender.getLocation();
+
+        pm.msg(sender, "otherMessages.initialNearby");
+        StringBuilder builder = new StringBuilder();
+
+        for (Warp warp : plugin.getWarpRegister().getWarps().values()) {
+            Location location = warp.getLocation();
+            if (!playerLoc.getWorld().getName().equals(location.getWorld().getName())) continue;
+            double distance = playerLoc.distance(location);
+            if (distance < radius) {
+                builder.append(pm.getMsg("warpMessages.warpNearby", "%warp%", warp.getName(), "%dist%", Double.toString(Math.floor(distance))));
+            }
+        }
+
+        sender.sendMessage(builder.toString());
     }
 
     @Override
