@@ -69,11 +69,12 @@ public class WarpRequestGUI extends InventoryGUI {
 
                 skullMeta.setDisplayName(plugin.getCFH().getPlayerMessenger().getMsg("warpName", "%warp%", warp.getName()));
                 List<String> interaction = Arrays.asList(
-                        ChatColor.translateAlternateColorCodes('&', "&r&8Owner: " + warp.getWarpOwner()),
-                        ChatColor.translateAlternateColorCodes('&', "&r&8Date Created: " + formattedDate),
-                        ChatColor.translateAlternateColorCodes('&', "&r&8Left click to &eTELEPORT &8to warp"),
-                        ChatColor.translateAlternateColorCodes('&', "&r&8Shift-Left click to &aAPPROVE &8warp"),
-                        ChatColor.translateAlternateColorCodes('&', "&r&8Shift-Right click to &cREJECT &8warp"));
+                        ChatColor.translateAlternateColorCodes('&', "&r&8Owner: &7" + warp.getWarpOwner()),
+                        ChatColor.translateAlternateColorCodes('&', "&r&8Date Created: &7" + formattedDate),
+                        "",
+                        ChatColor.translateAlternateColorCodes('&', "&r&7Left click&8 to &eTELEPORT &8to warp"),
+                        ChatColor.translateAlternateColorCodes('&', "&r&7Shift-Left&8 click to &aAPPROVE &8warp"),
+                        ChatColor.translateAlternateColorCodes('&', "&r&7Shift-Right&8 click to &cREJECT &8warp"));
                 skullMeta.setLore(interaction);
                 ItemStack warpItem = new ItemStack(Material.PLAYER_HEAD);
                 warpItem.setItemMeta(skullMeta);

@@ -3,9 +3,6 @@
 # -================================-
 # All messages use the '&' symbol for the minecraft default colouring/formatting
 
-# This document supports hex colour coding. If you want to include a hex colour, insert before the text you want coloured
-# e.g. noPermission: "#6e140dYou do not have permission to use that command"
-
 # If you want a message to not have the prefix, tag it at the start of the message '[NO_PREFIX]'
 # Make sure the tag is the VERY start, no format codes or anything
 # e.g. noPermission: "[NO_PREFIX]&cYou do not have permission to use that command"
@@ -80,6 +77,10 @@ warpMessages:
   # use %dist% for the distance from the player to the warp (direct line, 3D space) in meters
   warpNearby: "&6%warp% &7(&3%dist%&7)&8"
 
+  # For /pwa list [player]
+  warpList: "&bWarps for %player% are:"
+
+
 # Messages that don't match other categories
 otherMessages:
 
@@ -88,6 +89,9 @@ otherMessages:
 
   # Sent when the user renames their warp, this is the message that shows up for them in chat
   renameWarpMessage: "&bPlease enter the name of the new warp"
+
+  # Sent when the user forces a new week to start using /pwa forceweek
+  forceNewWeek: "&bYou have forced a new week to start! Oldest week data removed!"
 
   # Sent when the user toggles the 'category' option when sorting warps
   # Highly recommended to include the list of categories in this list to reduce confusion
@@ -108,6 +112,17 @@ otherMessages:
   # Message sent when the player tries to rename their warp in a world without a sign GUI configured
   # You don't actually have to be in the same world as the warp, but it just makes it easier to explain to players
   noSignGUIAvaliable: "&cYou must be in the same world as your warp to rename it!"
+
+# Must be in list message form. Dumps stats for a warp, can be formatted if desired.
+# Available placeholders:
+# %warp% - warp name, %category% - warp category, %owner% - warp owner, %visits% - all time unique visits,
+# %weekly% - last 4 weeks of unique visitors, %ownerUUID% - owner UUID, %weeklyAverage% - weekly average for the visitors
+stats:
+  - "%warp% (%category%)"
+  - "owned by: %owner% (%ownerUUID%)"
+  - "unique visits all-time: %visits%"
+  - "weekly visits: %weekly%"
+  - "average weekly visitors: %weeklyAverage%"
 
 helpMessages:
 

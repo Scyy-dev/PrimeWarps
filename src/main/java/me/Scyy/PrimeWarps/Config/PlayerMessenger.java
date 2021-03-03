@@ -68,9 +68,7 @@ public class PlayerMessenger extends ConfigFile {
             while (hexMatcher.find()) {
                 String rawMatch = message.substring(hexMatcher.start(), hexMatcher.end());
                 String hexCode = message.substring(hexMatcher.start() + 1, hexMatcher.end());
-                System.out.println(hexCode);
                 message = message.replace(rawMatch, ChatColor.of(hexCode).toString());
-                System.out.println(message);
             }
         }
 

@@ -2,6 +2,7 @@ package me.Scyy.PrimeWarps.Commands;
 
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
 import me.Scyy.PrimeWarps.Plugin;
+import me.Scyy.PrimeWarps.Util.DateUtils;
 import me.Scyy.PrimeWarps.Warps.Warp;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,8 +17,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class PlayerWarpAdminCommand implements TabExecutor {
 
@@ -65,12 +68,34 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                 }
                 setWarpShardSubcommand(sender, args);
                 return true;
+            case "stats":
+                if (!sender.hasPermission("pwarp.admin.stats")) {
+                    pm.msg(sender, "errorMessages.noPermission");
+                    return true;
+                }
+                statsSubcommand(sender, args);
+                return true;
+            case "search":
+                if (!sender.hasPermission("pwarp.admin.list")) {
+                    pm.msg(sender, "errorMessages.noPermission");
+                    return true;
+                }
+                searchSubcommand(sender, args);
+                return true;
             case "forceinactive":
                 if (!sender.hasPermission("pwarp.admin.forceinactive")) {
                     pm.msg(sender, "errorMessages.noPermission");
                     return true;
                 }
                 forceInactiveSubcommand(sender, args);
+                return true;
+            case "forceweek":
+                if (!sender.hasPermission("pwarp.admin.forceweek")) {
+                    pm.msg(sender, "errorMessages.noPermission");
+                    return true;
+                }
+                plugin.getWarpRegister().forceNewWeek();
+                pm.msg(sender, "otherMessages.forcedNewWeek");
                 return true;
             case "setsigngui":
                 if (!sender.hasPermission("pwarp.admin.forceinactive")) {
@@ -93,6 +118,7 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                     return true;
                 }
                 nearbySubcommand((Player) sender, args);
+                return true;
             case "reload":
                 if (!sender.hasPermission("pwarp.admin.reload")) {
                     pm.msg(sender, "errorMessages.noPermission");
@@ -147,6 +173,38 @@ public class PlayerWarpAdminCommand implements TabExecutor {
         } else {
             pm.msg(sender, "warpMessages.warpNotFound", "%warp%", args[1]);
         }
+    }
+
+    private void searchSubcommand(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            pm.msg(sender, "errorMessages.invalidCommandLength");
+            return;
+        }
+
+        Player player = Bukkit.getPlayer(args[1]);
+        if (player == null) {
+            pm.msg(sender, "errorMessages.playerNotFound");
+            return;
+        }
+
+        List<Warp> warps = plugin.getWarpRegister().getWarps().values().stream()
+                .filter((warp -> warp.getOwner().equals(player.getUniqueId()))).collect(Collectors.toList());
+
+        pm.msg(sender, "warpMessages.warplist", "%player%", player.getName());
+
+        StringBuilder builder = new StringBuilder();
+
+        for (Warp warp : warps) {
+            if (warp.isInactive()) builder.append(warp.getName()).append(" (inactive), ");
+            else builder.append(warp.getName()).append(", ");
+        }
+
+        if (builder.length() > 0) {
+            builder.delete(builder.length() - 2, builder.length());
+        }
+
+        sender.sendMessage(builder.toString());
+
     }
 
     private void setWarpShardSubcommand(CommandSender sender, String[] args) {
@@ -226,10 +284,46 @@ public class PlayerWarpAdminCommand implements TabExecutor {
             double distance = playerLoc.distance(location);
             if (distance < radius) {
                 builder.append(pm.getMsg("warpMessages.warpNearby", "%warp%", warp.getName(), "%dist%", Double.toString(Math.floor(distance))));
+                builder.append(", ");
             }
         }
 
+        if (builder.length() > 0) {
+            builder.delete(builder.length() - 1, builder.length());
+        }
+
         sender.sendMessage(builder.toString());
+    }
+
+    private void statsSubcommand(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            pm.msg(sender, "errorMessages.invalidCommandLength");
+            return;
+        }
+        // Get the warp
+        Warp warp = plugin.getWarpRegister().getWarp(args[1]);
+        if (warp == null) {
+            pm.msg(sender, "warpMessages.warpNotFound", "%warp%", args[1]);
+            return;
+        }
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            String warpOwner = Bukkit.getOfflinePlayer(warp.getOwner()).getName();
+            StringBuilder weeklyVisits = new StringBuilder();
+            for (int i = 0; i < 4; i++) {
+                weeklyVisits.append("w").append(i).append(": ").append(warp.getWeeklyVisitors(i).size()).append(", ");
+            }
+            weeklyVisits.delete(weeklyVisits.length() - 1, weeklyVisits.length());
+            pm.msgList(sender, "stats",
+                    "%warp%", warp.getName(),
+                    "%category%", warp.getCategory(),
+                    "%owner%", warpOwner,
+                    "%visits%", Integer.toString(warp.getUniqueVisitorCount()),
+                    "%weekly%", weeklyVisits.toString(),
+                    "%weeklyAverage%", Integer.toString(warp.getWeeklyAverage()),
+                    "%ownerUUID%", warp.getOwner().toString());
+        });
+
+
     }
 
     @Override
@@ -243,9 +337,12 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                 if (sender.hasPermission("pwarp.admin.changeowner")) list.add("changeowner");
                 if (sender.hasPermission("pwarp.admin.remove")) list.add("remove");
                 if (sender.hasPermission("pwarp.admin.forceinactive")) list.add("forceinactive");
+                if (sender.hasPermission("pwarp.admin.forceweek")) list.add("forceweek");
                 if (sender.hasPermission("pwarp.admin.reload")) list.add("reload");
                 if (sender.hasPermission("pwarp.admin.setwarpshard")) list.add("setwarpshard");
                 if (sender.hasPermission("pwarp.admin.setsigngui")) list.add("setsigngui");
+                if (sender.hasPermission("pwarp.admin.nearby")) list.add("nearby");
+                if (sender.hasPermission("pwarp.admin.stats")) list.add("stats");
                 return list;
             case 2:
                 if (args[0].equalsIgnoreCase("remove") && sender.hasPermission("pwarp.admin.remove")) {
@@ -257,6 +354,13 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                         list.add(warp.getName());
                     }
                 } else if (args[0].equalsIgnoreCase("forceinactive") && sender.hasPermission("pwarp.admin.forceinactive"))  {
+                    for (Warp warp : plugin.getWarpRegister().getWarps().values()) {
+                        list.add(warp.getName());
+                    }
+                } else if (args[0].equalsIgnoreCase("nearby") && sender.hasPermission("pwarp.admin.nearby")) {
+                    list.addAll(Arrays.asList("10", "50", "100"));
+                }
+                if (args[0].equalsIgnoreCase("stats") && sender.hasPermission("pwarp.admin.stts")) {
                     for (Warp warp : plugin.getWarpRegister().getWarps().values()) {
                         list.add(warp.getName());
                     }
