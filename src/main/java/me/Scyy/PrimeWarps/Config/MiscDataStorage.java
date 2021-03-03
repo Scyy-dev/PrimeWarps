@@ -7,6 +7,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -50,6 +51,15 @@ public class MiscDataStorage extends ConfigFile {
     public void setSignLocation(String worldName, Location location) {
         config.set("signs." + worldName, location);
         this.saveConfig("Could not save sign location to config");
+    }
+
+    public Instant getWeekTimer() {
+        return Instant.ofEpochSecond(this.config.getLong("weeklyTimer"), Instant.now().getEpochSecond());
+    }
+
+    public void setWeekTimer(Instant weekTimer) {
+        this.config.set("weeklyTimer", weekTimer.getEpochSecond());
+        this.saveConfig("Could not save weekly timer to config");
     }
 
 }

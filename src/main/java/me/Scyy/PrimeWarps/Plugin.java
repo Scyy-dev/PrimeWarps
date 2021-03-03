@@ -8,12 +8,16 @@ import me.Scyy.PrimeWarps.Event.JoinEvent;
 import me.Scyy.PrimeWarps.Event.WorldLoadListener;
 import me.Scyy.PrimeWarps.GUI.Sign.SignManager;
 import me.Scyy.PrimeWarps.GUI.Type.InventoryGUI;
+import me.Scyy.PrimeWarps.Util.DateUtils;
 import me.Scyy.PrimeWarps.Warps.WarpRegister;
 import me.Scyy.PrimeWarps.GUI.Type.SignGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 public class Plugin extends JavaPlugin {
 
@@ -58,6 +62,16 @@ public class Plugin extends JavaPlugin {
             getLogger().warning("Could not find the default category for warps!");
         }
 
+        // If it has been more than a week since the last week shift was performed. Assumes plugin is regularly enabled/disabled.
+        Instant weekTimer = CFH.getMiscDataStorage().getWeekTimer();
+        // Weeks are 6.5 days long - this accommodates for irregular server restarts
+        Instant weekLater = weekTimer.plus(7, ChronoUnit.DAYS).minus(12, ChronoUnit.HOURS);
+        if (Instant.now().isAfter(weekLater)) {
+            this.getLogger().info("Detected need to update weekly warp visits. Updating...");
+            warpRegister.forceNewWeek();
+            CFH.getMiscDataStorage().setWeekTimer(Instant.now());
+            this.getLogger().info("Updated.");
+        }
     }
 
     @Override

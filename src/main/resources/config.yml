@@ -34,6 +34,9 @@ inactiveDays: 30
 # How many unique players have visited the warp. This value positively affects ranking
 uniqueHitsWeighting: 1
 
+# An average of how many unique players visit this warp every week. This value positively affects ranking
+weeklyVisitorAverageWeighting: 1
+
 # How long the warp has been around. This value negatively affects ranking
 warpUptimeWeighting: 1
 

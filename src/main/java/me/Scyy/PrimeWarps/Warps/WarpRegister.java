@@ -75,6 +75,12 @@ public class WarpRegister {
         warps.put((newWarp.getName()), newWarp);
     }
 
+    public void forceNewWeek() {
+        for (Warp warp : warps.values()) {
+            warp.newWeek();
+        }
+    }
+
     public Map<String, WarpRequest> getWarpRequests() {
         return warpRequests;
     }
