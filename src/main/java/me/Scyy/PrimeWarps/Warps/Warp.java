@@ -25,6 +25,9 @@ public class Warp implements Comparable<Warp> {
 
     protected final Set<UUID> uniqueVisitors;
 
+    // weeklyVisitors[0] is this week, weeklyVisitors[1] is last week, weeklyVisitors[2] is 2 weeks ago etc etc
+    protected WeeklyVisitors[] weeklyVisitors;
+
     /**
      * For loading a warp from config
      * @param name name of the warp
@@ -33,7 +36,8 @@ public class Warp implements Comparable<Warp> {
      * @param dateCreated when the warp was created
      * @param uniqueVisitors collection of all unique visits to the warp
      */
-    public Warp(String name, UUID owner, Location location, String category, Instant dateCreated, Instant ownerLastSeen, boolean inactive, Set<UUID> uniqueVisitors) {
+    public Warp(String name, UUID owner, Location location, String category, Instant dateCreated, Instant ownerLastSeen, boolean inactive, Set<UUID> uniqueVisitors,
+                WeeklyVisitors[] weeklyVisitors) {
         this.name = name.toLowerCase(Locale.ENGLISH);
         this.owner = owner;
         this.location = location;
@@ -42,6 +46,7 @@ public class Warp implements Comparable<Warp> {
         this.ownerLastSeen = ownerLastSeen;
         this.inactive = inactive;
         this.uniqueVisitors = uniqueVisitors;
+        this.weeklyVisitors = weeklyVisitors;
     }
 
     public Warp(WarpRequest request) {
@@ -54,6 +59,12 @@ public class Warp implements Comparable<Warp> {
         this.inactive = false;
         this.uniqueVisitors = new HashSet<>();
         this.uniqueVisitors.add(owner);
+        this.weeklyVisitors = new WeeklyVisitors[4];
+    }
+
+    public void addVisitor(UUID visitor) {
+        this.uniqueVisitors.add(visitor);
+        this.weeklyVisitors[0].addVisitor(visitor);
     }
 
     public int getRanking() {
@@ -65,7 +76,11 @@ public class Warp implements Comparable<Warp> {
         long millisecondsSinceOwner = Instant.now().toEpochMilli() - ownerLastSeen.toEpochMilli();
         int daysSinceOwner = (int) (millisecondsSinceOwner / 86400000L);
 
-        int ranking = uniqueVisitors.size() * Settings.uniqueHitsWeighting;
+        int ranking = 0;
+
+        // Calculate the ranking
+        ranking += uniqueVisitors.size() * Settings.uniqueHitsWeighting;
+        ranking += getWeeklyAverage() * Settings.weeklyVisitorAverageWeighting;
         ranking -= daysAlive * Settings.warpUptimeWeighting;
         ranking -= daysSinceOwner * Settings.ownerDowntimeWeighting;
 
@@ -135,6 +150,34 @@ public class Warp implements Comparable<Warp> {
         return uniqueVisitors.size();
     }
 
+    public Set<UUID> getWeeklyVisitors(int weeksAgo) {
+        if (weeksAgo > 4 || weeksAgo < 0) throw  new IllegalArgumentException("weeksAgo must be 0-4");
+        return weeklyVisitors[weeksAgo].getVisitors();
+    }
+
+    public WeeklyVisitors[] getWeeklyVisitors() {
+        return weeklyVisitors;
+    }
+
+    /**
+     * Shuffles all the weeks in {@link Warp#weeklyVisitors} down one in the array, removing the oldest week and adding a new week
+     */
+    public void newWeek() {
+        WeeklyVisitors[] shifted = new WeeklyVisitors[4];
+        System.arraycopy(weeklyVisitors, 0, shifted, 1, 3);
+        shifted[0] = new WeeklyVisitors();
+        this.weeklyVisitors = shifted;
+    }
+
+    public int getWeeklyAverage() {
+        int average = 0;
+        for (int i = 0; i < 4; i++) {
+            average += weeklyVisitors[i].visitorCount();
+        }
+        // Integer division - remainder automatically ignored
+        return average / 4;
+    }
+
     @Override
     public String toString() {
         return "Warp{" +
@@ -148,4 +191,45 @@ public class Warp implements Comparable<Warp> {
     public int compareTo(@NotNull Warp warp) {
         return this.getRanking() - warp.getRanking();
     }
+
+    public static WeeklyVisitors weeklyVisitors(Set<UUID> uniqueVisitors) {
+        return new WeeklyVisitors(uniqueVisitors);
+    }
+
+    public static class WeeklyVisitors {
+
+        private final Set<UUID> visitors;
+
+        public WeeklyVisitors() {
+            this(new LinkedHashSet<>());
+        }
+
+        public WeeklyVisitors(Set<UUID> visitors) {
+            if (visitors == null) {
+                this.visitors = new LinkedHashSet<>();
+            } else {
+                this.visitors = visitors;
+            }
+        }
+
+        public Set<UUID> getVisitors() {
+            return visitors;
+        }
+
+        public void addVisitor(UUID uuid) {
+            this.visitors.add(uuid);
+        }
+
+        public int visitorCount() {
+            return visitors.size();
+        }
+
+        @Override
+        public String toString() {
+            return "WeeklyVisitors{" +
+                    "visitors=" + visitors +
+                    '}';
+        }
+    }
+
 }
