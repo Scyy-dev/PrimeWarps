@@ -50,8 +50,6 @@ public class WarpUtils {
             // Check if the player is on a full block
             boolean isOnFullBlock = location.getY() % 1 == 0;
 
-            System.out.println("full block: " + isOnFullBlock);
-
             // Block the player stands on
             Block b1 = isOnFullBlock ? world.getBlockAt(location.getBlockX(), (int) Math.floor(location.getBlockY() - 1), location.getBlockZ())
                     : world.getBlockAt(location.getBlockX(), (int) Math.floor(location.getBlockY()), location.getBlockZ());
@@ -63,10 +61,6 @@ public class WarpUtils {
             // Block the player is in (head)
             Block b3 = isOnFullBlock ? world.getBlockAt(location.getBlockX(), (int) Math.floor(location.getBlockY() + 1), location.getBlockZ())
                     : world.getBlockAt(location.getBlockX(), (int) Math.floor(location.getBlockY() + 2), location.getBlockZ());
-
-            System.out.println(b1.getType() + " Loc: " + b1.getLocation());
-            System.out.println(b2.getType() + " Loc: " + b2.getLocation());
-            System.out.println(b3.getType() + " Loc: " + b3.getLocation());
 
             // Verify the space the player takes up is safe
             if (!b2.isPassable() || !b3.isPassable()) {
@@ -82,7 +76,7 @@ public class WarpUtils {
 
             player.teleport(location, PlayerTeleportEvent.TeleportCause.COMMAND);
             pm.msg(player, "warpMessages.playerWarped", "%warp%", warp.getName());
-            warp.getUniqueVisitors().add(player.getUniqueId());
+            warp.addVisitor(player.getUniqueId());
         }, delay);
 
     }

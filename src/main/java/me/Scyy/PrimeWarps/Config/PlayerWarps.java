@@ -41,7 +41,15 @@ public class PlayerWarps extends ConfigFile {
                 for (String visitor : section.getStringList(warpName + ".uniqueVisitors")) {
                     uniqueVisitors.add(UUID.fromString(visitor));
                 }
-                warps.put(warpName, new Warp(warpName, uuid, location, category, dateCreated,ownerLastSeen, inactive, uniqueVisitors));
+                Warp.WeeklyVisitors[] weeklyVisitors = new Warp.WeeklyVisitors[4];
+                for (int i = 0; i < 4; i++) {
+                    Set<UUID> uuidSet = new HashSet<>();
+                    for (String visitor : section.getStringList(warpName + ".weeklyVisitors" + i)) {
+                        uuidSet.add(UUID.fromString(visitor));
+                    }
+                    weeklyVisitors[i] = Warp.weeklyVisitors(uuidSet);
+                }
+                warps.put(warpName, new Warp(warpName, uuid, location, category, dateCreated,ownerLastSeen, inactive, uniqueVisitors, weeklyVisitors));
             } catch (Exception e) {
                 plugin.getLogger().severe("Error loading warps!");
                 e.printStackTrace();
@@ -68,11 +76,18 @@ public class PlayerWarps extends ConfigFile {
             config.set("warps." + warpName + ".dateCreated", warp.getDateCreated().getEpochSecond());
             config.set("warps." + warpName + ".ownerLastSeen", warp.getOwnerLastSeen().getEpochSecond());
             config.set("warps." + warpName + ".inactive", warp.isInactive());
-            List<String> stringUUIDs = new LinkedList<>();
+            List<String> allTimeStringUUIDs = new LinkedList<>();
             for (UUID uuid : warp.getUniqueVisitors()) {
-                stringUUIDs.add(uuid.toString());
+                allTimeStringUUIDs.add(uuid.toString());
             }
-            config.set("warps." + warpName + ".uniqueVisitors", stringUUIDs);
+            config.set("warps." + warpName + ".uniqueVisitors", allTimeStringUUIDs);
+            for (int i = 0; i < 4; i++) {
+                List<String> weeklyStringUUIDs = new LinkedList<>();
+                for (UUID uuid : warp.getWeeklyVisitors(i)) {
+                    weeklyStringUUIDs.add(uuid.toString());
+                }
+                config.set("warps." + warpName + ".weeklyVisitors" + i, weeklyStringUUIDs);
+            }
 
         }
 

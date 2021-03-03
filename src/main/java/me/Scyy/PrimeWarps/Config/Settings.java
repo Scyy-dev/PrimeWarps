@@ -15,11 +15,14 @@ public class Settings extends ConfigFile {
 
     public static int ownerDowntimeWeighting;
 
+    public static int weeklyVisitorAverageWeighting;
+
     public Settings(Plugin plugin) {
         super(plugin, "config.yml");
         uniqueHitsWeighting = config.getInt("uniqueHitsWeighting");
         warpUptimeWeighting = config.getInt("warpUptimeWeighting");
         ownerDowntimeWeighting = config.getInt("ownerDowntimeWeighting");
+        weeklyVisitorAverageWeighting = config.getInt("weeklyVisitorAverageWeighting");
     }
 
     @Override
@@ -28,6 +31,7 @@ public class Settings extends ConfigFile {
         uniqueHitsWeighting = config.getInt("uniqueHitsWeighting");
         warpUptimeWeighting = config.getInt("warpUptimeWeighting");
         ownerDowntimeWeighting = config.getInt("ownerDowntimeWeighting");
+        weeklyVisitorAverageWeighting = config.getInt("weeklyVisitorAverageWeighting");
     }
 
     public int getCreateWarpCost() {
