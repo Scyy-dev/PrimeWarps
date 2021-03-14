@@ -90,6 +90,8 @@ public class WarpManagerGUI extends InventoryGUI {
         // Move Warp button
         if (rawSlot == 29 && inventoryItems[29].getType() == Material.PISTON) {
 
+            event.setCancelled(true);
+
             ItemStack warpToken = plugin.getCFH().getMiscDataStorage().getWarpToken();
             int cost = plugin.getCFH().getSettings().getMoveWarpCost();
 
@@ -117,6 +119,8 @@ public class WarpManagerGUI extends InventoryGUI {
 
             // Let the player know the warp was moved
             plugin.getCFH().getPlayerMessenger().msg(player, "warpMessages.warpMoved", "%warp%", newWarp.getName());
+
+            return new WarpManagerGUI(this, plugin, player, warp);
 
         }
 
