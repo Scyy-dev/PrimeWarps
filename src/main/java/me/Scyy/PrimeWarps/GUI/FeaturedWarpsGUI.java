@@ -54,8 +54,7 @@ public class FeaturedWarpsGUI extends InventoryGUI {
 
         // Create Warp button
         inventoryItems[33] = new ItemBuilder(Material.ENDER_PEARL).name("&5Create Warp")
-                .lore("&8Drop a named item here to create")
-                .lore("&8a warp with the name of the item!").build();
+                .lore("&8Click here to create a warp!").build();
 
         // Add the Requests button if the user has the permission for it
         if (player.hasPermission("pwarp.admin.requests")) {
