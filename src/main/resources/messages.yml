@@ -118,11 +118,11 @@ otherMessages:
 # %warp% - warp name, %category% - warp category, %owner% - warp owner, %visits% - all time unique visits,
 # %weekly% - last 4 weeks of unique visitors, %ownerUUID% - owner UUID, %weeklyAverage% - weekly average for the visitors
 stats:
-  - "%warp% (%category%)"
-  - "owned by: %owner% (%ownerUUID%)"
-  - "unique visits all-time: %visits%"
-  - "weekly visits: %weekly%"
-  - "average weekly visitors: %weeklyAverage%"
+  - "&6 == [ &b%warp% &8(&7&%category%&8) &6 ] == "
+  - "&3owned by: &6%owner% &8(&7%ownerUUID%&8)"
+  - "&3unique visits all-time: &6%visits%"
+  - "&3weekly visits: &6%weekly%"
+  - "&3average weekly visitors: &6%weeklyAverage%"
 
 helpMessages:
 
@@ -137,12 +137,3 @@ helpMessages:
   # Message is sent when the user clicks the help button
   # Intended for a wiki page / guide on how to use
   helpClickMessage: "[NO_PREFIX]&bView the wiki here: https://www.fruitservers.net/wiki/m/34051434/page/Landing_Page"
-
-
-
-
-
-
-
-
-
