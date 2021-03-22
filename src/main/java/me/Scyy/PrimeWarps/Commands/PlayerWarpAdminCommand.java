@@ -7,6 +7,7 @@ import me.Scyy.PrimeWarps.Warps.Warp;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
@@ -158,6 +159,13 @@ public class PlayerWarpAdminCommand implements TabExecutor {
         // Set the new owner, and update the last seen time for the warp
         warp.setOwner(player.getUniqueId());
         warp.setOwnerLastSeen(Instant.now());
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            // Deprecation reason can be ignored, not saving data using this method
+            String newOwner = Bukkit.getOfflinePlayer(args[2]).getName();
+            pm.msg(sender, "warpMessages.changedOwner", "%warp%", warp.getName(),
+                    "%owner%", newOwner);
+        });
+
     }
 
     private void removeWarpSubcommand(CommandSender sender, String[] args) {
@@ -181,29 +189,31 @@ public class PlayerWarpAdminCommand implements TabExecutor {
             return;
         }
 
-        Player player = Bukkit.getPlayer(args[1]);
-        if (player == null) {
-            pm.msg(sender, "errorMessages.playerNotFound");
-            return;
-        }
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
+            if (!player.hasPlayedBefore()) {
+                pm.msg(sender, "errorMessages.playerNotFound");
+                return;
+            }
 
-        List<Warp> warps = plugin.getWarpRegister().getWarps().values().stream()
-                .filter((warp -> warp.getOwner().equals(player.getUniqueId()))).collect(Collectors.toList());
+            List<Warp> warps = plugin.getWarpRegister().getWarps().values().stream()
+                    .filter((warp -> warp.getOwner().equals(player.getUniqueId()))).collect(Collectors.toList());
 
-        pm.msg(sender, "warpMessages.warplist", "%player%", player.getName());
+            pm.msg(sender, "warpMessages.warplist", "%player%", player.getName());
 
-        StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
 
-        for (Warp warp : warps) {
-            if (warp.isInactive()) builder.append(warp.getName()).append(" (inactive), ");
-            else builder.append(warp.getName()).append(", ");
-        }
+            for (Warp warp : warps) {
+                if (warp.isInactive()) builder.append(warp.getName()).append(" (inactive), ");
+                else builder.append(warp.getName()).append(", ");
+            }
 
-        if (builder.length() > 0) {
-            builder.delete(builder.length() - 2, builder.length());
-        }
+            if (builder.length() > 0) {
+                builder.delete(builder.length() - 2, builder.length());
+            }
 
-        sender.sendMessage(builder.toString());
+            sender.sendMessage(builder.toString());
+        });
 
     }
 
@@ -320,7 +330,9 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                     "%visits%", Integer.toString(warp.getUniqueVisitorCount()),
                     "%weekly%", weeklyVisits.toString(),
                     "%weeklyAverage%", Integer.toString(warp.getWeeklyAverage()),
-                    "%ownerUUID%", warp.getOwner().toString());
+                    "%ownerUUID%", warp.getOwner().toString(),
+                    // TODO - show uptime in days
+                    "%warpUptime%", Integer.toString(warp.getDaysSinceCreation()));
         });
 
 
@@ -343,6 +355,7 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                 if (sender.hasPermission("pwarp.admin.setsigngui")) list.add("setsigngui");
                 if (sender.hasPermission("pwarp.admin.nearby")) list.add("nearby");
                 if (sender.hasPermission("pwarp.admin.stats")) list.add("stats");
+                if (sender.hasPermission("pwarp.admin.search")) list.add("search");
                 return list;
             case 2:
                 if (args[0].equalsIgnoreCase("remove") && sender.hasPermission("pwarp.admin.remove")) {
@@ -359,10 +372,13 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("nearby") && sender.hasPermission("pwarp.admin.nearby")) {
                     list.addAll(Arrays.asList("10", "50", "100"));
-                }
-                if (args[0].equalsIgnoreCase("stats") && sender.hasPermission("pwarp.admin.stts")) {
+                } else if (args[0].equalsIgnoreCase("stats") && sender.hasPermission("pwarp.admin.stats")) {
                     for (Warp warp : plugin.getWarpRegister().getWarps().values()) {
                         list.add(warp.getName());
+                    }
+                } else if (args[0].equalsIgnoreCase("search") && sender.hasPermission("pwarp.admin.search")) {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        list.add(player.getName());
                     }
                 }
                 return list;

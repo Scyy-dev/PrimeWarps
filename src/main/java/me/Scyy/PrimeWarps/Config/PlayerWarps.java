@@ -32,6 +32,7 @@ public class PlayerWarps extends ConfigFile {
         for (String warpName : section.getKeys(false)) {
             try {
                 UUID uuid = UUID.fromString(section.getString(warpName + ".owner"));
+                String ownerName = section.getString(warpName + ".ownerName");
                 Location location = section.getLocation(warpName + ".location");
                 String category = section.getString(warpName + ".category", defaultCategory);
                 Instant dateCreated = Instant.ofEpochSecond(section.getLong(warpName + ".dateCreated"));
@@ -49,7 +50,7 @@ public class PlayerWarps extends ConfigFile {
                     }
                     weeklyVisitors[i] = Warp.weeklyVisitors(uuidSet);
                 }
-                warps.put(warpName, new Warp(warpName, uuid, location, category, dateCreated,ownerLastSeen, inactive, uniqueVisitors, weeklyVisitors));
+                warps.put(warpName, new Warp(warpName, uuid, ownerName, location, category, dateCreated,ownerLastSeen, inactive, uniqueVisitors, weeklyVisitors));
             } catch (Exception e) {
                 plugin.getLogger().severe("Error loading warps!");
                 e.printStackTrace();
@@ -71,6 +72,7 @@ public class PlayerWarps extends ConfigFile {
 
             Warp warp = warps.get(warpName);
             config.set("warps." + warpName + ".owner", warp.getOwner().toString());
+            config.set("warps." + warpName + ".ownerName", warp.getOwnerName());
             config.set("warps." + warpName + ".location", warp.getLocation());
             config.set("warps." + warpName + ".category", warp.getCategory());
             config.set("warps." + warpName + ".dateCreated", warp.getDateCreated().getEpochSecond());

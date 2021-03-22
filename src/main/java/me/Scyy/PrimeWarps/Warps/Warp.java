@@ -13,6 +13,8 @@ public class Warp implements Comparable<Warp> {
 
     protected UUID owner;
 
+    protected String ownerName;
+
     protected final Location location;
 
     protected String category;
@@ -36,10 +38,11 @@ public class Warp implements Comparable<Warp> {
      * @param dateCreated when the warp was created
      * @param uniqueVisitors collection of all unique visits to the warp
      */
-    public Warp(String name, UUID owner, Location location, String category, Instant dateCreated, Instant ownerLastSeen, boolean inactive, Set<UUID> uniqueVisitors,
+    public Warp(String name, UUID owner, String ownerName, Location location, String category, Instant dateCreated, Instant ownerLastSeen, boolean inactive, Set<UUID> uniqueVisitors,
                 WeeklyVisitors[] weeklyVisitors) {
         this.name = name.toLowerCase(Locale.ENGLISH);
         this.owner = owner;
+        this.ownerName = ownerName;
         this.location = location;
         this.category = category;
         this.dateCreated = dateCreated;
@@ -52,6 +55,7 @@ public class Warp implements Comparable<Warp> {
     public Warp(WarpRequest request) {
         this.name = request.getName();
         this.owner = request.getOwner();
+        this.ownerName = request.getWarpOwner();
         this.location = request.getLocation();
         this.category = "default";
         this.dateCreated = request.getDateCreated();
@@ -60,6 +64,9 @@ public class Warp implements Comparable<Warp> {
         this.uniqueVisitors = new HashSet<>();
         this.uniqueVisitors.add(owner);
         this.weeklyVisitors = new WeeklyVisitors[4];
+        for (int i = 0; i < 4; i++) {
+            this.weeklyVisitors[i] = new WeeklyVisitors();
+        }
     }
 
     public void addVisitor(UUID visitor) {
@@ -98,6 +105,14 @@ public class Warp implements Comparable<Warp> {
 
     public void setOwner(UUID owner) {
         this.owner = owner;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
     public Location getLocation() {
@@ -140,6 +155,11 @@ public class Warp implements Comparable<Warp> {
         // Subtract daysAgo days away from this second
         Instant inactiveMarker = Instant.now().minusSeconds(daysAgo * 86400L);
         return inactiveMarker.isAfter(ownerLastSeen);
+    }
+
+    public int getDaysSinceCreation() {
+        long millisecondsAlive = Instant.now().toEpochMilli() - dateCreated.toEpochMilli();
+        return (int) (millisecondsAlive / 86400000L);
     }
 
     public Set<UUID> getUniqueVisitors() {

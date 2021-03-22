@@ -48,10 +48,8 @@ public class SignManager {
 
             WorldSign sign = new WorldSign(worldName);
 
-            // Verify the chunk is loaded
-            if (!signLocation.getWorld().isChunkForceLoaded(signLocation.getBlockX(), signLocation.getBlockZ())) {
-                signLocation.getChunk().setForceLoaded(true);
-            }
+            // Force load the chunk
+            signLocation.getChunk().setForceLoaded(true);
 
             // Get the block at the location
             Block block = signLocation.getBlock();
@@ -76,6 +74,7 @@ public class SignManager {
 
     public void markAsGUI(Sign block) {
         block.getPersistentDataContainer().set(signDataKey, PersistentDataType.BYTE, (byte)1);
+        block.getBlock().getChunk().setForceLoaded(true);
         block.update();
     }
 

@@ -75,7 +75,11 @@ warpMessages:
 
   # Formatting of each warp that shows up in the list for /pwa nearby [radius]
   # use %dist% for the distance from the player to the warp (direct line, 3D space) in meters
-  warpNearby: "&6%warp% &7(&3%dist%&7)&8"
+  warpNearby: "[NO_PREFIX]&6%warp% &7(&3%dist%&7)&8"
+
+  # For /pwa changeowner [warp] [player]
+  # %owner% for the new owner
+  newOwner: "&bThe warp &6%warp% &bis now owned by &6%owner%"
 
   # For /pwa list [player]
   warpList: "&bWarps for %player% are:"
@@ -117,12 +121,14 @@ otherMessages:
 # Available placeholders:
 # %warp% - warp name, %category% - warp category, %owner% - warp owner, %visits% - all time unique visits,
 # %weekly% - last 4 weeks of unique visitors, %ownerUUID% - owner UUID, %weeklyAverage% - weekly average for the visitors
+# %warpUptime% - days since warp was created
 stats:
-  - "&6 == [ &b%warp% &8(&7&%category%&8) &6 ] == "
+  - "&6 == [ &b%warp% &8(&7%category%&8) &6 ] == "
   - "&3owned by: &6%owner% &8(&7%ownerUUID%&8)"
   - "&3unique visits all-time: &6%visits%"
   - "&3weekly visits: &6%weekly%"
   - "&3average weekly visitors: &6%weeklyAverage%"
+  - "&4Days since warp created: &6%warpUptime%"
 
 helpMessages:
 

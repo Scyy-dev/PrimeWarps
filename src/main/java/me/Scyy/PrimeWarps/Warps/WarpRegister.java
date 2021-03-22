@@ -47,6 +47,7 @@ public class WarpRegister {
         if (warps.containsKey(formatName)) return false;
         else {
             warps.put(formatName, warp);
+
             return true;
         }
     }

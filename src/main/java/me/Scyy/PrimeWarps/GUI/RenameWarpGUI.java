@@ -79,7 +79,7 @@ public class RenameWarpGUI extends SignGUI {
         ItemStackUtils.removeItem(player, warpShard, cost);
 
         // Create the new warp
-        Warp newWarp = new Warp(warpName, warp.getOwner(), warp.getLocation(), warp.getCategory(), warp.getDateCreated(), Instant.now(), warp.isInactive(), warp.getUniqueVisitors(), warp.getWeeklyVisitors());
+        Warp newWarp = new Warp(warpName, warp.getOwner(), warp.getOwnerName(), warp.getLocation(), warp.getCategory(), warp.getDateCreated(), Instant.now(), warp.isInactive(), warp.getUniqueVisitors(), warp.getWeeklyVisitors());
 
         // Update the warp
         plugin.getWarpRegister().updateWarp(warp, newWarp);

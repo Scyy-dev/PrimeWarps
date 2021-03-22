@@ -92,10 +92,12 @@ public class FeaturedWarpsGUI extends InventoryGUI {
             }
 
             // Check if the sign is available
+            /*
             if (!plugin.getSignManager().getSign(player.getWorld().getName()).isAvailable()) {
                 plugin.getCFH().getPlayerMessenger().msg(player, "errorMessages.signNotAvailable");
                 return new FeaturedWarpsGUI(this, plugin, player);
             }
+             */
 
             // Sign is valid and available - open it
             return new CreateWarpGUI(this, plugin, player);
@@ -182,7 +184,7 @@ public class FeaturedWarpsGUI extends InventoryGUI {
         if (index >= warps.size()) return new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name(" ").build();
         Warp warp = warps.get(index);
         String warpName = pm.getMsg("warpName", "%warp%", warp.getName());
-        String playerName = Bukkit.getOfflinePlayer(warp.getOwner()).getName();
+        String playerName = warp.getOwnerName();
         return new ItemBuilder(Material.PLAYER_HEAD).skull(plugin, warp.getOwner())
                 .name(warpName)
                 .lore("&8Owner: &7" + playerName)

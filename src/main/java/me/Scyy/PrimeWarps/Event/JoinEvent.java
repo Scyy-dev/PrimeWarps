@@ -37,6 +37,7 @@ public class JoinEvent implements Listener {
 
             if (warp.getOwner().equals(player.getUniqueId())) {
                 warp.setOwnerLastSeen(Instant.now());
+                warp.setOwnerName(player.getName());
             }
 
         }

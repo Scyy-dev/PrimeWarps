@@ -79,7 +79,7 @@ public class WarpListGUI extends InventoryGUI {
 
                 String warpName = warp.isInactive() ? pm.getMsg("inactiveWarpName", "%warp%", warp.getName()) : pm.getMsg("warpName", "%warp%", warp.getName());
 
-                String ownerName = Bukkit.getOfflinePlayer(warp.getOwner()).getName();
+                String ownerName = warp.getOwnerName();
 
                 String visitText = warp.isInactive() ? "" : "&aLeft click to visit!";
 

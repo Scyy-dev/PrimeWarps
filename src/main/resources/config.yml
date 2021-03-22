@@ -30,17 +30,19 @@ inactiveDays: 30
 # Weights either positively or negatively affect the ranking. Positive weights increase the ranking, negative decrease
 # If you wish to flip the effect of a weighting, make the weighting negative
 # Weights can also be set to 0 to make their value have no effect
+# Formula:
+# Ranking = uniqueHits * weighting + weeklyVisitorAverage * weighting - warpUptime * weighting - ownerDowntime * weighting
 
 # How many unique players have visited the warp. This value positively affects ranking
 uniqueHitsWeighting: 1
 
 # An average of how many unique players visit this warp every week. This value positively affects ranking
-weeklyVisitorAverageWeighting: 1
+weeklyVisitorAverageWeighting: 0
 
-# How long the warp has been around. This value negatively affects ranking
+# How long the warp has been around in days. This value negatively affects ranking
 warpUptimeWeighting: 1
 
-# How long it has been since the owner of the warp has been online. This value negatively affects ranking
+# How long it has been since the owner of the warp has been online in days. This value negatively affects ranking
 ownerDowntimeWeighting: 1
 
 
@@ -73,6 +75,7 @@ defaultCategory: "default"
 #   - "world"
 #   - "world_nether"
 worlds:
+  - "Skyblock"
 
 
 

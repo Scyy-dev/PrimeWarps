@@ -114,7 +114,7 @@ public class WarpManagerGUI extends InventoryGUI {
             }
 
             // Create a new warp
-            Warp newWarp = new Warp(warp.getName(), warp.getOwner(), player.getLocation(), warp.getCategory(), warp.getDateCreated(), warp.getOwnerLastSeen(), warp.isInactive(), warp.getUniqueVisitors(), warp.getWeeklyVisitors());
+            Warp newWarp = new Warp(warp.getName(), warp.getOwner(), warp.getOwnerName(), player.getLocation(), warp.getCategory(), warp.getDateCreated(), warp.getOwnerLastSeen(), warp.isInactive(), warp.getUniqueVisitors(), warp.getWeeklyVisitors());
 
             // Update the warp
             plugin.getWarpRegister().updateWarp(warp, newWarp);
