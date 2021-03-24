@@ -19,7 +19,12 @@ import java.util.Locale;
 public class CreateWarpGUI extends SignGUI {
 
     public CreateWarpGUI(GUI<?> lastGUI, Plugin plugin, Player player) {
-        super(lastGUI, plugin, player);
+        super(lastGUI, plugin, player, new String[] {
+                "",
+                "^^^^^^^^^^^^^^^",
+                "please enter",
+                "warp name"
+        });
     }
 
     @Override

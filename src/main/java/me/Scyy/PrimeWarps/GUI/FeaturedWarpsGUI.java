@@ -85,20 +85,6 @@ public class FeaturedWarpsGUI extends InventoryGUI {
                 return new FeaturedWarpsGUI(this, plugin, player);
             }
 
-            // Check if the world has a registered sign GUI - log an error that there is not one available
-            if (!plugin.getSignManager().isValidWorld(player.getWorld().getName())) {
-                plugin.getCFH().getPlayerMessenger().msg(player, "errorMessages.signNotFound");
-                return new FeaturedWarpsGUI(this, plugin, player);
-            }
-
-            // Check if the sign is available
-            /*
-            if (!plugin.getSignManager().getSign(player.getWorld().getName()).isAvailable()) {
-                plugin.getCFH().getPlayerMessenger().msg(player, "errorMessages.signNotAvailable");
-                return new FeaturedWarpsGUI(this, plugin, player);
-            }
-             */
-
             // Sign is valid and available - open it
             return new CreateWarpGUI(this, plugin, player);
 

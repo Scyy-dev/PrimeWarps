@@ -1,8 +1,7 @@
 package me.Scyy.PrimeWarps.GUI.Type;
 
-import me.Scyy.PrimeWarps.Plugin;
 import me.Scyy.PrimeWarps.GUI.Sign.SignManager;
-import me.Scyy.PrimeWarps.GUI.Sign.WorldSign;
+import me.Scyy.PrimeWarps.Plugin;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -20,22 +19,21 @@ public abstract class SignGUI implements GUI<SignChangeEvent> {
 
     protected final Player player;
 
-    protected final SignManager signManager;
+    private final SignManager signManager;
 
-    protected final WorldSign sign;
+    private final int signID;
 
-    public SignGUI(GUI<?> lastGUI, Plugin plugin, Player player) {
+    private final boolean validSign;
+
+    public SignGUI(GUI<?> lastGUI, Plugin plugin, Player player, String[] text) {
         this.lastGUI = lastGUI;
         this.plugin = plugin;
         this.player = player;
         this.signManager = plugin.getSignManager();
-        if (!signManager.getSign(player.getWorld().getName()).isAvailable()) {
-            throw new IllegalStateException("Sign in use!");
-        }
-        this.sign = signManager.getSign(player.getWorld().getName());
-        signManager.setGUI(player.getWorld().getName(), this);
-        signManager.setUsage(player.getWorld().getName(), true);
-        if (!sign.getSign().isEditable()) sign.getSign().setEditable(true);
+
+        this.signID = signManager.createSign(this, text);
+
+        validSign = signID >= 0;
     }
 
     /**
@@ -48,11 +46,11 @@ public abstract class SignGUI implements GUI<SignChangeEvent> {
 
     @Override
     public void open(Player player) {
-        if (sign == null) {
+        if (!validSign) {
             plugin.getCFH().getPlayerMessenger().msg(player, "errorMessages.signNotAvailable");
             lastGUI.open(player);
         } else {
-            player.openSign(sign.getSign());
+            signManager.openSign(player, signID);
         }
     }
 
@@ -89,12 +87,13 @@ public abstract class SignGUI implements GUI<SignChangeEvent> {
         public void onSignChangeEvent(SignChangeEvent event) {
             SignManager manager = plugin.getSignManager();
             Sign sign = (Sign) event.getBlock().getState();
-            if (!manager.isSignGUI(sign)) return;
-            // Make sure the sign gets made free, even if handling the sign produces an error
-            manager.setUsage(event.getPlayer().getWorld().getName(), false);
-            // Sign is a GUI, so cancel the event and interpret the result
+            int signID = manager.getSignTag(sign);
+            if (signID < 0) return;
+            // Sign is a GUI, so cancel the event, remove the sign and interpret the result
             event.setCancelled(true);
-            SignGUI oldGUI = manager.getGUI(event.getPlayer().getWorld().getName());
+            SignGUI oldGUI = manager.getGUI(signID);
+            manager.removeSign(signID);
+
             // Check if the Sign should be closed
             if (oldGUI.shouldClose()) {
                 Bukkit.getScheduler().runTask(oldGUI.getPlugin(), () -> oldGUI.getPlayer().closeInventory());

@@ -21,7 +21,12 @@ public class RenameWarpGUI extends SignGUI {
     private final Warp warp;
 
     public RenameWarpGUI(GUI<?> lastGUI, Plugin plugin, Player player, Warp warp) {
-        super(lastGUI, plugin, player);
+        super(lastGUI, plugin, player, new String[] {
+                "",
+                "^^^^^^^^^^^^^^^",
+                "enter new",
+                "warp name"
+        });
         this.warp = warp;
     }
 

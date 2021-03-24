@@ -131,18 +131,6 @@ public class WarpManagerGUI extends InventoryGUI {
 
             event.setCancelled(true);
 
-            // Check if the world has a registered sign GUI - error not logged as players can use the GUI outside of valid worlds
-            if (!plugin.getSignManager().isValidWorld(player.getWorld().getName())) {
-                plugin.getCFH().getPlayerMessenger().msg(player, "otherMessages.noSignGUIAvailable");
-                return new WarpManagerGUI(this, plugin, player, warp);
-            }
-
-            // Check if the sign is available
-            if (!plugin.getSignManager().getSign(player.getWorld().getName()).isAvailable()) {
-                plugin.getCFH().getPlayerMessenger().msg(player, "errorMessages.signNotAvailable");
-                return new WarpManagerGUI(this, plugin, player, warp);
-            }
-
             ItemStack warpToken = plugin.getCFH().getMiscDataStorage().getWarpToken();
             int cost = plugin.getCFH().getSettings().getRenameWarpCost();
 

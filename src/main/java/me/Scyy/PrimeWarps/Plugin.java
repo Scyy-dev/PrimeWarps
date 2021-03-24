@@ -8,7 +8,6 @@ import me.Scyy.PrimeWarps.Event.JoinEvent;
 import me.Scyy.PrimeWarps.Event.WorldLoadListener;
 import me.Scyy.PrimeWarps.GUI.Sign.SignManager;
 import me.Scyy.PrimeWarps.GUI.Type.InventoryGUI;
-import me.Scyy.PrimeWarps.Util.DateUtils;
 import me.Scyy.PrimeWarps.Warps.WarpRegister;
 import me.Scyy.PrimeWarps.GUI.Type.SignGUI;
 import org.bukkit.Bukkit;
@@ -120,7 +119,7 @@ public class Plugin extends JavaPlugin {
             CFH.getPlayerWarps().saveWarpRequests(warpRegister.getWarpRequests());
             CFH.getPlayerWarps().saveWarpHandlers(warpRegister.getRequestHandlerMap());
             CFH.reloadConfigs();
-            signManager.loadSigns();
+
             if (CFH.getSettings().getCategoryMaterial("default") == null) {
                 sender.sendMessage("'default' warp category not found!");
             }

@@ -2,11 +2,13 @@ package me.Scyy.PrimeWarps.GUI.Sign;
 
 import me.Scyy.PrimeWarps.GUI.Type.SignGUI;
 import me.Scyy.PrimeWarps.Plugin;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
@@ -16,99 +18,125 @@ public class SignManager {
 
     private final NamespacedKey signDataKey;
 
-    private final Map<String, WorldSign> signs;
+    private final Map<Integer, WorldSign> signs;
 
-    private final Plugin plugin;
+    private int lastSignID = 0;
 
     public SignManager(Plugin plugin) {
-        this.plugin = plugin;
         this.signDataKey = new NamespacedKey(plugin, "isSignGUI");
         this.signs = new HashMap<>();
-
-        // Bukkit tasks are run as soon as the server is fully loaded, this ensures all worlds are loaded so signs can be loaded
-        Bukkit.getScheduler().runTaskLater(plugin, this::loadSigns, 1);
-
     }
 
-    public void loadSigns() {
-        Map<String, Location> signLocations = plugin.getCFH().getMiscDataStorage().getSignLocations();
-        if (signLocations == null || signLocations.size() == 0) {
-            plugin.getLogger().warning("Could not load physical signs for the sign GUIs!");
-            plugin.getLogger().warning("Set it with /pwa setsigngui and then reload with /pwa reload!");
-            return;
-        }
+    public int createSign(SignGUI gui, String[] signText) {
+        WorldSign sign = new WorldSign(gui, signText);
+        this.signs.put(++lastSignID, sign);
+        this.applySignTag(lastSignID);
+        return lastSignID;
+    }
 
-        // Clear the sign data
-        this.signs.clear();
+    public void removeSign(int signID) {
+        WorldSign sign = this.signs.get(signID);
+        if (sign == null) return;
+        sign.remove();
+        this.signs.remove(signID);
+    }
 
-        // Iterate over each Location
-        for (String worldName : signLocations.keySet()) {
+    public void applySignTag(int signID) {
+        WorldSign sign = this.signs.get(signID);
+        if (sign == null) return;
+        sign.applyTag(signDataKey, signID);
+    }
 
-            Location signLocation = signLocations.get(worldName);
+    public int getSignTag(Sign sign) {
+        return WorldSign.getTag(sign, signDataKey);
+    }
 
-            WorldSign sign = new WorldSign(worldName);
+    public void openSign(Player player, int signID) {
+        WorldSign sign = this.signs.get(signID);
+        if (sign == null) throw new IllegalArgumentException("Cannot find sign with ID " + signID);
+        player.openSign(sign.getSign());
+    }
 
-            // Force load the chunk
-            signLocation.getChunk().setForceLoaded(true);
+    public SignGUI getGUI(int signID) {
+        WorldSign sign = this.signs.get(signID);
+        if (sign == null) throw new IllegalArgumentException("Cannot find sign with ID " + signID);
+        return sign.getGUI();
+    }
 
-            // Get the block at the location
-            Block block = signLocation.getBlock();
-            if (!(block.getState() instanceof Sign)) {
-                plugin.getLogger().warning("assigned block for Sign GUI in world '" + worldName + "' isn't a sign!");
-                signs.put(worldName, sign);
-                continue;
+    public static class WorldSign {
+
+        private final Player player;
+
+        private final SignGUI gui;
+
+        private Sign sign;
+
+        public WorldSign(SignGUI gui, String[] signText) {
+
+            if (signText.length != 4) throw new IllegalArgumentException("Must be a String array of length 4");
+
+            this.gui = gui;
+            this.player = gui.getPlayer();
+            this.sign = null;
+            World world = player.getWorld();
+
+            for (int i = player.getWorld().getMaxHeight(); i > 0; i--) {
+
+                // Loop through each block the player stands in
+                Location loc = new Location(world, player.getLocation().getBlockX(), i, player.getLocation().getBlockZ());
+
+                // Find a block that is empty space
+                Block block = world.getBlockAt(loc);
+                if (block.getType() != Material.AIR) continue;
+
+                // Place the block
+                block.setType(Material.OAK_SIGN);
+                Sign sign = (Sign) block.getState();
+
+                this.sign = sign;
+
+                // Customise the sign
+                sign.setEditable(true);
+                for (int signIndex = 0; i < 4; i++) {
+                    sign.setLine(signIndex, signText[signIndex]);
+                    // Update the sign with the new text
+                    sign.update();
+                }
+
+
+
+                // Prevents plugin from more signs than needed
+                break;
+
             }
 
-            sign.setSign((Sign) block.getState());
-            sign.setLoaded(true);
-
-            signs.put(worldName, sign);
-
         }
 
-    }
-
-    public boolean isValidWorld(String worldName) {
-        return signs.containsKey(worldName);
-    }
-
-    public void markAsGUI(Sign block) {
-        block.getPersistentDataContainer().set(signDataKey, PersistentDataType.BYTE, (byte)1);
-        block.getBlock().getChunk().setForceLoaded(true);
-        block.update();
-    }
-
-    public WorldSign getSign(String worldName) {
-        return signs.get(worldName);
-    }
-
-    public SignGUI getGUI(String worldName) {
-        WorldSign sign = signs.get(worldName);
-        return sign != null ? sign.getGUI() : null;
-    }
-
-    public void setGUI(String worldName, SignGUI GUI) {
-        WorldSign sign = signs.get(worldName);
-        if (sign == null) {
-            plugin.getLogger().warning("Sign GUI opened in world without sign");
-            return;
+        public Player getPlayer() {
+            return player;
         }
-        sign.setGUI(GUI);
-    }
 
-    public void setUsage(String worldName, boolean usage) {
-        WorldSign sign = signs.get(worldName);
-        if (sign != null) sign.setInUse(usage);
-    }
+        public Sign getSign() {
+            return sign;
+        }
 
-    public boolean isSignGUI(Sign sign) {
-        return sign.getPersistentDataContainer().has(signDataKey, PersistentDataType.BYTE);
-    }
+        public void remove() {
+            this.sign.getBlock().setType(Material.AIR);
+        }
 
-    @Override
-    public String toString() {
-        return "SignManager{" +
-                "signs=" + signs +
-                '}';
+        public void applyTag(NamespacedKey key, int tag) {
+            this.sign.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, tag);
+            this.sign.update();
+        }
+
+        public static int getTag(Sign sign, NamespacedKey key) {
+            Integer integer = sign.getPersistentDataContainer().get(key, PersistentDataType.INTEGER);
+            if (integer == null) return  -1;
+            else return integer;
+        }
+
+        public SignGUI getGUI() {
+            return gui;
+        }
     }
 }

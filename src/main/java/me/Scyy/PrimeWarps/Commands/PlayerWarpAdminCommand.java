@@ -2,19 +2,17 @@ package me.Scyy.PrimeWarps.Commands;
 
 import me.Scyy.PrimeWarps.Config.PlayerMessenger;
 import me.Scyy.PrimeWarps.Plugin;
-import me.Scyy.PrimeWarps.Util.DateUtils;
 import me.Scyy.PrimeWarps.Warps.Warp;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -35,7 +33,7 @@ public class PlayerWarpAdminCommand implements TabExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
 
         if (args.length == 0) {
             plugin.splashText(sender);
@@ -97,17 +95,6 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                 }
                 plugin.getWarpRegister().forceNewWeek();
                 pm.msg(sender, "otherMessages.forcedNewWeek");
-                return true;
-            case "setsigngui":
-                if (!sender.hasPermission("pwarp.admin.forceinactive")) {
-                    pm.msg(sender, "errorMessages.noPermission");
-                    return true;
-                }
-                if (!(sender instanceof Player)) {
-                    pm.msg(sender, "errorMessages.mustBePlayer");
-                    return true;
-                }
-                setSignGUISubcommand(sender, args);
                 return true;
             case "nearby":
                 if (!sender.hasPermission("pwarp.admin.nearby")) {
@@ -249,26 +236,6 @@ public class PlayerWarpAdminCommand implements TabExecutor {
         pm.msg(sender, "warpMessages.warpInactive", "%warp%", warp.getName());
     }
 
-    private void setSignGUISubcommand(CommandSender sender, String[] args) {
-        Player player = (Player) sender;
-        Block targetBlock = player.getTargetBlock(null,7);
-
-        if (!(targetBlock.getState() instanceof Sign)) {
-            pm.msg(sender, "errorMessages.mustBeSign");
-            return;
-        }
-
-        Sign sign = (Sign) targetBlock.getState();
-        plugin.getSignManager().markAsGUI(sign);
-        plugin.getCFH().getMiscDataStorage().setSignLocation(player.getWorld().getName(), sign.getLocation());
-
-        String signLoc = "[" + sign.getLocation().getWorld().getName() + ": " + sign.getLocation().getBlockX() + ", "
-                + sign.getLocation().getBlockY() + ", " + sign.getLocation().getBlockZ() + "]";
-
-        pm.msg(sender, "otherMessages.setSignGUI", "%loc%", signLoc);
-
-    }
-
     private void nearbySubcommand(Player sender, String[] args) {
         if (args.length < 2) {
             pm.msg(sender, "errorMessages.invalidCommandLength");
@@ -331,7 +298,6 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                     "%weekly%", weeklyVisits.toString(),
                     "%weeklyAverage%", Integer.toString(warp.getWeeklyAverage()),
                     "%ownerUUID%", warp.getOwner().toString(),
-                    // TODO - show uptime in days
                     "%warpUptime%", Integer.toString(warp.getDaysSinceCreation()));
         });
 
@@ -339,7 +305,7 @@ public class PlayerWarpAdminCommand implements TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
 
         List<String> list = new ArrayList<>();
 
@@ -352,7 +318,6 @@ public class PlayerWarpAdminCommand implements TabExecutor {
                 if (sender.hasPermission("pwarp.admin.forceweek")) list.add("forceweek");
                 if (sender.hasPermission("pwarp.admin.reload")) list.add("reload");
                 if (sender.hasPermission("pwarp.admin.setwarpshard")) list.add("setwarpshard");
-                if (sender.hasPermission("pwarp.admin.setsigngui")) list.add("setsigngui");
                 if (sender.hasPermission("pwarp.admin.nearby")) list.add("nearby");
                 if (sender.hasPermission("pwarp.admin.stats")) list.add("stats");
                 if (sender.hasPermission("pwarp.admin.search")) list.add("search");
