@@ -8,7 +8,6 @@ import me.Scyy.PrimeWarps.Util.DateUtils;
 import me.Scyy.PrimeWarps.Util.ItemBuilder;
 import me.Scyy.PrimeWarps.Util.WarpUtils;
 import me.Scyy.PrimeWarps.Warps.Warp;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -54,7 +53,8 @@ public class FeaturedWarpsGUI extends InventoryGUI {
 
         // Create Warp button
         inventoryItems[33] = new ItemBuilder(Material.ENDER_PEARL).name("&5Create Warp")
-                .lore("&8Click here to create a warp!").build();
+                .lore("&8Click here to create a warp!")
+                .lore("&8Enter the name of your warp on the sign").build();
 
         // Add the Requests button if the user has the permission for it
         if (player.hasPermission("pwarp.admin.requests")) {

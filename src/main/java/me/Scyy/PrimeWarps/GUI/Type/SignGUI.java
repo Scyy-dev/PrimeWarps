@@ -1,8 +1,9 @@
 package me.Scyy.PrimeWarps.GUI.Type;
 
-import me.Scyy.PrimeWarps.GUI.Sign.SignManager;
+import me.Scyy.PrimeWarps.GUI.sign.SignManager;
 import me.Scyy.PrimeWarps.Plugin;
 import org.bukkit.Bukkit;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,17 +24,13 @@ public abstract class SignGUI implements GUI<SignChangeEvent> {
 
     private final int signID;
 
-    private final boolean validSign;
-
     public SignGUI(GUI<?> lastGUI, Plugin plugin, Player player, String[] text) {
         this.lastGUI = lastGUI;
         this.plugin = plugin;
         this.player = player;
         this.signManager = plugin.getSignManager();
 
-        this.signID = signManager.createSign(this, text);
-
-        validSign = signID >= 0;
+        signID = signManager.initSign(this, text);
     }
 
     /**
@@ -46,16 +43,13 @@ public abstract class SignGUI implements GUI<SignChangeEvent> {
 
     @Override
     public void open(Player player) {
-        if (!validSign) {
+        if (!signManager.isValidSign(signID)) {
             plugin.getCFH().getPlayerMessenger().msg(player, "errorMessages.signNotAvailable");
             lastGUI.open(player);
         } else {
-            signManager.openSign(player, signID);
+            Sign sign = signManager.getSign(signID);
+            player.openSign(sign);
         }
-    }
-
-    public static Listener getListener(Plugin plugin) {
-        return new SignListener(plugin);
     }
 
     @Override
@@ -76,34 +70,6 @@ public abstract class SignGUI implements GUI<SignChangeEvent> {
     @Override
     public boolean shouldClose() {
         return false;
-    }
-
-    private static class SignListener implements Listener {
-        private final Plugin plugin;
-        public SignListener(Plugin plugin) {
-            this.plugin = plugin;
-        }
-        @EventHandler
-        public void onSignChangeEvent(SignChangeEvent event) {
-            SignManager manager = plugin.getSignManager();
-            Sign sign = (Sign) event.getBlock().getState();
-            int signID = manager.getSignTag(sign);
-            if (signID < 0) return;
-            // Sign is a GUI, so cancel the event, remove the sign and interpret the result
-            event.setCancelled(true);
-            SignGUI oldGUI = manager.getGUI(signID);
-            manager.removeSign(signID);
-
-            // Check if the Sign should be closed
-            if (oldGUI.shouldClose()) {
-                Bukkit.getScheduler().runTask(oldGUI.getPlugin(), () -> oldGUI.getPlayer().closeInventory());
-            }
-            // handle the interaction
-            GUI<?> newGUI = oldGUI.handleInteraction(event);
-            if (newGUI instanceof SignGUI) throw new IllegalStateException("Cannot open a Sign GUI from a Sign GUI");
-            Bukkit.getScheduler().runTask(oldGUI.getPlugin(), () -> newGUI.open(oldGUI.getPlayer()));
-        }
-
     }
 
 }

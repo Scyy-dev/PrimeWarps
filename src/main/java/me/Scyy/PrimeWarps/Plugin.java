@@ -6,7 +6,7 @@ import me.Scyy.PrimeWarps.Config.ConfigFileHandler;
 import me.Scyy.PrimeWarps.Commands.PlayerWarpCommand;
 import me.Scyy.PrimeWarps.Event.JoinEvent;
 import me.Scyy.PrimeWarps.Event.WorldLoadListener;
-import me.Scyy.PrimeWarps.GUI.Sign.SignManager;
+import me.Scyy.PrimeWarps.GUI.sign.SignManager;
 import me.Scyy.PrimeWarps.GUI.Type.InventoryGUI;
 import me.Scyy.PrimeWarps.Warps.WarpRegister;
 import me.Scyy.PrimeWarps.GUI.Type.SignGUI;
@@ -42,7 +42,6 @@ public class Plugin extends JavaPlugin {
         // Register all events
         Bukkit.getPluginManager().registerEvents(new JoinEvent(this), this);
         Bukkit.getPluginManager().registerEvents(InventoryGUI.getListener(), this);
-        Bukkit.getPluginManager().registerEvents(SignGUI.getListener(this), this);
 
         // Register all the commands
         PlayerWarpCommand playerWarpCommand = new PlayerWarpCommand(this);
