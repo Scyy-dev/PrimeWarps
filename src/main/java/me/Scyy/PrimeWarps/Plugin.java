@@ -28,6 +28,8 @@ public class Plugin extends JavaPlugin {
 
     private SignManager signManager;
 
+    // this is a change
+
     @Override
     public void onEnable() {
         this.CFH = new ConfigFileHandler(this);
