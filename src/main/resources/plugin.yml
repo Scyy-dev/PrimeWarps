@@ -3,16 +3,84 @@ main: me.Scyy.PrimeWarps.Plugin
 version: ${project.version}
 api-version: 1.16
 author: "Scyphers"
-softdepend:
+depend:
+  - ScyCore
   - Skyblock
+softdepend:
   - Multiverse-Core
+
+permissions:
+
+  # Command Permissions - Warping
+  primewarps.warp:
+    default: op
+    description: "Ability to use the primewarps command to visit warps"
+  primewarps.warp.gui:
+    default: op
+    description: "Ability to use the GUI to create, visit and manage warps"
+  primewarps.request:
+    default: op
+    description: "Ability to submit warp requests"
+  primewarps.warp.*:
+    default: op
+    description: "Wildcard permission for visiting warps"
+    children:
+      - primewarps.warp
+      - primewarps.warp.gui
+      - primewarps.request
+
+  # Command Permissions - Admin
+  primewarps.commands.admin:
+    default: op
+    description: "Ability to use prime warp admin commands"
+  primewarps.commands.changeowner:
+    default: op
+    description: "Ability to change the owner of a warp"
+  primewarps.commands.forceinactive:
+    default: op
+    description: "Ability to force a warp to become inactive regardless of owner activity"
+  primewarps.commands.nearby:
+    default: op
+    description: "Ability to see the names of warps that are near the player"
+  primewarps.commands.reload:
+    default: op
+    description: "Reloads the plugin"
+  primewarps.commands.remove:
+    default: op
+    description: "Ability to delete a warp"
+  primewarps.commands.search:
+    default: op
+    description: "Ability to see all warps owned by a particular player"
+  primewarps.commands.setshard:
+    default: op
+    description: "Ability to set the item to use as a warp shard"
+  primewarps.commands.stats:
+    default: op
+    description: "Ability to see the stats of a warp"
+  primewarps.commands.admin.*:
+    default: op
+    description: "Wildcard permission for all warp management commands"
+    children:
+      - primewarps.commands.admin
+      - primewarps.commands.changeowner
+      - primewarps.commands.forceinactive
+      - primewarps.commands.nearby
+      - primewarps.commands.reload
+      - primewarps.commands.remove
+      - primewarps.commands.search
+      - primewarps.commands.setshard
+      - primewarps.commands.stats
+
 commands:
+
   pwarp:
-    description: "Provides the GUI and easy access to teleporting to player-made warps"
-    aliases: ["pw", "playerwarp"]
+    description: "Command for opening the warp GUI and visiting warps"
+    aliases: ["pw", "primewarp"]
+
   pwadmin:
-    description: "Provides admin tools for managing player warps"
-    aliases: ["pwa", "playerwarpadmin"]
+    description: "Command for administration tools for information and management of warps"
+    aliases: ["pwa", "primewarpadmin"]
+
   warprequest:
     description: "Used to request the creation of a warp. Server admins have to approve a warp before it becomes live"
     aliases: ["wrequest"]
