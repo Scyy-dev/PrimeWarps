@@ -1,6 +1,6 @@
 package me.scyphers.minecraft.primewarps.warps;
 
-import me.scyphers.minecraft.primewarps.util.TimeUtil;
+import me.scyphers.minecraft.primewarps.util.DateTimeUtil;
 import org.bukkit.Location;
 
 import java.time.Instant;
@@ -10,7 +10,7 @@ public class Warp {
 
     private final String name;
     private final UUID islandUUID;
-    private final Location location;
+    private Location location;
     private String category;
     private final Instant dateCreated;
     private Instant lastSeen;
@@ -38,11 +38,11 @@ public class Warp {
     }
 
     public long getDaysSinceCreation() {
-        return Instant.now().minusMillis(dateCreated.toEpochMilli()).toEpochMilli() / TimeUtil.DAYS_MILLI;
+        return Instant.now().minusMillis(dateCreated.toEpochMilli()).toEpochMilli() / DateTimeUtil.DAYS_MILLI;
     }
 
     public long getDaysSinceLastSeen() {
-        return Instant.now().minusMillis(lastSeen.toEpochMilli()).toEpochMilli() / TimeUtil.DAYS_MILLI;
+        return Instant.now().minusMillis(lastSeen.toEpochMilli()).toEpochMilli() / DateTimeUtil.DAYS_MILLI;
     }
 
     public void addVisitor(UUID visitor) {
@@ -92,6 +92,10 @@ public class Warp {
 
     public Location getLocation() {
         return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     public String getCategory() {
