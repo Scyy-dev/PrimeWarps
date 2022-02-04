@@ -7,6 +7,7 @@ import me.scyphers.scycore.command.BaseCommand;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
+import java.util.Locale;
 
 public class RemoveWarpCommand extends BaseCommand {
 
@@ -20,13 +21,17 @@ public class RemoveWarpCommand extends BaseCommand {
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
 
+        String warpName = args[1].toLowerCase(Locale.ROOT);
+
+        if (!plugin.getWarps().warpExists(warpName)) {
+            m.chat(sender, "warpMessages.warpNotFound", "%warp%", args[1]);
+            return true;
+        }
+
         // Remove the warp
-        boolean warpRemoved = plugin.getWarpRegister().removeWarp(args[1]);
+        plugin.getWarps().removeWarp(warpName);
 
-        // Send a message based on removal success
-        if (warpRemoved) m.chat(sender, "warpMessages.warpRemoved", "%warp%", args[1]);
-        else m.chat(sender, "warpMessages.warpNotFound", "%warp%", args[1]);
-
+        m.chat(sender, "warpMessages.warpRemoved", "%warp%", args[1]);
         return true;
     }
 
