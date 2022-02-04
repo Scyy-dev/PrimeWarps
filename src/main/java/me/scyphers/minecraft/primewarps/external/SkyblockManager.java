@@ -58,7 +58,7 @@ public class SkyblockManager {
     public boolean hasAtLeast(UUID playerUUID, String islandRole) {
         if (!pluginLoaded) return true;
 
-        Island island = this.getIsland(playerUUID);
+        Island island = this.getIslandFromPlayer(playerUUID);
         if (island == null) return false;
 
         SkyblockPlayer player = island.getPlayer(playerUUID);
@@ -73,7 +73,13 @@ public class SkyblockManager {
 
     }
 
-    public Island getIsland(UUID playerUUID) {
+    public UUID getIslandUUID(UUID playerUUID) {
+        if (!pluginLoaded) return null;
+
+        return this.getIslandFromPlayer(playerUUID).getUuid();
+    }
+
+    public Island getIslandFromPlayer(UUID playerUUID) {
         if (!pluginLoaded) return null;
 
         // Try get the player if the player is online
@@ -83,6 +89,30 @@ public class SkyblockManager {
         // Get the offline player instead
         OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(playerUUID);
         return Skyblock.getInstance().getIslandManager().getIsland(offlinePlayer);
+
+    }
+
+    public Island getIslandFromUUID(UUID islandUUID) {
+        if (!pluginLoaded) return null;
+
+        return Skyblock.getInstance().getIslandManager().getIsland(islandUUID);
+    }
+
+    public UUID getIslandOwner(UUID islandUUID) {
+        if (!pluginLoaded) return null;
+
+        Island island = this.getIslandFromUUID(islandUUID);
+        if (island == null) return null;
+
+        for (UUID playerUUID : island.getPlayers().keySet()) {
+
+            SkyblockPlayer player = island.getPlayers().get(playerUUID);
+            if (player.getRole() == IslandRole.OWNER) return playerUUID;
+
+        }
+
+        // Impossible for an island not to have an owner, and we cannot handle it differently
+        throw new IllegalStateException("Island does not have an island owner");
 
     }
 
