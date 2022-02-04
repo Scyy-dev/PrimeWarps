@@ -11,8 +11,6 @@ public class ItemStackUtils {
 
         for (ItemStack itemStack : player.getInventory().getStorageContents()) {
 
-            if (itemStack == null) continue;
-
             if (itemStack.isSimilar(item)) {
 
                 if (itemStack.getAmount() >= removedCounter) {

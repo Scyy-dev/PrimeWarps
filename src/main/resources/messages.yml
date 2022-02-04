@@ -20,6 +20,7 @@ inactiveWarpName: "[NO_PREFIX]&c%warp% &8(inactive)"
 # Global error messages that apply to all commands
 errorMessages:
   noPermission: "&cYou do not have permission to use that command"
+  noIslandPermission: "&cYou must be at least &6&l%role% &cto perform that action"
   invalidCommandLength: "&cInvalid Command Length"
   mustBePlayer: "&cYou must be a player to use that command"
   cannotUseAir: "&cYou cannot use air as an item"
