@@ -99,4 +99,21 @@ public class WarpFile extends ConfigStorageFile implements WarpRegister {
     public boolean warpExists(String warpName) {
         return warps.containsKey(warpName.toLowerCase(Locale.ROOT));
     }
+
+    @Override
+    public Collection<Warp> getAllWarps() {
+        return warps.values();
+    }
+
+    @Override
+    public void removeWarp(String warpName) {
+        warps.remove(warpName);
+    }
+
+    @Override
+    public List<Warp> getIslandWarps(UUID islandUUID) {
+        return warps.values().stream().filter(warp -> warp.getIslandUUID().equals(islandUUID)).collect(Collectors.toList());
+    }
+
+
 }
