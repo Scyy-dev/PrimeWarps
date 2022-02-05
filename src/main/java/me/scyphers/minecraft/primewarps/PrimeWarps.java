@@ -1,13 +1,19 @@
 package me.scyphers.minecraft.primewarps;
 
+import me.scyphers.minecraft.primewarps.command.PrimeWarpAdminCommandFactory;
+import me.scyphers.minecraft.primewarps.command.PrimeWarpCommandFactory;
+import me.scyphers.minecraft.primewarps.command.WarpRequestCommandFactory;
 import me.scyphers.minecraft.primewarps.config.PrimeWarpsFileManager;
 import me.scyphers.minecraft.primewarps.config.Settings;
 import me.scyphers.minecraft.primewarps.external.SkyblockManager;
+import me.scyphers.minecraft.primewarps.listener.PlayerListener;
+import me.scyphers.minecraft.primewarps.listener.WorldLoadListener;
 import me.scyphers.minecraft.primewarps.warps.RequestResponseManager;
 import me.scyphers.minecraft.primewarps.warps.WarpRegister;
 import me.scyphers.minecraft.primewarps.warps.WarpRequestRegister;
 import me.scyphers.scycore.BasePlugin;
 import me.scyphers.scycore.api.Messenger;
+import me.scyphers.scycore.gui.InventoryGUI;
 import org.bukkit.command.CommandSender;
 
 import java.util.Arrays;
@@ -39,6 +45,16 @@ public class PrimeWarps extends BasePlugin {
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
+        // Initialise all commands
+        PrimeWarpCommandFactory commandFactory = new PrimeWarpCommandFactory(this);
+        PrimeWarpAdminCommandFactory adminCommandFactory = new PrimeWarpAdminCommandFactory(this);
+        WarpRequestCommandFactory requestCommandFactory = new WarpRequestCommandFactory(this);
+
+        // Register all listeners
+        this.getServer().getPluginManager().registerEvents(InventoryGUI.getListener(), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new WorldLoadListener(this), this);
 
         this.successfulEnable = true;
     }
