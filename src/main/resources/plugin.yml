@@ -12,9 +12,12 @@ softdepend:
 permissions:
 
   # General Permissions
+  primewarps.warps.requests:
+    default: op
+    description: "Permission to view and manage warp requests through the warp GUI"
   primewarps.warps.manage:
     default: op
-    description: "Permission to manage warps through the warp GUI"
+    description: "Permission to manage all warps through the warp GUI"
 
   # Command Permissions - Warping
   primewarps.warp:

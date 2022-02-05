@@ -46,6 +46,14 @@ warpUptimeWeighting: 1
 ownerDowntimeWeighting: 1
 
 
+# A linear formula for the number of warps an island can have
+prestigePerWarp: 10
+
+# The maximum number of warps an island can have, regardless of the formula above
+# Use 0 to leave it uncapped
+maximumWarps: 5
+
+
 # A list of all categories players can set their warps to. No limit on how many categories you create
 # Each category requires a name and attached to that name a material, which is then displayed to the users
 # Examples
