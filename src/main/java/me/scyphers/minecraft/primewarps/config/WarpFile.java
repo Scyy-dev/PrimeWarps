@@ -130,4 +130,9 @@ public class WarpFile extends ConfigStorageFile implements WarpRegister {
     public long getWarpCount(UUID islandUUID) {
         return warps.values().stream().filter(warp -> warp.getIslandUUID().equals(islandUUID)).count();
     }
+
+    @Override
+    public Warp getWarp(String warpName) {
+        return warps.get(warpName);
+    }
 }

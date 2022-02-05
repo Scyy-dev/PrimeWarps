@@ -20,6 +20,6 @@ public interface WarpRegister {
 
     long getWarpCount(UUID islandUUID);
 
-
+    Warp getWarp(String warpName);
 
 }
