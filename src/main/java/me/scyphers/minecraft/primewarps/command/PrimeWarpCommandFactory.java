@@ -1,9 +1,9 @@
 package me.scyphers.minecraft.primewarps.command;
 
-import me.Scyy.PrimeWarps.GUI.FeaturedWarpsGUI;
-import me.Scyy.PrimeWarps.Util.WarpUtils;
-import me.Scyy.PrimeWarps.Warps.Warp;
 import me.scyphers.minecraft.primewarps.PrimeWarps;
+import me.scyphers.minecraft.primewarps.gui.FeaturedWarpsGUI;
+import me.scyphers.minecraft.primewarps.util.WarpUtil;
+import me.scyphers.minecraft.primewarps.warps.Warp;
 import me.scyphers.scycore.api.Messenger;
 import me.scyphers.scycore.command.SimpleCommandFactory;
 import org.bukkit.command.CommandSender;
@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class PrimeWarpCommandFactory extends SimpleCommandFactory {
 
@@ -20,10 +22,10 @@ public class PrimeWarpCommandFactory extends SimpleCommandFactory {
     private final Messenger m;
 
     public PrimeWarpCommandFactory(PrimeWarps plugin) {
-        super(sender -> {
+        super(plugin, "pwarp", sender -> {
             if (!sender.hasPermission("primewarps.warp.gui")) {
                 plugin.getMessenger().chat(sender, "errorMessages.noPermission");
-                return true;
+                return;
             }
 
             if (sender instanceof Player player) {
@@ -32,8 +34,6 @@ public class PrimeWarpCommandFactory extends SimpleCommandFactory {
             } else {
                 plugin.getMessenger().chat(sender, "errorMessages.mustBePlayer");
             }
-
-            return true;
         });
         this.plugin = plugin;
         this.m = plugin.getMessenger();
@@ -48,18 +48,19 @@ public class PrimeWarpCommandFactory extends SimpleCommandFactory {
             return true;
         }
 
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             m.chat(sender, "errorMessages.mustBePlayer");
             return true;
         }
 
-        // Get the warp from the provided name
-        Warp warp = plugin.getWarpRegister().getWarp(args[0]);
-
-        if (warp == null) {
+        String warpName = args[0].toLowerCase(Locale.ROOT);
+        if (!plugin.getWarps().warpExists(warpName)) {
             m.chat(sender, "warpMessages.warpNotFound", "%warp%", args[0]);
             return true;
         }
+
+        // Get the warp from the provided name
+        Warp warp = plugin.getWarps().getWarp(warpName);
 
         if (warp.isInactive()) {
             m.chat(sender, "warpMessages.warpInactive", "%warp%", warp.getName());
@@ -67,9 +68,8 @@ public class PrimeWarpCommandFactory extends SimpleCommandFactory {
         }
 
         // Warp the player
-        WarpUtils.warp((Player) sender, plugin, warp);
+        WarpUtil.warp(player, plugin, warp);
         return true;
-        
         
     }
 
@@ -79,10 +79,6 @@ public class PrimeWarpCommandFactory extends SimpleCommandFactory {
         if (!sender.hasPermission("primewarps.warp") && !sender.hasPermission("primewarps.warp.gui")) return Collections.emptyList();
         if (!sender.hasPermission("primewarps.warp")) return Collections.emptyList();
 
-        // TODO - return a list
-        for (Warp warp : plugin.getWarpRegister().getWarps().values()) {
-            list.add(warp.getName());
-        }
-
+        return plugin.getWarps().getAllWarps().stream().map(Warp::getName).collect(Collectors.toList());
     }
 }
