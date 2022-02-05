@@ -14,16 +14,13 @@ public class Settings extends ConfigFile implements PluginSettings {
     private int saveTicks;
 
     // Warp 'popularity' algorithm settings
-    private int uniqueHitsWeighting;
-    private int warpUptimeWeighting;
-    private int ownerDowntimeWeighting;
-    private int weeklyVisitorAverageWeighting;
+    private int uniqueHitsWeighting, warpUptimeWeighting, ownerDowntimeWeighting, weeklyVisitorAverageWeighting;
 
     // Warp cost settings
-    private int createWarpCost;
-    private int moveWarpCost;
-    private int renameWarpCost;
-    private int reactivateWarpCost;
+    private int createWarpCost, moveWarpCost, renameWarpCost, reactivateWarpCost;
+
+    // Island caps for warps
+    private int prestigePerWarp, maximumWarps;
 
     // Warp categories
     private Map<String, Material> warpMaterials;
@@ -53,6 +50,9 @@ public class Settings extends ConfigFile implements PluginSettings {
         this.moveWarpCost = file.getInt("moveWarpCost", 5);
         this.renameWarpCost = file.getInt("renameWarpCost", 5);
         this.reactivateWarpCost = file.getInt("reactivateWarpCost", 10);
+
+        this.prestigePerWarp = file.getInt("prestigePerWarp", 10);
+        this.maximumWarps = file.getInt("maximumWarps", 5);
 
         ConfigurationSection categories = file.getConfigurationSection("categories");
         if (categories == null) this.warpMaterials = Collections.emptyMap();
@@ -108,6 +108,14 @@ public class Settings extends ConfigFile implements PluginSettings {
 
     public int getReactivateWarpCost() {
         return reactivateWarpCost;
+    }
+
+    public int getPrestigePerWarp() {
+        return prestigePerWarp;
+    }
+
+    public int getMaximumWarps() {
+        return maximumWarps;
     }
 
     public Set<String> getCategories() {
