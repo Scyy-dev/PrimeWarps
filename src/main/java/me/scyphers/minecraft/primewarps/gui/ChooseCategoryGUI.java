@@ -63,13 +63,10 @@ public class ChooseCategoryGUI extends PagedListGUI<String> {
         int click = event.getRawSlot();
         event.setCancelled(true);
 
-        if (click == 49) {
-            return lastGUI;
-        }
+        if (click == 49) return new WarpManagerGUI(this, plugin, player, warp);
 
-        // TODO - complete
-        // return new WarpManagerGUI();
-        return null;
+        return this;
+
     }
 
     @Override

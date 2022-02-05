@@ -189,7 +189,7 @@ public class WarpManagerGUI extends InventoryGUI {
                 plugin.getWarps().removeWarp(warp.getName());
 
                 // TODO - determine which menu to open based on permission
-                if (player.hasPermission("primewarps.warps.manage")) return new WarpListGUI(this, plugin, player);
+                if (player.hasPermission("primewarps.warps.manage")) return new WarpListGUI(this, plugin, player, "");
 
                 else {
                     UUID islandUUID = plugin.getSkyblockManager().getIslandUUID(player.getUniqueId());
@@ -200,7 +200,7 @@ public class WarpManagerGUI extends InventoryGUI {
 
             // Back page
             case 49 -> {
-                if (player.hasPermission("primewarps.warps.manage")) return new WarpListGUI(this, plugin, player);
+                if (player.hasPermission("primewarps.warps.manage")) return new WarpListGUI(this, plugin, player, "");
                 else {
                     UUID islandUUID = plugin.getSkyblockManager().getIslandUUID(player.getUniqueId());
                     return new PlayerWarpListGUI(this, plugin, player, islandUUID);
