@@ -138,6 +138,10 @@ public class Warp {
         return weeklyVisitors;
     }
 
+    public Set<UUID> getWeeklyVisitors(int week) {
+        return weeklyVisitors.get(week);
+    }
+
     @Override
     public String toString() {
         return "Warp{" +
