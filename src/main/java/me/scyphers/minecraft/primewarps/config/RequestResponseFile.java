@@ -38,7 +38,7 @@ public class RequestResponseFile extends ConfigStorageFile implements RequestRes
 
                 String warpName = islandResponses.getString(rawIslandUUID + "." + key + ".warpName", "INVALID_WARP_NAME");
                 UUID requesterUUID = UUID.fromString(responses.getString(rawIslandUUID + "." + key + ".requesterUUID", "INVALID_UUID"));
-                boolean success = responses.getBoolean(rawIslandUUID + "." + key + ".refundShards", false);
+                boolean success = responses.getBoolean(rawIslandUUID + "." + key + ".success", false);
                 boolean refundShards = responses.getBoolean(rawIslandUUID + "." + key + ".refundShards", false);
 
                 WarpRequestResponse requestResponse = new WarpRequestResponse(warpName, islandUUID, requesterUUID, success, refundShards);
@@ -53,9 +53,24 @@ public class RequestResponseFile extends ConfigStorageFile implements RequestRes
     }
 
     @Override
-    public void saveData(YamlConfiguration yamlConfiguration) throws Exception {
+    public void saveData(YamlConfiguration file) throws Exception {
 
-        // TODO - actually save the data
+        for (UUID playerUUID : requestResponses.keySet()) {
+
+            List<WarpRequestResponse> responses = requestResponses.get(playerUUID);
+
+            for (int key = 0; key < responses.size(); key++) {
+
+                WarpRequestResponse response = responses.get(key);
+
+                file.set(playerUUID + "." + key + ".warpName", response.warpName());
+                file.set(playerUUID + "." + key + ".requesterUUID", response.warpRequester());
+                file.set(playerUUID + "." + key + ".success", response.success());
+                file.set(playerUUID + "." + key + ".refundShards", response.refundShards());
+
+            }
+
+        }
 
     }
 
