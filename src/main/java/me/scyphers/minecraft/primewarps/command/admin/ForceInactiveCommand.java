@@ -1,12 +1,14 @@
 package me.scyphers.minecraft.primewarps.command.admin;
 
-import me.Scyy.PrimeWarps.Warps.Warp;
 import me.scyphers.minecraft.primewarps.PrimeWarps;
-import me.scyphers.scycore.BasePlugin;
+import me.scyphers.minecraft.primewarps.warps.Warp;
 import me.scyphers.scycore.command.BaseCommand;
 import org.bukkit.command.CommandSender;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class ForceInactiveCommand extends BaseCommand {
     
@@ -19,23 +21,27 @@ public class ForceInactiveCommand extends BaseCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
-        
-        // Get the warp
-        Warp warp = plugin.getWarpRegister().getWarp(args[1]);
-        if (warp == null) {
+
+        // Check if the warp exists
+        String warpName = args[1].toLowerCase(Locale.ROOT);
+        if (!plugin.getWarps().warpExists(warpName)) {
             m.chat(sender, "warpMessages.warpNotFound", "%warp%", args[1]);
             return true;
         }
+        
+        // Set the warp as inactive
+        Warp warp = plugin.getWarps().getWarp(args[1]);
         warp.setInactive(true);
+
         m.chat(sender, "warpMessages.warpInactive", "%warp%", warp.getName());
         return true;
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, String[] strings) {
-        // TODO - return a list
-        for (Warp warp : plugin.getWarpRegister().getWarps().values()) {
-            list.add(warp.getName());
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        if (args.length == 1) {
+            return plugin.getWarps().getAllWarps().stream().map(Warp::getName).collect(Collectors.toList());
         }
+        return Collections.emptyList();
     }
 }
