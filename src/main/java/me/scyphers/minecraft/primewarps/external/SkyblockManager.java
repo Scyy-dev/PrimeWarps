@@ -116,4 +116,13 @@ public class SkyblockManager {
 
     }
 
+    public int getPrestigeLevel(UUID islandUUID) {
+        if (!pluginLoaded) return 0;
+
+        Island island = this.getIslandFromUUID(islandUUID);
+        return island.getPrestige();
+
+
+    }
+
 }
