@@ -115,5 +115,19 @@ public class WarpFile extends ConfigStorageFile implements WarpRegister {
         return warps.values().stream().filter(warp -> warp.getIslandUUID().equals(islandUUID)).collect(Collectors.toList());
     }
 
+    @Override
+    public List<Warp> getWarpsByCategory(String category) {
+        if (category == null || category.equals("")) return new ArrayList<>(warps.values());
+        return warps.values().stream().filter(warp -> warp.getCategory().equals(category)).collect(Collectors.toList());
+    }
 
+    @Override
+    public void addWarp(String warpName, Warp warp) {
+        this.warps.put(warpName, warp);
+    }
+
+    @Override
+    public long getWarpCount(UUID islandUUID) {
+        return warps.values().stream().filter(warp -> warp.getIslandUUID().equals(islandUUID)).count();
+    }
 }

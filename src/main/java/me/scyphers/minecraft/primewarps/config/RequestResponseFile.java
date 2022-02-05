@@ -1,5 +1,6 @@
 package me.scyphers.minecraft.primewarps.config;
 
+import me.scyphers.minecraft.primewarps.warps.RequestResponseManager;
 import me.scyphers.minecraft.primewarps.warps.WarpRequestResponse;
 import me.scyphers.scycore.config.ConfigStorageFile;
 import me.scyphers.scycore.config.FileManager;
@@ -8,7 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.*;
 
-public class RequestResponseFile extends ConfigStorageFile {
+public class RequestResponseFile extends ConfigStorageFile implements RequestResponseManager {
 
     private Map<UUID, List<WarpRequestResponse>> requestResponses;
 
@@ -37,9 +38,10 @@ public class RequestResponseFile extends ConfigStorageFile {
 
                 String warpName = islandResponses.getString(rawIslandUUID + "." + key + ".warpName", "INVALID_WARP_NAME");
                 UUID requesterUUID = UUID.fromString(responses.getString(rawIslandUUID + "." + key + ".requesterUUID", "INVALID_UUID"));
+                boolean success = responses.getBoolean(rawIslandUUID + "." + key + ".refundShards", false);
                 boolean refundShards = responses.getBoolean(rawIslandUUID + "." + key + ".refundShards", false);
 
-                WarpRequestResponse requestResponse = new WarpRequestResponse(warpName, islandUUID, requesterUUID, refundShards);
+                WarpRequestResponse requestResponse = new WarpRequestResponse(warpName, islandUUID, requesterUUID, success, refundShards);
                 responseList.add(requestResponse);
 
             }
@@ -53,5 +55,28 @@ public class RequestResponseFile extends ConfigStorageFile {
     @Override
     public void saveData(YamlConfiguration yamlConfiguration) throws Exception {
 
+        // TODO - actually save the data
+
     }
+
+    @Override
+    public void scheduleResponse(UUID requester, WarpRequestResponse response) {
+
+    }
+
+    @Override
+    public List<WarpRequestResponse> getResponses(UUID playerUUID) {
+        return new ArrayList<>(requestResponses.get(playerUUID));
+    }
+
+    @Override
+    public boolean hasResponse(UUID playerUUID) {
+        return requestResponses.containsKey(playerUUID);
+    }
+
+    @Override
+    public void clearResponses(UUID playerUUID) {
+        this.requestResponses.remove(playerUUID);
+    }
+
 }

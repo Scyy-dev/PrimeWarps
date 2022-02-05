@@ -3,6 +3,7 @@ package me.scyphers.minecraft.primewarps;
 import me.scyphers.minecraft.primewarps.config.PrimeWarpsFileManager;
 import me.scyphers.minecraft.primewarps.config.Settings;
 import me.scyphers.minecraft.primewarps.external.SkyblockManager;
+import me.scyphers.minecraft.primewarps.warps.RequestResponseManager;
 import me.scyphers.minecraft.primewarps.warps.WarpRegister;
 import me.scyphers.minecraft.primewarps.warps.WarpRequestRegister;
 import me.scyphers.scycore.BasePlugin;
@@ -58,6 +59,10 @@ public class PrimeWarps extends BasePlugin {
 
     public WarpRequestRegister getWarpRequests() {
         return fileManager.getWarpRequestFile();
+    }
+
+    public RequestResponseManager getResponseManager() {
+        return fileManager.getRequestResponseFile();
     }
 
     public SkyblockManager getSkyblockManager() {

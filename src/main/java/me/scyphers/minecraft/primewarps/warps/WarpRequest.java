@@ -5,4 +5,4 @@ import org.bukkit.Location;
 import java.time.Instant;
 import java.util.UUID;
 
-public record WarpRequest(String name, UUID islandUUID, Location location, String category, Instant dateCreated) { }
+public record WarpRequest(String name, UUID islandUUID, UUID requester, Location location, String category, Instant dateCreated) { }

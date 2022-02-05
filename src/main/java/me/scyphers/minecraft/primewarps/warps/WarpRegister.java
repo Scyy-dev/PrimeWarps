@@ -14,4 +14,12 @@ public interface WarpRegister {
 
     List<Warp> getIslandWarps(UUID islandUUID);
 
+    List<Warp> getWarpsByCategory(String category);
+
+    void addWarp(String warpName, Warp warp);
+
+    long getWarpCount(UUID islandUUID);
+
+
+
 }

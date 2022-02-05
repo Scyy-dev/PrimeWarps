@@ -122,6 +122,10 @@ public class Warp {
         return inactive;
     }
 
+    public boolean isActive() {
+        return !inactive;
+    }
+
     public void setInactive(boolean inactive) {
         this.inactive = inactive;
     }

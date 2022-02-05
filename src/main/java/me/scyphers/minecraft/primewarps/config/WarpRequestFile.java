@@ -9,10 +9,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class WarpRequestFile extends ConfigStorageFile implements WarpRequestRegister {
 
@@ -31,13 +29,13 @@ public class WarpRequestFile extends ConfigStorageFile implements WarpRequestReg
         if (section == null || section.getKeys(false).size() == 0) return;
 
         for (String warpName : section.getKeys(false)) {
-            UUID uuid = UUID.fromString(section.getString(warpName + ".islandUUID", "INVALID_UUID"));
+            UUID islandUUID = UUID.fromString(section.getString(warpName + ".islandUUID", "INVALID_UUID"));
+            UUID requesterUUID = UUID.fromString(section.getString(warpName + ".requesterUUID", "INVALID_UUID"));
             Location location = section.getLocation(warpName + ".location");
             String category = section.getString(warpName + ".category", "INVALID_CATEGORY");
             Instant dateCreated = Instant.ofEpochMilli(file.getLong(warpName + ".dateCreated", 0));
-            warpRequests.put(warpName, new WarpRequest(warpName, uuid, location, category, dateCreated));
+            warpRequests.put(warpName, new WarpRequest(warpName, islandUUID, requesterUUID, location, category, dateCreated));
         }
-
 
     }
 
@@ -51,6 +49,7 @@ public class WarpRequestFile extends ConfigStorageFile implements WarpRequestReg
             WarpRequest request = warpRequests.get(warpRequestName);
 
             file.set("warpRequests." + warpRequestName + ".islandUUID", request.islandUUID());
+            file.set("warpRequests." + warpRequestName + ".requesterUUID", request.requester());
             file.set("warpRequests." + warpRequestName + ".location", request.location());
             file.set("warpRequests." + warpRequestName + ".category", request.category());
             file.set("warpRequests." + warpRequestName + ".dateCreated", request.dateCreated());
@@ -70,4 +69,18 @@ public class WarpRequestFile extends ConfigStorageFile implements WarpRequestReg
         return true;
     }
 
+    @Override
+    public Collection<WarpRequest> getRequests() {
+        return warpRequests.values();
+    }
+
+    @Override
+    public void removeWarpRequest(String warpName) {
+        this.warpRequests.remove(warpName);
+    }
+
+    @Override
+    public List<WarpRequest> getRequests(UUID islandUUID) {
+        return warpRequests.values().stream().filter(warpRequest -> warpRequest.islandUUID().equals(islandUUID)).collect(Collectors.toList());
+    }
 }
