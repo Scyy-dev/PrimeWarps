@@ -1,6 +1,7 @@
 package me.scyphers.minecraft.primewarps.gui;
 
 import me.scyphers.minecraft.primewarps.PrimeWarps;
+import me.scyphers.minecraft.primewarps.util.ItemStackUtils;
 import me.scyphers.minecraft.primewarps.warps.Warp;
 import me.scyphers.scycore.api.HeadMetaProvider;
 import me.scyphers.scycore.api.ItemBuilder;
@@ -34,7 +35,7 @@ public class WarpManagerGUI extends InventoryGUI {
 
         this.fill();
 
-        // TODO - factor in for when the management GUI is accessed by an admin and not an island member
+        // TODO - check if issues occur when accessed through management permission and not warp owner
 
         UUID islandOwnerUUID = plugin.getSkyblockManager().getIslandOwner(warp.getIslandUUID());
 
@@ -111,7 +112,7 @@ public class WarpManagerGUI extends InventoryGUI {
 
                 // Only remove items if the player doesn't have management permissions
                 if (!player.hasPermission("primewarps.warps.manage")) {
-                    // TODO - actually remove the warp shards
+                    ItemStackUtils.removeItem(player, warpToken, moveCost);
                 }
 
                 // Move the warp
@@ -133,7 +134,7 @@ public class WarpManagerGUI extends InventoryGUI {
 
                 // Only remove items if the player doesn't have management permissions
                 if (!player.hasPermission("primewarps.warps.manage")) {
-                    // TODO - actually remove the warp shards
+                    ItemStackUtils.removeItem(player, warpToken, renameCost);
                 }
 
                 // Open the rename GUI
@@ -169,6 +170,11 @@ public class WarpManagerGUI extends InventoryGUI {
                     return this;
                 }
 
+                // Only remove items if the player doesn't have management permissions
+                if (!player.hasPermission("primewarps.warps.manage")) {
+                    ItemStackUtils.removeItem(player, warpToken, reactivateCost);
+                }
+
                 // Set the warp as active
                 warp.setInactive(false);
 
@@ -188,9 +194,7 @@ public class WarpManagerGUI extends InventoryGUI {
                 // Delete the warp
                 plugin.getWarps().removeWarp(warp.getName());
 
-                // TODO - determine which menu to open based on permission
                 if (player.hasPermission("primewarps.warps.manage")) return new WarpListGUI(this, plugin, player, "");
-
                 else {
                     UUID islandUUID = plugin.getSkyblockManager().getIslandUUID(player.getUniqueId());
                     return new PlayerWarpListGUI(this, plugin, player, islandUUID);
