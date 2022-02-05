@@ -1,13 +1,14 @@
 package me.scyphers.minecraft.primewarps.command.admin;
 
-import me.Scyy.PrimeWarps.Warps.Warp;
 import me.scyphers.minecraft.primewarps.PrimeWarps;
-import me.scyphers.scycore.BasePlugin;
+import me.scyphers.minecraft.primewarps.warps.Warp;
 import me.scyphers.scycore.command.BaseCommand;
 import org.bukkit.command.CommandSender;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class RemoveWarpCommand extends BaseCommand {
 
@@ -36,10 +37,10 @@ public class RemoveWarpCommand extends BaseCommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, String[] strings) {
-        // TODO - return a list
-        for (Warp warp : plugin.getWarpRegister().getWarps().values()) {
-            list.add(warp.getName());
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        if (args.length == 1) {
+            return plugin.getWarps().getAllWarps().stream().map(Warp::getName).collect(Collectors.toList());
         }
+        return Collections.emptyList();
     }
 }
