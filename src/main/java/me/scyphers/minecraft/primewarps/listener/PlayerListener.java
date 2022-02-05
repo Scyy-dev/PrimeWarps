@@ -1,17 +1,20 @@
 package me.scyphers.minecraft.primewarps.listener;
 
-import me.Scyy.PrimeWarps.Warps.Warp;
-import me.Scyy.PrimeWarps.Warps.WarpRequest;
-import me.Scyy.PrimeWarps.Warps.WarpRequestHandler;
 import me.scyphers.minecraft.primewarps.PrimeWarps;
-import org.bukkit.Bukkit;
+import me.scyphers.minecraft.primewarps.warps.Warp;
+import me.scyphers.minecraft.primewarps.warps.WarpRequest;
+import me.scyphers.minecraft.primewarps.warps.WarpRequestResponse;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.Instant;
-import java.util.Set;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public record PlayerListener(PrimeWarps plugin) implements Listener {
 
@@ -20,70 +23,51 @@ public record PlayerListener(PrimeWarps plugin) implements Listener {
 
         Player player = event.getPlayer();
 
-        if (plugin.getWarpRegister() == null) {
-            return;
+        UUID playerUUID = event.getPlayer().getUniqueId();
+        UUID islandUUID = plugin.getSkyblockManager().getIslandUUID(playerUUID);
+
+        // Update warp activity for each warp
+        List<Warp> warps = plugin.getWarps().getIslandWarps(islandUUID);
+        warps.forEach(warp -> warp.setLastSeen(Instant.now()));
+
+        // Check if the island has any pending warp requests
+        List<WarpRequest> warpRequests = plugin.getWarpRequests().getRequests(islandUUID);
+        if (warpRequests.size() != 0) {
+            plugin.getMessenger().chat(this.getWarpRequestAudience(), "warpMessages.playerHasWarpRequest", "%player%", player.getName());
         }
 
-        Set<WarpRequestHandler> handlers = plugin.getWarpRegister().getRequestHandlerList(player.getUniqueId());
+        // Check if the player has any warp request responses
+        if (plugin.getResponseManager().hasResponse(playerUUID)) {
 
-        // Check if the player owns any warps and if so update when the owner was last seen
-        for (Warp warp : plugin.getWarpRegister().getWarps().values()) {
+            // Only get responses that the player had - players from the same island will not trigger a response
+            List<WarpRequestResponse> responses = plugin.getResponseManager().getResponses(playerUUID);
+            responses = responses.stream().filter(response -> response.warpRequester().equals(playerUUID)).collect(Collectors.toList());
 
-            if (warp.getOwner().equals(player.getUniqueId())) {
-                warp.setOwnerLastSeen(Instant.now());
-                warp.setOwnerName(player.getName());
-            }
+            ItemStack warpShard = plugin.getFileManager().getMiscDataFile().getWarpToken();
+            int warpCreateCost = plugin.getSettings().getCreateWarpCost();
 
-        }
-
-        // Cycle through warp requests and if the player has a warp request notify staff
-        for (WarpRequest request : plugin.getWarpRegister().getWarpRequests().values()) {
-            if (request.getOwner().equals(player.getUniqueId())) {
-                for (Player online : Bukkit.getOnlinePlayers()) {
-                    if (online.hasPermission("pwarp.admin.request")) {
-                        plugin.getCFH().getPlayerMessenger().msg(online, "warpMessages.playerHasWarpRequest", "%player%", player.getName());
+            int delay = 400;
+            for (WarpRequestResponse response : responses) {
+                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                    boolean refunded = response.refundShardsFor(player, warpShard, warpCreateCost);
+                    if (refunded) {
+                        plugin.getMessenger().chat(player, "warpMessages.warpShardsRefunded", "%warp%", response.warpName());
                     }
-                }
+                }, delay);
+                delay += 20;
             }
+
+            plugin.getResponseManager().clearResponses(playerUUID);
 
         }
-
-        // Alert the player of any inactive warps they have
-        for (Warp warp : plugin.getWarpRegister().getWarps().values()) {
-            if (warp.isInactive() && warp.getOwner().equals(player.getUniqueId())) {
-                plugin.getCFH().getPlayerMessenger().msg(player, "warpMessages.alertWarpInactive",
-                        "%warp%", warp.getName());
-            }
-        }
-
-        if (handlers == null) return;
-
-        // Check for any messages and shard refunds
-        for (WarpRequestHandler handler : handlers) {
-
-            if (handler.isRefundWarpShards()) {
-
-                Bukkit.getScheduler().runTaskLater(plugin, () -> handler.refundWarpShards(player, plugin), 20);
-
-            }
-
-            if (handler.getRequestMessage() != null) {
-
-                Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    player.sendMessage(handler.getRequestMessage());
-                    handler.setRequestMessage(null);
-                }, 20);
-
-            }
-
-        }
-
-        // Clean out used handlers
-        plugin.getWarpRegister().filterHandlers(player);
-
-
 
     }
 
+    private Audience getWarpRequestAudience() {
+        List<Player> applicablePlayers = plugin.getServer().getOnlinePlayers().stream()
+                .filter(player -> player.hasPermission("primewarps.warps.requests"))
+                .collect(Collectors.toList());
+        return Audience.audience(applicablePlayers);
+    }
 
 }
