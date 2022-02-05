@@ -34,6 +34,10 @@ public class MiscDataFile extends ConfigStorageFile {
         return warpToken;
     }
 
+    public void setWarpToken(ItemStack warpToken) {
+        this.warpToken = warpToken;
+    }
+
     public Instant getLastResetTime() {
         return lastResetTime;
     }

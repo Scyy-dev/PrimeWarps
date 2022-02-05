@@ -33,7 +33,7 @@ public class SetWarpShardCommand extends PlayerCommand {
         ItemStack warpShard = mainHand.clone();
         warpShard.setAmount(1);
 
-        plugin.getCFH().getMiscDataStorage().saveWarpToken(warpShard);
+        plugin.getFileManager().getMiscDataFile().setWarpToken(warpShard);
         m.chat(player, "warpMessages.addedWarpShard");
         return true;
     }
