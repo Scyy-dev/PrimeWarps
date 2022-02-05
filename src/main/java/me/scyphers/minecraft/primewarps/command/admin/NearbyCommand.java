@@ -1,13 +1,14 @@
 package me.scyphers.minecraft.primewarps.command.admin;
 
-import me.Scyy.PrimeWarps.Warps.Warp;
 import me.scyphers.minecraft.primewarps.PrimeWarps;
+import me.scyphers.minecraft.primewarps.warps.Warp;
 import me.scyphers.scycore.command.PlayerCommand;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class NearbyCommand extends PlayerCommand {
@@ -34,7 +35,7 @@ public class NearbyCommand extends PlayerCommand {
         m.chat(player, "otherMessages.initialNearby");
         StringBuilder builder = new StringBuilder();
 
-        for (Warp warp : plugin.getWarpRegister().getWarps().values()) {
+        for (Warp warp : plugin.getWarps().getAllWarps()) {
             Location location = warp.getLocation();
             if (!playerLoc.getWorld().getName().equals(location.getWorld().getName())) continue;
             double distance = playerLoc.distance(location);
@@ -53,8 +54,8 @@ public class NearbyCommand extends PlayerCommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, String[] strings) {
-        // TODO - return a list
-        list.addAll(Arrays.asList("10", "50", "100"));
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        if (args.length == 1) return Arrays.asList("10", "50", "100");
+        return Collections.emptyList();
     }
 }
