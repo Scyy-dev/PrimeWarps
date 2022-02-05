@@ -13,7 +13,6 @@ public class PrimeWarpAdminCommandFactory extends CommandFactory {
 
     public PrimeWarpAdminCommandFactory(PrimeWarps plugin, String baseCommandName) {
         super(plugin, baseCommandName, Map.of(
-                "changeowner", new ChangeOwnerCommand(plugin, "primewarps.commands.changeowner"),
                 "forceinactive", new ForceInactiveCommand(plugin, "primewarps.commands.forceinactive"),
                 "nearby", new NearbyCommand(plugin, "primewarps.commands.nearby"),
                 "reload", new ReloadCommand(plugin, "primewarps.commands.reload"),
