@@ -2,6 +2,7 @@ package me.scyphers.minecraft.primewarps.util;
 
 import me.scyphers.minecraft.primewarps.PrimeWarps;
 import me.scyphers.minecraft.primewarps.warps.Warp;
+import me.scyphers.scycore.api.Messenger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -38,8 +39,10 @@ public class WarpUtil {
 
         Location location = warp.getLocation();
 
+        Messenger m = plugin.getMessenger();
+
         if (location.getWorld() == null) {
-            pm.msg(player, "errorMessages.worldNotFound");
+            m.chat(player, "errorMessages.worldNotFound");
             return;
         }
 
@@ -63,18 +66,18 @@ public class WarpUtil {
 
             // Verify the space the player takes up is safe
             if (!b2.isPassable() || !b3.isPassable()) {
-                pm.msg(player, "warpMessages.spaceBlocked", "%warp%", warp.getName());
+                m.chat(player, "warpMessages.spaceBlocked", "%warp%", warp.getName());
                 return;
             }
 
             // Verify the player has a block to stand on
             if (b1.isPassable()) {
-                pm.msg(player, "warpMessages.holeInFloor", "%warp%", warp.getName());
+                m.chat(player, "warpMessages.holeInFloor", "%warp%", warp.getName());
                 return;
             }
 
             player.teleport(location, PlayerTeleportEvent.TeleportCause.COMMAND);
-            pm.msg(player, "warpMessages.playerWarped", "%warp%", warp.getName());
+            m.chat(player, "warpMessages.playerWarped", "%warp%", warp.getName());
             warp.addVisitor(player.getUniqueId());
         }, delay);
 
