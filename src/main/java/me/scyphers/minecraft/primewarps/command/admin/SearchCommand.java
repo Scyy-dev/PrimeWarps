@@ -1,14 +1,16 @@
 package me.scyphers.minecraft.primewarps.command.admin;
 
-import me.Scyy.PrimeWarps.Warps.Warp;
 import me.scyphers.minecraft.primewarps.PrimeWarps;
+import me.scyphers.minecraft.primewarps.warps.Warp;
 import me.scyphers.scycore.command.BaseCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class SearchCommand extends BaseCommand {
@@ -22,16 +24,20 @@ public class SearchCommand extends BaseCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
+
         OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
         if (!player.hasPlayedBefore() && !player.isOnline()) {
             m.chat(sender, "errorMessages.playerNotFound");
             return true;
         }
 
-        List<Warp> warps = plugin.getWarpRegister().getWarps().values().stream()
-                .filter((warp -> warp.getOwner().equals(player.getUniqueId()))).collect(Collectors.toList());
+        UUID islandUUID = plugin.getSkyblockManager().getIslandUUID(player.getUniqueId());
 
-        m.chat(sender, "warpMessages.warplist", "%player%", player.getName());
+        List<Warp> warps = plugin.getWarps().getAllWarps().stream()
+                .filter(warp -> warp.getIslandUUID().equals(islandUUID))
+                .collect(Collectors.toList());
+
+        m.chat(sender, "warpMessages.warplist", "%player%", "" + player.getName());
 
         StringBuilder builder = new StringBuilder();
 
@@ -49,10 +55,11 @@ public class SearchCommand extends BaseCommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, String[] strings) {
-        // TODO - return a list
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            list.add(player.getName());
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        if (args.length == 1) {
+            return plugin.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
         }
+        return Collections.emptyList();
     }
+
 }
