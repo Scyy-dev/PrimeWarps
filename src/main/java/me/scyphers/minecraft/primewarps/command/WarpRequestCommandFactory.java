@@ -1,6 +1,7 @@
 package me.scyphers.minecraft.primewarps.command;
 
 import me.scyphers.minecraft.primewarps.PrimeWarps;
+import me.scyphers.minecraft.primewarps.util.ItemStackUtils;
 import me.scyphers.minecraft.primewarps.warps.WarpRequest;
 import me.scyphers.scycore.api.Messenger;
 import me.scyphers.scycore.command.SimpleCommandFactory;
@@ -9,9 +10,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 public class WarpRequestCommandFactory extends SimpleCommandFactory {
 
@@ -20,7 +23,7 @@ public class WarpRequestCommandFactory extends SimpleCommandFactory {
     private final Messenger m;
 
     public WarpRequestCommandFactory(PrimeWarps plugin) {
-        super(sender -> plugin.getMessenger().sendChat(sender, "warpMessages.requestHelp"));
+        super(plugin, "warprequest", sender -> plugin.getMessenger().sendChat(sender, "warpMessages.requestHelp"));
         this.plugin = plugin;
         this.m = plugin.getMessenger();
     }
@@ -38,9 +41,26 @@ public class WarpRequestCommandFactory extends SimpleCommandFactory {
             return true;
         }
 
-        // TODO - determine island role required to create warps
-        if (!plugin.getSkyblockManager().hasAtLeast(player.getUniqueId(), "???")) {
+        UUID islandUUID = plugin.getSkyblockManager().getIslandUUID(player.getUniqueId());
+
+        // Ensure the player has the right island role
+        if (!plugin.getSkyblockManager().hasAtLeast(player.getUniqueId(), "TRUSTED")) {
             m.chat(sender, "errorMessages.noIslandPermission", "%player%", player.getName());
+            return true;
+        }
+
+        // Check if the island has reached the warp cap for the current prestige
+        int maxWarps = plugin.getSettings().getMaximumWarps();
+        int prestigePerWarp = plugin.getSettings().getPrestigePerWarp();
+        long warpCount = plugin.getWarps().getWarpCount(islandUUID);
+        int prestigeLevel = plugin.getSkyblockManager().getPrestigeLevel(islandUUID);
+
+        // The number of warps the player can have at their current prestige level
+        long maximumPrestigeWarps = prestigeLevel / prestigePerWarp;
+
+        // If the player has reached the hard warp count cap or reached the cap for their current prestige
+        if (warpCount >= maxWarps || warpCount >= maximumPrestigeWarps) {
+            m.chat(sender, "errorMessages.warpCapReached", "%prestige%", "" + prestigeLevel, "%warpCap%", "" + Math.min(maxWarps, maximumPrestigeWarps));
             return true;
         }
 
@@ -71,7 +91,7 @@ public class WarpRequestCommandFactory extends SimpleCommandFactory {
         }
 
         // Create the Warp Request
-        WarpRequest request = new WarpRequest(formatName, player.getName(), player.getUniqueId(), player.getLocation());
+        WarpRequest request = new WarpRequest(formatName, islandUUID, player.getUniqueId(), player.getLocation(), "", Instant.now());
         boolean requestSuccess = plugin.getWarpRequests().addRequest(formatName, request);
         if (requestSuccess) {
 
@@ -80,7 +100,7 @@ public class WarpRequestCommandFactory extends SimpleCommandFactory {
 
             // Remove the tokens from the players inventory
             ItemStack requiredTokens = warpToken.clone();
-            ItemStackUtils.removeItem(player, requiredTokens, plugin.getCFH().getSettings().getCreateWarpCost());
+            ItemStackUtils.removeItem(player, requiredTokens, plugin.getSettings().getCreateWarpCost());
 
         } else {
             m.chat(sender, "warpMessages.warpAlreadyExists", "%warp%", formatName);
