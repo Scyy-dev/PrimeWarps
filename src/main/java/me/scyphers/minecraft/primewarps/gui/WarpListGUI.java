@@ -2,32 +2,47 @@ package me.scyphers.minecraft.primewarps.gui;
 
 import me.scyphers.minecraft.primewarps.PrimeWarps;
 import me.scyphers.minecraft.primewarps.util.DateTimeUtil;
+import me.scyphers.minecraft.primewarps.util.WarpUtil;
 import me.scyphers.minecraft.primewarps.warps.Warp;
 import me.scyphers.scycore.api.HeadMetaProvider;
 import me.scyphers.scycore.api.ItemBuilder;
 import me.scyphers.scycore.gui.GUI;
 import me.scyphers.scycore.gui.PagedListGUI;
 import me.scyphers.scycore.gui.UninteractableGUI;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class WarpListGUI extends PagedListGUI<Warp> {
 
     private final PrimeWarps plugin;
 
-    public WarpListGUI(@Nullable GUI<?> lastGUI, @NotNull PrimeWarps plugin, @NotNull Player player) {
-        super(lastGUI, plugin, player, "&5Warps", 54, new ArrayList<>(plugin.getWarps().getAllWarps()), 4, 7, 47, 51);
+    private String category;
+
+    public WarpListGUI(@Nullable GUI<?> lastGUI, @NotNull PrimeWarps plugin, @NotNull Player player, String category) {
+        super(lastGUI, plugin, player, "&5Warps", 54, defaultSortedWarps(plugin.getWarps().getAllWarps()),
+                4, 7, 47, 51);
         this.plugin = plugin;
+        this.category = category;
+    }
+
+    @Override
+    public void draw() {
+        super.draw();
+        inventoryItems[45] = new ItemBuilder(Material.BARRIER).name("&5Back to Featured Warps").build();
+        String categoryDisplay = category.equals("") ? "ALL" : category;
+        inventoryItems[49] = new ItemBuilder(Material.HOPPER).name("&5Sort Warps")
+                .lore("&8Category: &7" + categoryDisplay)
+                .lore("")
+                .lore("&8Click to switch category!")
+                .build();
     }
 
     @Override
@@ -38,12 +53,21 @@ public class WarpListGUI extends PagedListGUI<Warp> {
 
         String islandOwnerName = plugin.getServer().getOfflinePlayer(islandOwnerUUID).getName();
 
-        return new ItemBuilder(skullMeta, Material.PLAYER_HEAD).name(warp.getName())
+        ItemBuilder builder = new ItemBuilder(skullMeta, Material.PLAYER_HEAD).name(warp.getName())
                 .lore("&8Owner: &7" + islandOwnerName)
                 .lore("&8Category: &7" + warp.getCategory())
                 .lore("&8Date Created: &7" + DateTimeUtil.format(warp.getDateCreated()))
                 .lore("")
-                .lore("&aLeft click to visit!").build();
+                .lore("&aLeft click to visit!");
+
+        if (player.hasPermission("primewarps.admin.manage")) {
+            builder.lore("")
+                    .lore("&8Shift right click to manage this warp")
+                    .lore("&8Shift left click to force TP to this warp");
+        }
+
+        return builder.build();
+
     }
 
     @Override
@@ -66,47 +90,74 @@ public class WarpListGUI extends PagedListGUI<Warp> {
 
         event.setCancelled(true);
 
-        if (event.getRawSlot() == 49) {
-            return new FeaturedWarpsGUI(this, plugin, player);
-        }
+        int click = event.getRawSlot();
 
-        // TODO - review sorting process, see trello
+        return switch (click) {
 
-        return this;
+            // Back button
+            case 45 -> new FeaturedWarpsGUI(this, plugin, player);
+
+            // Sort button
+            case 49 -> {
+
+                // Find the next category in order
+                String nextCategory = "";
+                boolean foundPrevious = false;
+                for (String category : plugin.getSettings().getCategories()) {
+                    if (foundPrevious) {
+                        nextCategory = category;
+                        break;
+                    }
+                    if (this.category.equals(category)) foundPrevious = true;
+                }
+
+                this.setItems(plugin.getWarps().getWarpsByCategory(nextCategory));
+                this.category = nextCategory;
+                yield this;
+            }
+
+            // Everything else
+            default -> this;
+
+        };
+
     }
 
     @Override
-    public @NotNull GUI<?> handleItemInteraction(InventoryClickEvent inventoryClickEvent, Warp warp) {
+    public @NotNull GUI<?> handleItemInteraction(InventoryClickEvent event, Warp warp) {
 
-        // TODO - review warping process
+        event.setCancelled(true);
 
-        if (event.getClick() == ClickType.SHIFT_RIGHT && player.hasPermission("pwarp.admin.manage")) {
+        return switch (event.getClick()) {
 
-            return new WarpManagerGUI(this, plugin, player, warp);
-
-        } else if (event.getClick() == ClickType.SHIFT_LEFT && player.hasPermission("pwarp.admin.manage")) {
-
-            Bukkit.getScheduler().runTask(plugin, () -> player.teleport(warp.getLocation()));
-
-            return new UninteractableGUI(this);
-
-        } else {
-
-            if (warp.isInactive()) {
-                plugin.getCFH().getPlayerMessenger().msg(player, "warpMessages.warpInactive", "%warp%", warp.getName());
-                return new me.Scyy.PrimeWarps.GUI.WarpListGUI(this, plugin, page, player);
+            // Warp management
+            case SHIFT_RIGHT -> {
+                if (!player.hasPermission("primewarps.admin.manage")) {
+                    yield new WarpManagerGUI(this, plugin, player, warp);
+                } else {
+                    yield this;
+                }
             }
 
-            // Mark the inventory to close
-            this.close = true;
+            // Force teleport
+            case SHIFT_LEFT -> {
+                if (!player.hasPermission("primewarps.admin.manage")) {
+                    plugin.getServer().getScheduler().runTask(plugin, () -> {
+                        player.teleport(warp.getLocation());
+                    });
+                    yield new UninteractableGUI(this);
+                } else {
+                    yield this;
+                }
+            }
 
-            // Warp the player
-            WarpUtils.warp((Player) event.getWhoClicked(), plugin, warp);
+            default -> {
+                this.setShouldClose(true);
+                WarpUtil.warp(player, plugin, warp);
+                yield new UninteractableGUI(this);
+            }
 
-            // To minimise chance of interacting while warping, return the GUI in the state it is in
-            return new UninteractableGUI(this);
-
-        }
+        };
 
     }
 
@@ -114,4 +165,9 @@ public class WarpListGUI extends PagedListGUI<Warp> {
     public boolean allowPlayerInventoryEdits() {
         return false;
     }
+
+    private static List<Warp> defaultSortedWarps(Collection<Warp> rawWarps) {
+        return rawWarps.stream().sorted(Comparator.comparingLong(value -> value.getDateCreated().toEpochMilli())).collect(Collectors.toList());
+    }
+
 }
