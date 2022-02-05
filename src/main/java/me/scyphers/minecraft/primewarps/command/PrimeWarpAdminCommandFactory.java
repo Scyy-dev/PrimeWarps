@@ -11,8 +11,8 @@ import java.util.Map;
 
 public class PrimeWarpAdminCommandFactory extends CommandFactory {
 
-    public PrimeWarpAdminCommandFactory(PrimeWarps plugin, String baseCommandName) {
-        super(plugin, baseCommandName, Map.of(
+    public PrimeWarpAdminCommandFactory(PrimeWarps plugin) {
+        super(plugin, "pwadmin", Map.of(
                 "forceinactive", new ForceInactiveCommand(plugin, "primewarps.commands.forceinactive"),
                 "nearby", new NearbyCommand(plugin, "primewarps.commands.nearby"),
                 "reload", new ReloadCommand(plugin, "primewarps.commands.reload"),
