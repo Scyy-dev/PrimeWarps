@@ -101,6 +101,8 @@ public class SignManager {
 
     public boolean removeSign(int signID) {
         if (signs.containsKey(signID)) {
+            Sign sign = this.signs.get(signID).sign;
+            sign.setType(Material.AIR);
             this.signs.remove(signID);
             return true;
         } else {

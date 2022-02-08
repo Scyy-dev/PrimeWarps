@@ -48,6 +48,11 @@ public abstract class SignGUI implements GUI<SignChangeEvent> {
         } else {
             Sign sign = signManager.getSign(signID);
 
+            if (sign == null) {
+                player.sendMessage("Something went wrong opening the sign!");
+                return;
+            }
+
             for (int i = 0; i < 4; i++) {
                 sign.line(i, MessengerFile.toMessageComponent(text[i]));
             }
