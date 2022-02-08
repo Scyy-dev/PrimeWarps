@@ -138,8 +138,7 @@ public class WarpManagerGUI extends InventoryGUI {
                 }
 
                 // Open the rename GUI
-                // TODO - finish sign-based GUIs
-                return new RenameWarpGUI();
+                return new RenameWarpGUI(this, plugin, player, warp);
 
             }
 
@@ -223,4 +222,5 @@ public class WarpManagerGUI extends InventoryGUI {
     public boolean allowPlayerInventoryEdits() {
         return false;
     }
+
 }

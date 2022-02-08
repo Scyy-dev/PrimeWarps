@@ -121,7 +121,7 @@ public class FeaturedWarpsGUI extends InventoryGUI {
             case 31 -> new WarpListGUI(this, plugin, player, "");
 
             // Warp Request
-            case 33 -> new CreateWarpGUI();
+            case 33 -> new CreateWarpGUI(this, plugin, player);
 
             // Warp Request Management
             case 36 -> {
