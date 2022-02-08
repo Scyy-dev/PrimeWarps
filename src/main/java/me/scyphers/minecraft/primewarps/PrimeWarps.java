@@ -6,9 +6,11 @@ import me.scyphers.minecraft.primewarps.command.WarpRequestCommandFactory;
 import me.scyphers.minecraft.primewarps.config.PrimeWarpsFileManager;
 import me.scyphers.minecraft.primewarps.config.Settings;
 import me.scyphers.minecraft.primewarps.external.SkyblockManager;
+import me.scyphers.minecraft.primewarps.gui.sign.SignManager;
 import me.scyphers.minecraft.primewarps.listener.PlayerListener;
 import me.scyphers.minecraft.primewarps.listener.WorldLoadListener;
 import me.scyphers.minecraft.primewarps.warps.RequestResponseManager;
+import me.scyphers.minecraft.primewarps.warps.Warp;
 import me.scyphers.minecraft.primewarps.warps.WarpRegister;
 import me.scyphers.minecraft.primewarps.warps.WarpRequestRegister;
 import me.scyphers.scycore.BasePlugin;
@@ -16,6 +18,8 @@ import me.scyphers.scycore.api.Messenger;
 import me.scyphers.scycore.gui.InventoryGUI;
 import org.bukkit.command.CommandSender;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,6 +28,8 @@ public class PrimeWarps extends BasePlugin {
     private PrimeWarpsFileManager fileManager;
 
     private SkyblockManager skyblockManager;
+
+    private SignManager signManager;
 
     private boolean successfulEnable;
 
@@ -51,10 +57,21 @@ public class PrimeWarps extends BasePlugin {
         PrimeWarpAdminCommandFactory adminCommandFactory = new PrimeWarpAdminCommandFactory(this);
         WarpRequestCommandFactory requestCommandFactory = new WarpRequestCommandFactory(this);
 
+        this.signManager = new SignManager(this);
+
         // Register all listeners
         this.getServer().getPluginManager().registerEvents(InventoryGUI.getListener(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         this.getServer().getPluginManager().registerEvents(new WorldLoadListener(this), this);
+
+        // Test all warps for inactivity
+        int inactiveTimer = this.getSettings().getInactiveDays();
+        Instant warpInactiveMarker = Instant.now().minus(inactiveTimer, ChronoUnit.DAYS);
+        for (Warp warp : this.getWarps().getAllWarps()) {
+            if (warp.getLastSeen().isBefore(warpInactiveMarker)) {
+                warp.setInactive(true);
+            }
+        }
 
         this.successfulEnable = true;
     }
@@ -65,8 +82,14 @@ public class PrimeWarps extends BasePlugin {
     }
 
     @Override
-    public void reload(CommandSender commandSender) {
-
+    public void reload(CommandSender sender) {
+        try {
+            fileManager.reloadConfigs();
+            sender.sendMessage("Successfully reloaded!");
+        } catch (Exception e) {
+            sender.sendMessage("Something went wrong reloading configs!");
+            getSLF4JLogger().error("An error occurred while reloading configs", e);
+        }
     }
 
     public WarpRegister getWarps() {
@@ -83,6 +106,10 @@ public class PrimeWarps extends BasePlugin {
 
     public SkyblockManager getSkyblockManager() {
         return skyblockManager;
+    }
+
+    public SignManager getSignManager() {
+        return signManager;
     }
 
     @Override
