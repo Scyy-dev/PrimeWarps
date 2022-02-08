@@ -99,14 +99,17 @@ public class SignManager {
         return signs.get(signID).sign;
     }
 
-    public boolean removeSign(int signID) {
+    public void removeSign(int signID) {
         if (signs.containsKey(signID)) {
+
+            // Remove the sign from the game world
             Sign sign = this.signs.get(signID).sign;
-            sign.setType(Material.AIR);
+            Block block = sign.getLocation().getBlock();
+            block.setType(Material.AIR);
+
+            // Remove the sign from the cache of sign GUIs
             this.signs.remove(signID);
-            return true;
-        } else {
-            return false;
+            System.out.println("Removed sign with ID " + signID);
         }
     }
 
