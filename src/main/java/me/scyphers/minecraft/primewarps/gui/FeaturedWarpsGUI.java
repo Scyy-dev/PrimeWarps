@@ -57,7 +57,7 @@ public class FeaturedWarpsGUI extends InventoryGUI {
 
         // Create the display items
         for (int i = 0; i < 4; i++) {
-            ItemStack warpItem = featuredWarps.size() < i ? this.createWarpItem(null) : this.createWarpItem(featuredWarps.get(i));
+            ItemStack warpItem = featuredWarps.size() > i ? this.createWarpItem(featuredWarps.get(i)) : this.createWarpItem(null);
             inventoryItems[10 + i*2] = warpItem;
         }
 
@@ -113,6 +113,14 @@ public class FeaturedWarpsGUI extends InventoryGUI {
 
             // Warp Manager
             case 29 -> {
+
+                // Ensure the player has an island
+                if (!plugin.getSkyblockManager().hasIsland(player.getUniqueId())) {
+                    plugin.getMessenger().chat(player, "errorMessages.needIsland");
+                    yield this;
+                }
+
+
                 UUID islandUUID = plugin.getSkyblockManager().getIslandUUID(player.getUniqueId());
                 yield new PlayerWarpListGUI(this, plugin, player, islandUUID);
             }
@@ -121,7 +129,16 @@ public class FeaturedWarpsGUI extends InventoryGUI {
             case 31 -> new WarpListGUI(this, plugin, player, "");
 
             // Warp Request
-            case 33 -> new CreateWarpGUI(this, plugin, player);
+            case 33 -> {
+
+                // Ensure the player has an island
+                if (!plugin.getSkyblockManager().hasIsland(player.getUniqueId())) {
+                    plugin.getMessenger().chat(player, "errorMessages.needIsland");
+                    yield this;
+                }
+
+                yield new CreateWarpGUI(this, plugin, player);
+            }
 
             // Warp Request Management
             case 36 -> {

@@ -42,6 +42,12 @@ public class WarpRequestCommandFactory extends SimpleCommandFactory {
             return true;
         }
 
+        // Ensure the player has an island
+        if (!plugin.getSkyblockManager().hasIsland(player.getUniqueId())) {
+            m.chat(sender, "errorMessages.needIsland");
+            return true;
+        }
+
         UUID islandUUID = plugin.getSkyblockManager().getIslandUUID(player.getUniqueId());
 
         // Ensure the player has the right island role

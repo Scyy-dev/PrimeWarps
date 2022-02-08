@@ -44,6 +44,10 @@ public class SkyblockManager {
         return pluginLoaded;
     }
 
+    public boolean hasIsland(UUID playerUUID) {
+        return this.getIslandFromPlayer(playerUUID) != null;
+    }
+
     public boolean isWithinPlayerIsland(UUID playerUUID, Location location) {
         if (!pluginLoaded) return true;
 
