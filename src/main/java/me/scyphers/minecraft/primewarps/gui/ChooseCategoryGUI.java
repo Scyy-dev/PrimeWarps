@@ -1,8 +1,8 @@
 package me.scyphers.minecraft.primewarps.gui;
 
-import me.Scyy.PrimeWarps.Util.ItemBuilder;
 import me.scyphers.minecraft.primewarps.PrimeWarps;
 import me.scyphers.minecraft.primewarps.warps.Warp;
+import me.scyphers.scycore.api.ItemBuilder;
 import me.scyphers.scycore.gui.GUI;
 import me.scyphers.scycore.gui.PagedListGUI;
 import org.bukkit.Material;
