@@ -90,12 +90,12 @@ public class SignManager {
     }
 
     public SignGUI getGUI(int signID) {
-        if (isValidSign(signID)) return null;
+        if (!isValidSign(signID)) return null;
         return signs.get(signID).gui;
     }
 
     public Sign getSign(int signID) {
-        if (isValidSign(signID)) return null;
+        if (!isValidSign(signID)) return null;
         return signs.get(signID).sign;
     }
 
