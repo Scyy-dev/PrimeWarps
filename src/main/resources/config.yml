@@ -22,7 +22,7 @@ inactiveWarpName: "&r&c%warp% &8(inactive)"
 
 # Amount of days to pass for a warp to be marked as 'inactive'
 # Inactive warps cannot be teleported to unless the user has a permission to teleport to them
-inactiveDays: 30
+inactiveDays: 14
 
 # Featured Warp Algorithm
 # The 'ranking' of warps is calculated through the factors listed below. Changing the weighting below changes
