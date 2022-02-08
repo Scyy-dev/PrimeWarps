@@ -33,6 +33,12 @@ public class PlayerWarpListGUI extends PagedListGUI<Warp> {
     }
 
     @Override
+    public void draw() {
+        super.draw();
+        inventoryItems[49] = new ItemBuilder(Material.BARRIER).name("&r&5Back to Warps").build();
+    }
+
+    @Override
     public @NotNull ItemStack display(Warp warp) {
         Component warpName = plugin.getMessenger().get("warpName", "%warp%", warp.getName());
         return new ItemBuilder(Material.PLAYER_HEAD).meta(islandOwnerSkullMeta).name(warpName).build();
