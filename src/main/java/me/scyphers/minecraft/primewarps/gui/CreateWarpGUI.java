@@ -64,13 +64,13 @@ public class CreateWarpGUI extends SignGUI {
         // If the player has reached the hard warp count cap or reached the cap for their current prestige
         if (WarpUtil.reachedMaxWarps(maxWarps, prestigePerWarp, warpCount, prestigeLevel)) {
             plugin.getMessenger().chat(player, "errorMessages.warpCapReached", "%prestige%", "" + prestigeLevel, "%warpCap%", "" + Math.min(maxWarps, maximumPrestigeWarps));
-            return new FeaturedWarpsGUI(null, plugin, player);
+            return new FeaturedWarpsGUI(this, plugin, player);
         }
 
         // Ensure the warp is on the players island
         if (!plugin.getSkyblockManager().isWithinPlayerIsland(player.getUniqueId(), player.getLocation())) {
             plugin.getMessenger().chat(player, "errorMessages.mustBeOnPlayerIsland", "%player%", player.getName());
-            return new FeaturedWarpsGUI(null, plugin, player);
+            return new FeaturedWarpsGUI(this, plugin, player);
         }
 
         // Check if the player has the required items
@@ -78,17 +78,17 @@ public class CreateWarpGUI extends SignGUI {
         ItemStack warpToken = plugin.getFileManager().getMiscDataFile().getWarpToken();
         if (!player.getInventory().containsAtLeast(warpToken, warpCost)) {
             plugin.getMessenger().chat(player, "warpMessages.notEnoughWarpShards", "%warp%", warpName);
-            return new FeaturedWarpsGUI(null, plugin, player);
+            return new FeaturedWarpsGUI(this, plugin, player);
         }
 
         // Check if the warp already exists
         if (plugin.getWarps().warpExists(warpName)) {
             plugin.getMessenger().chat(player, "warpMessages.warpAlreadyExists", "%warp%", warpName);
-            return new FeaturedWarpsGUI(null, plugin, player);
+            return new FeaturedWarpsGUI(this, plugin, player);
         }
         if (plugin.getWarpRequests().warpRequestExists(warpName)) {
             plugin.getMessenger().chat(player, "warpMessages.warpRequestAlreadyExists", "%warp%", warpName);
-            return new FeaturedWarpsGUI(null, plugin, player);
+            return new FeaturedWarpsGUI(this, plugin, player);
         }
 
         // Create the Warp Request
@@ -107,7 +107,7 @@ public class CreateWarpGUI extends SignGUI {
             plugin.getMessenger().chat(player, "warpMessages.warpAlreadyExists", "%warp%", warpName);
         }
 
-        return new FeaturedWarpsGUI(null, plugin, player);
+        return new FeaturedWarpsGUI(this, plugin, player);
 
     }
 }
