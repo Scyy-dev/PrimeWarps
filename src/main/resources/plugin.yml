@@ -1,7 +1,7 @@
 name: "PrimeWarps"
-main: me.Scyy.PrimeWarps.Plugin
-version: ${project.version}
-api-version: 1.16
+main: me.scyphers.minecraft.primewarps.PrimeWarps
+version: 3.0.0
+api-version: 1.17
 author: "Scyphers"
 depend:
   - ScyCore
