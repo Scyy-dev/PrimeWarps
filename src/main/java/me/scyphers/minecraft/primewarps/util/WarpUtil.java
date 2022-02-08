@@ -35,8 +35,6 @@ public class WarpUtil {
      */
     public static void warp(Player player, PrimeWarps plugin, Warp warp, int delay) {
 
-        // TODO - split up handling of this into checking if warp spot is safe and actually teleporting the player
-
         Location location = warp.getLocation();
 
         Messenger m = plugin.getMessenger();
@@ -81,6 +79,11 @@ public class WarpUtil {
             warp.addVisitor(player.getUniqueId());
         }, delay);
 
+    }
+
+    public static boolean reachedMaxWarps(int maxWarps, int prestigePerWarp, long warpCount, int prestigeLevel) {
+        long maximumPrestigeWarps = prestigeLevel / prestigePerWarp;
+        return warpCount >= maxWarps || warpCount >= maximumPrestigeWarps;
     }
 
     public static boolean validName(String name) {

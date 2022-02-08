@@ -2,6 +2,7 @@ package me.scyphers.minecraft.primewarps.command;
 
 import me.scyphers.minecraft.primewarps.PrimeWarps;
 import me.scyphers.minecraft.primewarps.util.ItemStackUtils;
+import me.scyphers.minecraft.primewarps.util.WarpUtil;
 import me.scyphers.minecraft.primewarps.warps.WarpRequest;
 import me.scyphers.scycore.api.Messenger;
 import me.scyphers.scycore.command.SimpleCommandFactory;
@@ -55,12 +56,17 @@ public class WarpRequestCommandFactory extends SimpleCommandFactory {
         long warpCount = plugin.getWarps().getWarpCount(islandUUID);
         int prestigeLevel = plugin.getSkyblockManager().getPrestigeLevel(islandUUID);
 
-        // The number of warps the player can have at their current prestige level
         long maximumPrestigeWarps = prestigeLevel / prestigePerWarp;
 
         // If the player has reached the hard warp count cap or reached the cap for their current prestige
-        if (warpCount >= maxWarps || warpCount >= maximumPrestigeWarps) {
+        if (WarpUtil.reachedMaxWarps(maxWarps, prestigePerWarp, warpCount, prestigeLevel)) {
             m.chat(sender, "errorMessages.warpCapReached", "%prestige%", "" + prestigeLevel, "%warpCap%", "" + Math.min(maxWarps, maximumPrestigeWarps));
+            return true;
+        }
+
+        // Ensure the warp is on the players island
+        if (!plugin.getSkyblockManager().isWithinPlayerIsland(player.getUniqueId(), player.getLocation())) {
+            m.chat(player, "errorMessages.mustBeOnPlayerIsland", "%player%", player.getName());
             return true;
         }
 
@@ -81,12 +87,6 @@ public class WarpRequestCommandFactory extends SimpleCommandFactory {
         }
         if (plugin.getWarpRequests().warpRequestExists(args[0])) {
             m.chat(sender, "warpMessages.warpRequestAlreadyExists", "%warp%", formatName);
-            return true;
-        }
-
-        // Ensure the warp is on the players island
-        if (!plugin.getSkyblockManager().isWithinPlayerIsland(player.getUniqueId(), player.getLocation())) {
-            m.chat(player, "errorMessages.mustBeOnPlayerIsland", "%player%", player.getName());
             return true;
         }
 
