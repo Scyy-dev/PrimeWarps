@@ -2,16 +2,17 @@ package me.scyphers.minecraft.primewarps.util;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class ItemStackUtils {
 
-    public static void removeItem(Player player, ItemStack item, int amount) {
+    public static void removeItem(@NotNull Player player, @NotNull ItemStack item, int amount) {
 
         int removedCounter = amount;
 
         for (ItemStack itemStack : player.getInventory().getStorageContents()) {
 
-            if (itemStack.isSimilar(item)) {
+            if (item.isSimilar(itemStack)) {
 
                 if (itemStack.getAmount() >= removedCounter) {
                     itemStack.setAmount(itemStack.getAmount() - removedCounter);
