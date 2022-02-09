@@ -40,7 +40,7 @@ public class PlayerWarpListGUI extends PagedListGUI<Warp> {
 
     @Override
     public @NotNull ItemStack display(Warp warp) {
-        Component warpName = plugin.getMessenger().get("warpName", "%warp%", warp.getName());
+        String warpName = plugin.getMessenger().getRaw("warpName", "%warp%", warp.getName());
         return new ItemBuilder(Material.PLAYER_HEAD).meta(islandOwnerSkullMeta).name(warpName).build();
     }
 

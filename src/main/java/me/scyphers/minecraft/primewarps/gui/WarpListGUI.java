@@ -57,7 +57,7 @@ public class WarpListGUI extends PagedListGUI<Warp> {
 
         ItemBuilder builder = new ItemBuilder(skullMeta, Material.PLAYER_HEAD).name("&r" + warpDisplayName)
                 .lore("&8Owner: &7" + islandOwnerName)
-                .lore("&8Category: &7" + warp.getCategory())
+                .lore("&8Category: " + (warp.getCategory().equals("") ? "&cN/A" : "&7" + warp.getCategory()))
                 .lore("&8Date Created: &7" + DateTimeUtil.format(warp.getDateCreated()))
                 .lore("")
                 .lore("&aLeft click to visit!");
@@ -110,11 +110,12 @@ public class WarpListGUI extends PagedListGUI<Warp> {
                         nextCategory = category;
                         break;
                     }
-                    if (this.category.equals(category)) foundPrevious = true;
+                    if (this.category.equals(category) || this.category.equals("")) foundPrevious = true;
                 }
 
                 this.setItems(plugin.getWarps().getWarpsByCategory(nextCategory));
                 this.category = nextCategory;
+                player.sendMessage("Changed category to: " + category);
                 yield this;
             }
 

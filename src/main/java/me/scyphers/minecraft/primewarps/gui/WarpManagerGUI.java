@@ -24,7 +24,7 @@ public class WarpManagerGUI extends InventoryGUI {
     private final Warp warp;
 
     public WarpManagerGUI(@Nullable GUI<?> lastGUI, @NotNull PrimeWarps plugin, @NotNull Player player, Warp warp) {
-        super(lastGUI, plugin, player, "&5Warp &6" + warp.getName(), 54);
+        super(lastGUI, plugin, player, "&5Warp Management", 54);
         this.plugin = plugin;
         this.warp = warp;
     }
@@ -41,21 +41,26 @@ public class WarpManagerGUI extends InventoryGUI {
 
         ItemMeta headMeta = HeadMetaProvider.getMeta(plugin, islandOwnerUUID);
 
-        ItemStack warpOwnerHead = new ItemBuilder(Material.PLAYER_HEAD).meta(headMeta)
+        String warpName = plugin.getMessenger().getRaw("warpName", "%warp%", warp.getName());
+        ItemStack warpOwnerHead = new ItemBuilder(Material.PLAYER_HEAD).meta(headMeta).name(warpName)
                 .lore("&8Unique Visits: &6" + warp.getUniqueVisitors().size()).build();
 
         inventoryItems[13] = warpOwnerHead;
 
         int moveCost = plugin.getSettings().getMoveWarpCost();
         inventoryItems[29] = new ItemBuilder(Material.PISTON).name("&5Move Warp")
+                .lore("")
                 .lore("&8Move the warp to where you are standing!")
+                .lore("")
                 .lore("&8Cost: &6" + moveCost + " &8shards").build();
 
 
         int renameCost = plugin.getSettings().getRenameWarpCost();
         inventoryItems[30] = new ItemBuilder(Material.NAME_TAG).name("&5Rename Warp")
+                .lore("")
                 .lore("&8Rename the warp to a new name!")
                 .lore("&8Follow the chat prompt to finish the renaming")
+                .lore("")
                 .lore("&8Cost: &6" + renameCost + " &8shards").build();
 
         inventoryItems[31] = new ItemBuilder(Material.HOPPER).name("&5Categorise Warp")
@@ -64,15 +69,20 @@ public class WarpManagerGUI extends InventoryGUI {
         if (warp.isInactive()) {
             int reactivateCost = plugin.getSettings().getReactivateWarpCost();
             inventoryItems[32] = new ItemBuilder(Material.GRAY_DYE).name("&5Reactivate Warp")
+                    .lore("")
                     .lore("&8Reactivate the warp!")
+                    .lore("")
                     .lore("&8Cost: &6" + reactivateCost + " &8shards").build();
         } else {
             inventoryItems[32] = new ItemBuilder(Material.LIME_DYE).name("&5Reactivate Warp")
+                    .lore("")
                     .lore("&8Your warp is already active!").build();
         }
 
         inventoryItems[33] = new ItemBuilder(Material.TNT).name("&cRemove Warp")
-                .lore("&r&8&lWARNING!")
+                .lore("")
+                .lore("&r&7&lWARNING!")
+                .lore("")
                 .lore("&r&8You are &cNOT &8refunded for removing warps!").build();
 
         if (player.hasPermission("primewarps.warps.manage")) {

@@ -171,7 +171,7 @@ public class FeaturedWarpsGUI extends InventoryGUI {
         return new ItemBuilder(headMeta, Material.PLAYER_HEAD)
                 .name(warpName)
                 .lore("&8Island Owner: &7" + ownerName)
-                .lore("&8Category: &7" + warp.getCategory())
+                .lore("&8Category: " + (warp.getCategory().equals("") ? "&cN/A" : "&7" + warp.getCategory()))
                 .lore("&8Date Created: &7" + DateTimeUtil.format(warp.getDateCreated()))
                 .lore("")
                 .lore("&aLeft click to visit!").build();

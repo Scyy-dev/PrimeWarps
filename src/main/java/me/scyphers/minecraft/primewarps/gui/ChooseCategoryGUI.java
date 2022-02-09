@@ -38,7 +38,12 @@ public class ChooseCategoryGUI extends PagedListGUI<String> {
     public @NotNull ItemStack display(String item) {
         Material categoryMaterial = plugin.getSettings().getCategoryMaterial(item);
         ItemBuilder builder = new ItemBuilder(categoryMaterial).name("&6" + item);
-        if (warp.getCategory().equals(item)) builder.enchant();
+        if (warp.getCategory().equals(item)) {
+            builder.enchant();
+            builder.lore("&7Currently selected!");
+        } else {
+            builder.lore("&7Click to change the warp category to: &6" + item);
+        }
         return builder.build();
     }
 
