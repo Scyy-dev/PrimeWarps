@@ -80,6 +80,13 @@ public class PrimeWarps extends BasePlugin {
     @Override
     public void onDisable() {
         if (!successfulEnable) return;
+
+        try {
+            this.fileManager.saveAll();
+        } catch (Exception e) {
+            this.getSLF4JLogger().error("An error occurred while saving configs!", e);
+        }
+
     }
 
     @Override
