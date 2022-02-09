@@ -44,14 +44,16 @@ public class WarpRequestGUI extends PagedListGUI<WarpRequest> {
         UUID islandOwnerUUID = plugin.getSkyblockManager().getIslandOwner(warpRequest.islandUUID());
         ItemMeta skullMeta = HeadMetaProvider.getMeta(plugin, islandOwnerUUID);
 
+        String warpName = plugin.getMessenger().getRaw("warpName", "%warp%", warpRequest.name());
+
         String ownerName = plugin.getServer().getOfflinePlayer(islandOwnerUUID).getName();
 
-        return new ItemBuilder(skullMeta, Material.PLAYER_HEAD)
-                .lore("&r&8Owner: &7" + ownerName)
-                .lore("&r&8Date Created: &7" + formattedDate)
-                .lore("&r&7Left click&8 to &eTELEPORT &8to warp")
-                .lore("&r&7Shift-Left&8 click to &aAPPROVE &8warp")
-                .lore("&r&7Shift-Right&8 click to &cREJECT &8warp")
+        return new ItemBuilder(skullMeta, Material.PLAYER_HEAD).name("&r" + warpName)
+                .lore("&8Owner: &7" + ownerName)
+                .lore("&o&r&8Date Created: &7" + formattedDate)
+                .lore("&r&7Left click&8 to &eTELEPORT &8to warp&r")
+                .lore("&r&7Shift-Left&8 click to &aAPPROVE &8warp&r")
+                .lore("&r&7Shift-Right&8 click to &cREJECT &8warp&r")
                 .build();
     }
 

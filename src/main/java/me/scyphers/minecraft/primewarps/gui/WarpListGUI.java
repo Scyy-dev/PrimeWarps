@@ -53,7 +53,9 @@ public class WarpListGUI extends PagedListGUI<Warp> {
 
         String islandOwnerName = plugin.getServer().getOfflinePlayer(islandOwnerUUID).getName();
 
-        ItemBuilder builder = new ItemBuilder(skullMeta, Material.PLAYER_HEAD).name(warp.getName())
+        String warpDisplayName = plugin.getMessenger().getRaw("warpName", "%warp%", warp.getName());
+
+        ItemBuilder builder = new ItemBuilder(skullMeta, Material.PLAYER_HEAD).name("&r" + warpDisplayName)
                 .lore("&8Owner: &7" + islandOwnerName)
                 .lore("&8Category: &7" + warp.getCategory())
                 .lore("&8Date Created: &7" + DateTimeUtil.format(warp.getDateCreated()))
