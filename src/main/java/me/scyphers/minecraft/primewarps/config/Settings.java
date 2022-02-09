@@ -24,10 +24,6 @@ public class Settings extends ConfigFile implements PluginSettings {
 
     // Warp categories
     private Map<String, Material> warpMaterials;
-    private String defaultCategory;
-
-    // Valid warp worlds
-    private List<String> validWorlds;
 
     // Misc Warp settings
     private int inactiveDays;
@@ -64,9 +60,6 @@ public class Settings extends ConfigFile implements PluginSettings {
                 warpMaterials.put(categoryName, material);
             }
         }
-        this.defaultCategory = file.getString("defaultCategory", "default");
-
-        this.validWorlds = file.getStringList("worlds");
 
         this.inactiveDays = file.getInt("inactiveDays", 14);
 
@@ -128,10 +121,6 @@ public class Settings extends ConfigFile implements PluginSettings {
 
     public Material getCategoryMaterial(String category) {
         return warpMaterials.getOrDefault(category, Material.STONE);
-    }
-
-    public String getDefaultCategory() {
-        return defaultCategory;
     }
 
     public int getInactiveDays() {

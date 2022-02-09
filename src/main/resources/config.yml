@@ -68,11 +68,6 @@ categories:
   Shop: EMERALD
   Nether: NETHERRACK
   Build: BRICK
-  default: STONE
-
-# The default category whenever a warp is created
-# Note that it must also be in the list above
-defaultCategory: "default"
 
 # Worlds the player can create warps in
 # Modifying this list will require a server restart and will not work with /pwa reload
