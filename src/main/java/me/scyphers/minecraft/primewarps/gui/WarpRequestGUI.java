@@ -110,6 +110,7 @@ public class WarpRequestGUI extends PagedListGUI<WarpRequest> {
                 plugin.getResponseManager().scheduleResponse(warpRequest.requester(), response);
                 // TODO - do we need response handlers? Or is there enough information in the response?
                 // plugin.get.getRequestScheduler().scheduleHandler(warpRequest, "approved");
+                this.setItems(new ArrayList<>(plugin.getWarpRequests().getRequests()));
                 yield this;
             }
 
@@ -123,6 +124,7 @@ public class WarpRequestGUI extends PagedListGUI<WarpRequest> {
                 // Schedule a response to the rejection
                 WarpRequestResponse response = new WarpRequestResponse(warpRequest.name(), warpRequest.islandUUID(), warpRequest.requester(), false, true);
                 plugin.getResponseManager().scheduleResponse(warpRequest.requester(), response);
+                this.setItems(new ArrayList<>(plugin.getWarpRequests().getRequests()));
                 yield this;
             }
 
