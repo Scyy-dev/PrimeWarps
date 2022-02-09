@@ -145,6 +145,7 @@ public class WarpListGUI extends PagedListGUI<Warp> {
                     plugin.getServer().getScheduler().runTask(plugin, () -> {
                         player.teleport(warp.getLocation());
                     });
+                    this.setShouldClose(true);
                     yield new UninteractableGUI(this);
                 } else {
                     yield this;

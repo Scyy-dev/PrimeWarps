@@ -83,11 +83,14 @@ public class WarpRequestGUI extends PagedListGUI<WarpRequest> {
     @Override
     public @NotNull GUI<?> handleItemInteraction(InventoryClickEvent event, WarpRequest warpRequest) {
 
+        event.setCancelled(true);
+
         return switch (event.getClick()) {
 
             // Force Teleport
             case LEFT, RIGHT, MIDDLE -> {
-                plugin.getServer().getScheduler().runTask(plugin, () -> event.getWhoClicked().teleport(warpRequest.location()));
+                this.setShouldClose(true);
+                plugin.getServer().getScheduler().runTaskLater(plugin, () -> event.getWhoClicked().teleport(warpRequest.location()), 2L);
                 plugin.getMessenger().chat(event.getWhoClicked(), "warpMessages.playerWarped", "%warp%", warpRequest.name());
                 yield new UninteractableGUI(this);
             }

@@ -107,6 +107,8 @@ public class FeaturedWarpsGUI extends InventoryGUI {
 
                 WarpUtil.warp(player, plugin, warp);
 
+                this.setShouldClose(true);
+
                 yield new UninteractableGUI(this);
 
             }
