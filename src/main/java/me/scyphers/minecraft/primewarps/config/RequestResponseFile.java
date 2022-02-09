@@ -75,8 +75,10 @@ public class RequestResponseFile extends ConfigStorageFile implements RequestRes
     }
 
     @Override
-    public void scheduleResponse(UUID requester, WarpRequestResponse response) {
-
+    public void scheduleResponse(UUID playerUUID, WarpRequestResponse response) {
+        List<WarpRequestResponse> responses = this.hasResponse(playerUUID) ? this.getResponses(playerUUID) : new ArrayList<>();
+        responses.add(response);
+        this.requestResponses.put(playerUUID, responses);
     }
 
     @Override
