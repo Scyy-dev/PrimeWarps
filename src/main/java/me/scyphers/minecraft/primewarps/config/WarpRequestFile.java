@@ -48,11 +48,11 @@ public class WarpRequestFile extends ConfigStorageFile implements WarpRequestReg
 
             WarpRequest request = warpRequests.get(warpRequestName);
 
-            file.set("warpRequests." + warpRequestName + ".islandUUID", request.islandUUID());
-            file.set("warpRequests." + warpRequestName + ".requesterUUID", request.requester());
+            file.set("warpRequests." + warpRequestName + ".islandUUID", request.islandUUID().toString());
+            file.set("warpRequests." + warpRequestName + ".requesterUUID", request.requester().toString());
             file.set("warpRequests." + warpRequestName + ".location", request.location());
             file.set("warpRequests." + warpRequestName + ".category", request.category());
-            file.set("warpRequests." + warpRequestName + ".dateCreated", request.dateCreated());
+            file.set("warpRequests." + warpRequestName + ".dateCreated", request.dateCreated().toEpochMilli());
         }
 
     }

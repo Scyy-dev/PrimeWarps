@@ -64,7 +64,7 @@ public class RequestResponseFile extends ConfigStorageFile implements RequestRes
                 WarpRequestResponse response = responses.get(key);
 
                 file.set(playerUUID + "." + key + ".warpName", response.warpName());
-                file.set(playerUUID + "." + key + ".requesterUUID", response.warpRequester());
+                file.set(playerUUID + "." + key + ".requesterUUID", response.warpRequester().toString());
                 file.set(playerUUID + "." + key + ".success", response.success());
                 file.set(playerUUID + "." + key + ".refundShards", response.refundShards());
 

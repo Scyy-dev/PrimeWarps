@@ -73,7 +73,7 @@ public class WarpFile extends ConfigStorageFile implements WarpRegister {
         for (String warpName : warps.keySet()) {
 
             Warp warp = warps.get(warpName);
-            file.set("warps." + warpName + ".islandUUID", warp.getIslandUUID());
+            file.set("warps." + warpName + ".islandUUID", warp.getIslandUUID().toString());
             file.set("warps." + warpName + ".location", warp.getLocation());
             file.set("warps." + warpName + ".category", warp.getCategory());
             file.set("warps." + warpName + ".dateCreated", warp.getDateCreated().toEpochMilli());
