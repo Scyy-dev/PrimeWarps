@@ -20,6 +20,14 @@ public class PrimeWarpsFileManager extends SimpleFileManager {
         this.settings = new Settings(this);
     }
 
+    @Override
+    public void saveAll() throws Exception {
+        super.saveAll();
+        warpFile.save();
+        warpRequestFile.save();
+        miscDataFile.save();
+    }
+
     public WarpFile getWarpsFile() {
         return warpFile;
     }
