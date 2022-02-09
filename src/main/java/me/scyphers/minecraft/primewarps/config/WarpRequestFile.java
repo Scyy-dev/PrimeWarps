@@ -33,7 +33,7 @@ public class WarpRequestFile extends ConfigStorageFile implements WarpRequestReg
             UUID requesterUUID = UUID.fromString(section.getString(warpName + ".requesterUUID", "INVALID_UUID"));
             Location location = section.getLocation(warpName + ".location");
             String category = section.getString(warpName + ".category", "INVALID_CATEGORY");
-            Instant dateCreated = Instant.ofEpochMilli(file.getLong(warpName + ".dateCreated", 0));
+            Instant dateCreated = Instant.ofEpochMilli(section.getLong(warpName + ".dateCreated", 0));
             warpRequests.put(warpName, new WarpRequest(warpName, islandUUID, requesterUUID, location, category, dateCreated));
         }
 
