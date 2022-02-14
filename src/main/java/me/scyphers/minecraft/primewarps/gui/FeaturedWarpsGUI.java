@@ -73,7 +73,7 @@ public class FeaturedWarpsGUI extends InventoryGUI {
                 .lore("&8Enter the name of your warp on the sign").build();
 
         // Add the Requests button if the user has the permission for it
-        if (player.hasPermission("pwarp.admin.requests")) {
+        if (player.hasPermission("primewarps.warps.requests")) {
             inventoryItems[36] = new ItemBuilder(Material.PAPER).name("&5Warp Requests").build();
         }
 
