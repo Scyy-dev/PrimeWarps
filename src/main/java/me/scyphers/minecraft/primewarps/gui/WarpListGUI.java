@@ -121,7 +121,7 @@ public class WarpListGUI extends PagedListGUI<Warp> {
                     if (this.category.equals(category) || this.category.equals("")) foundPrevious = true;
                 }
 
-                this.setItems(plugin.getWarps().getWarpsByCategory(nextCategory));
+                this.setItems(plugin.getWarps().getWarpsByCategory(nextCategory).stream().filter(Warp::isActive).collect(Collectors.toList()));
                 this.category = nextCategory;
                 yield this;
 
@@ -179,7 +179,10 @@ public class WarpListGUI extends PagedListGUI<Warp> {
     }
 
     private static List<Warp> defaultSortedWarps(Collection<Warp> rawWarps) {
-        return rawWarps.stream().sorted(Comparator.comparingLong(value -> value.getDateCreated().toEpochMilli())).collect(Collectors.toList());
+        return rawWarps.stream()
+                .sorted(Comparator.comparingLong(value -> value.getDateCreated().toEpochMilli()))
+                .filter(Warp::isActive)
+                .collect(Collectors.toList());
     }
 
 }
