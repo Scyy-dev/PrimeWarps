@@ -77,7 +77,7 @@ public class WarpFile extends ConfigStorageFile implements WarpRegister {
             file.set("warps." + warpName + ".location", warp.getLocation());
             file.set("warps." + warpName + ".category", warp.getCategory());
             file.set("warps." + warpName + ".dateCreated", warp.getDateCreated().toEpochMilli());
-            file.set("warps." + warpName + ".ownerLastSeen", warp.getLastSeen().toEpochMilli());
+            file.set("warps." + warpName + ".lastSeen", warp.getLastSeen().toEpochMilli());
             file.set("warps." + warpName + ".inactive", warp.isInactive());
 
             // Convert unique visitors to a list of strings and save the list
