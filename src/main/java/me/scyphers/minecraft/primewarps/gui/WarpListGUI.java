@@ -123,8 +123,8 @@ public class WarpListGUI extends PagedListGUI<Warp> {
 
                 this.setItems(plugin.getWarps().getWarpsByCategory(nextCategory));
                 this.category = nextCategory;
-                player.sendMessage("Changed category to: " + category);
                 yield this;
+
             }
 
             // Everything else
@@ -143,7 +143,7 @@ public class WarpListGUI extends PagedListGUI<Warp> {
 
             // Warp management
             case SHIFT_RIGHT -> {
-                if (!player.hasPermission("primewarps.admin.manage")) {
+                if (player.hasPermission("primewarps.admin.manage")) {
                     yield new WarpManagerGUI(this, plugin, player, warp);
                 } else {
                     yield this;
@@ -152,7 +152,7 @@ public class WarpListGUI extends PagedListGUI<Warp> {
 
             // Force teleport
             case SHIFT_LEFT -> {
-                if (!player.hasPermission("primewarps.admin.manage")) {
+                if (player.hasPermission("primewarps.admin.manage")) {
                     plugin.getServer().getScheduler().runTask(plugin, () -> {
                         player.teleport(warp.getLocation());
                     });
