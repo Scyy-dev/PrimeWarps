@@ -17,6 +17,8 @@ public class SkyblockManager {
 
     private final PrimeWarps plugin;
 
+    private final SkyblockListener skyblockListener;
+
     private final boolean pluginLoaded;
 
     private final Map<String, IslandRole> roleMap = Map.of(
@@ -33,8 +35,11 @@ public class SkyblockManager {
             Skyblock skyblock = Skyblock.getInstance();
         } catch (NoClassDefFoundError error) {
             this.pluginLoaded = false;
+            this.skyblockListener = null;
             return;
         }
+
+        this.skyblockListener = new SkyblockListener(this);
 
         this.pluginLoaded = true;
 
@@ -129,4 +134,7 @@ public class SkyblockManager {
 
     }
 
+    public PrimeWarps getPlugin() {
+        return plugin;
+    }
 }
