@@ -8,7 +8,7 @@
 # e.g. noPermission: "[NO_PREFIX]&cYou do not have permission to use that command"
 
 # Prefix for all messages
-prefix: "&r&7[&6Prime&3Warps&r&7]&f"
+prefix: "&r&8[&dPlayer&5Warps&r&8]&f "
 
 # Formatting for the names of warps on featured warps and the warp list
 warpName: "[NO_PREFIX]&6%warp%"
@@ -36,6 +36,9 @@ errorMessages:
   # Message sent when the player tries to open the GUI without a sign GUI being set up for the world
   # This only happens if the sign system is incorrectly configured, highly recommended to encourage players to report if they get this message
   signNotFound: "&cSorry, but the sign GUI cannot be used in this world. Please report this bug!"
+
+  warpCapReached: "&cYou have reached your island warp limit &8(&6%warpCap%&8)&c. If you want more warps, increase your island prestige level!"
+  needIsland: "&cYou need an island to create a warp!"
 
 # Errors in relation to managing and using warps
 # All warp messages take %warp% as a placeholder for the warp name
