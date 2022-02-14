@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'me.scyphers.minecraft.primewarps'
-version '3.0.0'
+version '3.0.1'
 
 repositories {
     mavenCentral()
