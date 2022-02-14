@@ -23,6 +23,8 @@ public record PlayerListener(PrimeWarps plugin) implements Listener {
 
         Player player = event.getPlayer();
 
+        if (!plugin.getSkyblockManager().hasIsland(player.getUniqueId())) return;
+
         UUID playerUUID = event.getPlayer().getUniqueId();
         UUID islandUUID = plugin.getSkyblockManager().getIslandUUID(playerUUID);
 
