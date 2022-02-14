@@ -109,11 +109,12 @@ public class WarpListGUI extends PagedListGUI<Warp> {
             // Sort button
             case 49 -> {
 
-                // Find the next category in order
                 String nextCategory = "";
+                boolean sortingByAll = this.category.equals("");
                 boolean foundPrevious = false;
+
                 for (String category : plugin.getSettings().getCategories()) {
-                    if (foundPrevious) {
+                    if (sortingByAll || foundPrevious) {
                         nextCategory = category;
                         break;
                     }
