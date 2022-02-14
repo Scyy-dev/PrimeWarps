@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
 
@@ -36,48 +37,44 @@ public class WarpUtil {
     public static void warp(Player player, PrimeWarps plugin, Warp warp, int delay) {
 
         Location location = warp.getLocation();
-
         Messenger m = plugin.getMessenger();
 
-        if (location.getWorld() == null) {
-            m.chat(player, "errorMessages.worldNotFound");
-            return;
-        }
-
-        World world = location.getWorld();
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-
-            // Check if the player is on a full block
-            boolean isOnFullBlock = location.getY() % 1 == 0;
-
-            // Block the player stands on
-            Block b1 = isOnFullBlock ? world.getBlockAt(location.getBlockX(), (int) Math.floor(location.getBlockY() - 1), location.getBlockZ())
-                    : world.getBlockAt(location.getBlockX(), (int) Math.floor(location.getBlockY()), location.getBlockZ());
-
-            // Block the player is in (legs)
-            Block b2 = isOnFullBlock ? world.getBlockAt(location.getBlockX(), (int) Math.floor(location.getBlockY()), location.getBlockZ())
-                    : world.getBlockAt(location.getBlockX(), (int) Math.floor(location.getBlockY() + 1), location.getBlockZ());
-
-            // Block the player is in (head)
-            Block b3 = isOnFullBlock ? world.getBlockAt(location.getBlockX(), (int) Math.floor(location.getBlockY() + 1), location.getBlockZ())
-                    : world.getBlockAt(location.getBlockX(), (int) Math.floor(location.getBlockY() + 2), location.getBlockZ());
-
-            // Verify the space the player takes up is safe
-            if (!b2.isPassable() || !b3.isPassable()) {
-                m.chat(player, "warpMessages.spaceBlocked", "%warp%", warp.getName());
-                return;
-            }
-
-            // Verify the player has a block to stand on
-            if (b1.isPassable()) {
-                m.chat(player, "warpMessages.holeInFloor", "%warp%", warp.getName());
-                return;
-            }
-
             player.teleport(location, PlayerTeleportEvent.TeleportCause.COMMAND);
             m.chat(player, "warpMessages.playerWarped", "%warp%", warp.getName());
             warp.addVisitor(player.getUniqueId());
         }, delay);
+
+    }
+
+    public static boolean canWarp(@NotNull Location location) {
+
+        World world = location.getWorld();
+
+        if (world == null) return false;
+
+        // Check if the player is on a full block
+        boolean isOnFullBlock = location.getY() % 1 == 0;
+
+        // Block the player stands on
+        Block b1 = isOnFullBlock ? world.getBlockAt(location.getBlockX(), (int) Math.floor(location.getBlockY() - 1), location.getBlockZ())
+                : world.getBlockAt(location.getBlockX(), (int) Math.floor(location.getBlockY()), location.getBlockZ());
+
+        // Block the player is in (legs)
+        Block b2 = isOnFullBlock ? world.getBlockAt(location.getBlockX(), (int) Math.floor(location.getBlockY()), location.getBlockZ())
+                : world.getBlockAt(location.getBlockX(), (int) Math.floor(location.getBlockY() + 1), location.getBlockZ());
+
+        // Block the player is in (head)
+        Block b3 = isOnFullBlock ? world.getBlockAt(location.getBlockX(), (int) Math.floor(location.getBlockY() + 1), location.getBlockZ())
+                : world.getBlockAt(location.getBlockX(), (int) Math.floor(location.getBlockY() + 2), location.getBlockZ());
+
+        // Verify the space the player takes up is safe
+        if (!b2.isPassable() || !b3.isPassable()) {
+            return false;
+        }
+
+        // Verify the player has a block to stand on
+        return !b1.isPassable();
 
     }
 

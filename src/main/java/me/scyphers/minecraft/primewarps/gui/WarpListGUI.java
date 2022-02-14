@@ -164,6 +164,12 @@ public class WarpListGUI extends PagedListGUI<Warp> {
             }
 
             default -> {
+
+                if (!WarpUtil.canWarp(warp.getLocation())) {
+                    plugin.getMessenger().chat(player, "errorMessages.unsafeToWarp", "%warp%", warp.getName());
+                    yield this;
+                }
+
                 this.setShouldClose(true);
                 WarpUtil.warp(player, plugin, warp);
                 yield new UninteractableGUI(this);

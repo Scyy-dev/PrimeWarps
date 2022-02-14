@@ -67,6 +67,11 @@ public class PrimeWarpCommandFactory extends SimpleCommandFactory {
             return true;
         }
 
+        if (!WarpUtil.canWarp(warp.getLocation())) {
+            plugin.getMessenger().chat(player, "errorMessages.unsafeToWarp", "%warp%", warp.getName());
+            return true;
+        }
+
         // Warp the player
         WarpUtil.warp(player, plugin, warp);
         return true;

@@ -105,6 +105,11 @@ public class FeaturedWarpsGUI extends InventoryGUI {
                 int warpClick = (click - 10) / 2;
                 Warp warp = featuredWarps.get(warpClick);
 
+                if (!WarpUtil.canWarp(warp.getLocation())) {
+                    plugin.getMessenger().chat(player, "errorMessages.unsafeToWarp", "%warp%", warp.getName());
+                    yield this;
+                }
+
                 WarpUtil.warp(player, plugin, warp);
 
                 this.setShouldClose(true);
