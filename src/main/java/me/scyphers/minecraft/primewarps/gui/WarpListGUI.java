@@ -49,9 +49,16 @@ public class WarpListGUI extends PagedListGUI<Warp> {
     public @NotNull ItemStack display(Warp warp) {
 
         UUID islandOwnerUUID = plugin.getSkyblockManager().getIslandOwner(warp.getIslandUUID());
-        ItemMeta skullMeta = HeadMetaProvider.getMeta(plugin, islandOwnerUUID);
 
-        String islandOwnerName = plugin.getServer().getOfflinePlayer(islandOwnerUUID).getName();
+        ItemMeta skullMeta;
+        String islandOwnerName;
+        if (islandOwnerUUID == null) {
+            skullMeta = new ItemStack(Material.PLAYER_HEAD).getItemMeta();
+            islandOwnerName = "OWNER_NOT_FOUND";
+        } else {
+            skullMeta = HeadMetaProvider.getMeta(plugin, islandOwnerUUID);
+            islandOwnerName = plugin.getServer().getOfflinePlayer(islandOwnerUUID).getName();
+        }
 
         String warpDisplayName = plugin.getMessenger().getRaw("warpName", "%warp%", warp.getName());
 
