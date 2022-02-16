@@ -39,6 +39,7 @@ errorMessages:
 
   warpCapReached: "&cYou have reached your island warp limit &8(&6%warpCap%&8)&c. If you want more warps, increase your island prestige level!"
   needIsland: "&cYou need an island to create a warp!"
+  unsafeToWarp: "&cCould not warp as the warp is not safe to teleport to"
 
 # Errors in relation to managing and using warps
 # All warp messages take %warp% as a placeholder for the warp name

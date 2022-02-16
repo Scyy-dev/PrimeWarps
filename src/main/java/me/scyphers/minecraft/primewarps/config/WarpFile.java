@@ -36,7 +36,7 @@ public class WarpFile extends ConfigStorageFile implements WarpRegister {
             Location location = warps.getLocation(warpName + ".location");
             String category = warps.getString(warpName + ".category");
             Instant dateCreated = Instant.ofEpochMilli(warps.getLong(warpName + ".dateCreated"));
-            Instant lastSeen = Instant.ofEpochMilli(warps.getLong(warpName + ".lastSeen"));
+            Instant lastSeen = Instant.ofEpochMilli(warps.getLong(warpName + ".lastSeen", 0));
             boolean inactive = warps.getBoolean(warpName + ".inactive");
 
             // Load unique visitors
