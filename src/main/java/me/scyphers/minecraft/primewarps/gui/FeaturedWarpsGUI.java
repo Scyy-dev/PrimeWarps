@@ -127,7 +127,6 @@ public class FeaturedWarpsGUI extends InventoryGUI {
                     yield this;
                 }
 
-
                 UUID islandUUID = plugin.getSkyblockManager().getIslandUUID(player.getUniqueId());
                 yield new PlayerWarpListGUI(this, plugin, player, islandUUID);
             }

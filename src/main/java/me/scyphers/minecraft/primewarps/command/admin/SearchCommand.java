@@ -25,33 +25,43 @@ public class SearchCommand extends BaseCommand {
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
 
-        OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
-        if (!player.hasPlayedBefore() && !player.isOnline()) {
-            m.chat(sender, "errorMessages.playerNotFound");
-            return true;
-        }
+        // TODO - create async bridge from fruitbot for getting offline players
 
-        UUID islandUUID = plugin.getSkyblockManager().getIslandUUID(player.getUniqueId());
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
+            plugin.getAsync().addTask(primeWarps -> {
 
-        List<Warp> warps = plugin.getWarps().getAllWarps().stream()
-                .filter(warp -> warp.getIslandUUID().equals(islandUUID))
-                .collect(Collectors.toList());
+                if (!player.hasPlayedBefore() && !player.isOnline()) {
+                    m.chat(sender, "errorMessages.playerNotFound");
+                    return;
+                }
 
-        m.chat(sender, "warpMessages.warplist", "%player%", "" + player.getName());
+                UUID islandUUID = plugin.getSkyblockManager().getIslandUUID(player.getUniqueId());
 
-        StringBuilder builder = new StringBuilder();
+                List<Warp> warps = plugin.getWarps().getAllWarps().stream()
+                        .filter(warp -> warp.getIslandUUID().equals(islandUUID))
+                        .collect(Collectors.toList());
 
-        for (Warp warp : warps) {
-            if (warp.isInactive()) builder.append(warp.getName()).append(" (inactive), ");
-            else builder.append(warp.getName()).append(", ");
-        }
+                m.chat(sender, "warpMessages.warplist", "%player%", "" + player.getName());
 
-        if (builder.length() > 0) {
-            builder.delete(builder.length() - 2, builder.length());
-        }
+                StringBuilder builder = new StringBuilder();
 
-        sender.sendMessage(builder.toString());
+                for (Warp warp : warps) {
+                    if (warp.isInactive()) builder.append(warp.getName()).append(" (inactive), ");
+                    else builder.append(warp.getName()).append(", ");
+                }
+
+                if (builder.length() > 0) {
+                    builder.delete(builder.length() - 2, builder.length());
+                }
+
+                sender.sendMessage(builder.toString());
+
+            });
+        });
+
         return true;
+
     }
 
     @Override

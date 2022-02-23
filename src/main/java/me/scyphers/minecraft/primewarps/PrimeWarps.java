@@ -15,7 +15,6 @@ import me.scyphers.minecraft.primewarps.warps.WarpRegister;
 import me.scyphers.minecraft.primewarps.warps.WarpRequestRegister;
 import me.scyphers.scycore.BasePlugin;
 import me.scyphers.scycore.api.Messenger;
-import me.scyphers.scycore.gui.InventoryGUI;
 import me.scyphers.scycore.gui.InventoryListener;
 import org.bukkit.command.CommandSender;
 
@@ -27,6 +26,8 @@ import java.util.List;
 public class PrimeWarps extends BasePlugin {
 
     private PrimeWarpsFileManager fileManager;
+
+    private AsyncBridge asyncBridge;
 
     private SkyblockManager skyblockManager;
 
@@ -45,6 +46,8 @@ public class PrimeWarps extends BasePlugin {
             this.getSLF4JLogger().error("Something went wrong loading configs", e);
             return;
         }
+
+        this.asyncBridge = new AsyncBridge(this);
 
         this.skyblockManager = new SkyblockManager(this);
         if (!skyblockManager.isPluginLoaded()) {
@@ -118,6 +121,10 @@ public class PrimeWarps extends BasePlugin {
 
     public SignManager getSignManager() {
         return signManager;
+    }
+
+    public AsyncBridge getAsync() {
+        return asyncBridge;
     }
 
     @Override
