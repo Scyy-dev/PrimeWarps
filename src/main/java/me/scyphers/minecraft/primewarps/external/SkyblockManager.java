@@ -40,6 +40,7 @@ public class SkyblockManager {
         }
 
         this.skyblockListener = new SkyblockListener(this);
+        plugin.getServer().getPluginManager().registerEvents(skyblockListener, plugin);
 
         this.pluginLoaded = true;
 

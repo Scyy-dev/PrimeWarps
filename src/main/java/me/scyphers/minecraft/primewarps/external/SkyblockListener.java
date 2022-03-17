@@ -17,6 +17,8 @@ public record SkyblockListener(SkyblockManager manager) implements Listener {
 
         UUID islandUUID = event.getIsland().getUuid();
 
+        manager.getPlugin().getLogger().info("Deleting all warps for island " + islandUUID);
+
         List<Warp> islandWarps = new ArrayList<>(manager.getPlugin().getWarps().getIslandWarps(islandUUID));
         islandWarps.forEach(warp -> manager.getPlugin().getWarps().removeWarp(warp.getName()));
 

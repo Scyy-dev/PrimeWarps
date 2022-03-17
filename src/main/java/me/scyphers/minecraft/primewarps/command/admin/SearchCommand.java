@@ -25,8 +25,6 @@ public class SearchCommand extends BaseCommand {
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
 
-        // TODO - create async bridge from fruitbot for getting offline players
-
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
             plugin.getAsync().addTask(primeWarps -> {

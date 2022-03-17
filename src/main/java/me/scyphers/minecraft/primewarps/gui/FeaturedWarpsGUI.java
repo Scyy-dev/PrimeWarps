@@ -168,6 +168,10 @@ public class FeaturedWarpsGUI extends InventoryGUI {
         String warpName = plugin.getMessenger().getRaw("warpName", "%warp%", warp.getName());
 
         UUID islandOwnerUUID = plugin.getSkyblockManager().getIslandOwner(warp.getIslandUUID());
+
+        // This catches an edge case where the island is deleted but the warp isn't deleted, i.e. IslandDeleteEvent is not fired
+        if (islandOwnerUUID == null) return new ItemBuilder(Material.BARRIER).name("&cERROR_LOADING_WARP").build();
+
         String ownerName = plugin.getServer().getOfflinePlayer(islandOwnerUUID).getName();
 
         ItemMeta headMeta = HeadMetaProvider.getMeta(plugin, islandOwnerUUID);
