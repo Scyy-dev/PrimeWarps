@@ -39,11 +39,13 @@ public record SignListener(SignManager manager) implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onSignBreakEvent(BlockBreakEvent event) {
+
         BlockState blockState = event.getBlock().getState();
         if (blockState instanceof Sign sign) {
             int signID = manager.getSignTag(sign);
-            // Cancel the event if the signID is valid
-            event.setCancelled(signID != -1);
+
+            // Cancel the event if the sign is valid
+            if (signID != -1) event.setCancelled(true);
         }
 
     }
