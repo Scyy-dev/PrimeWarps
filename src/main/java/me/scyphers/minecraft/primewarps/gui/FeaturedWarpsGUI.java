@@ -143,6 +143,12 @@ public class FeaturedWarpsGUI extends InventoryGUI {
                     yield this;
                 }
 
+                // Ensure the player is on their skyblock island
+                if (!plugin.getSkyblockManager().isWithinPlayerIsland(player.getUniqueId(), player.getLocation())) {
+                    plugin.getMessenger().chat(player, "errorMessages.mustBeOnPlayerIsland", "%player%", player.getName());
+                    yield this;
+                }
+
                 yield new CreateWarpGUI(this, plugin, player);
             }
 
